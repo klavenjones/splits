@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cn } from './cn';
 import { Icon, type IconName } from './Icon';
 import { useTheme } from '../theme/useTheme';
-import { blur } from '../theme/tokens';
+import { blur, size } from '../theme/tokens';
 
 export type TabKey = 'today' | 'plan' | 'nutrition' | 'progress';
 const TABS: { key: TabKey; icon: IconName; label: string }[] = [
@@ -27,10 +27,10 @@ export function TabBar({ active, onChange, onAdd, badge }: { active: TabKey; onC
       <Pressable key={t.key} onPress={() => onChange(t.key)} accessibilityRole="tab" accessibilityState={{ selected: on }} accessibilityLabel={t.label}
         className="flex-1 h-12.5 items-center justify-center gap-0.5 active:opacity-70">
         <View>
-          <Icon name={t.icon} size={24} color={on ? c.text : c.textMuted} />
+          <Icon name={t.icon} size={size.iconLg} color={on ? c.text : c.textMuted} />
           {badge === t.key ? <View className="absolute -right-1 -top-0.5 h-2.5 w-2.5 rounded-pill bg-lift-fill border-2 border-bg" /> : null}
         </View>
-        <Text className={cn('text-[11px] leading-[13px]', on ? 'font-body-bold text-text' : 'font-body-semibold text-text-muted')}>{t.label}</Text>
+        <Text className={cn('text-micro', on ? 'font-body-bold text-text' : 'font-body-semibold text-text-muted')}>{t.label}</Text>
       </Pressable>
     );
   };
@@ -41,8 +41,9 @@ export function TabBar({ active, onChange, onAdd, badge }: { active: TabKey; onC
       <View className="flex-row items-start px-2 pt-1.5">
         {TABS.slice(0, 2).map(tab)}
         <Pressable onPress={onAdd} accessibilityRole="button" accessibilityLabel="Log a run, lift, meal or weigh-in"
-          className="-mt-3.5 h-14 w-14 items-center justify-center rounded-pill bg-primary-fill shadow-float active:scale-95">
-          <Icon name="plus" size={28} color={c.onPrimary} />
+          className="-mt-3.5 items-center justify-center rounded-pill bg-primary-fill shadow-float active:scale-95"
+          style={{ width: size.fabSize, height: size.fabSize }}>
+          <Icon name="plus" size={size.iconXl} color={c.onPrimary} />
         </Pressable>
         {TABS.slice(2).map(tab)}
       </View>

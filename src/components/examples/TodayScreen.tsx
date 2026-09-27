@@ -36,7 +36,7 @@ export default function TodayScreen() {
               <Text className="font-display text-on-anchor text-[30px] leading-[34px] tracking-[-0.6px] mt-3">upper body A</Text>
               <Text className="type-subhead text-on-anchor-muted mt-1">5 exercises · ~55 min · bench 185 × 8 target</Text>
             </View>
-            <Button variant="inverse" icon="play" block onPress={() => router.push('/lift-logger')}>start workout</Button>
+            <Button variant="inverse" icon="play" block onPress={() => router.push('/dev/lift-logger')}>start workout</Button>
           </AnchorCard>
 
           <SessionCard kind="run" title="easy 5k" subtitle="zone 2 · after lifting or this evening"
