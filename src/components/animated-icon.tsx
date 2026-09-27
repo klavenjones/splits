@@ -110,6 +110,8 @@ export function AnimatedIcon() {
   );
 }
 
+// Splash/logo artwork: sizes and blues match the image assets and the splash color in app.json,
+// so they stay as local one-off values rather than theme tokens.
 const styles = StyleSheet.create({
   imageContainer: {
     justifyContent: 'center',
