@@ -24,6 +24,7 @@ export { TabBar, type TabKey } from './TabBar';
 export { PlaceholderScreen } from './PlaceholderScreen';
 export {
   Chip,
+  ChipGroup,
   formatNumber,
   NumericField,
   parseNumber,
@@ -46,3 +47,18 @@ export { FocusSlider } from './FocusSlider';
 export { StepScreen } from './StepScreen';
 export { Avatar, displayNameOf } from './Avatar';
 export { SafeAreaView } from './SafeAreaView';
+export {
+  ActionRow,
+  Checkbox,
+  EmptyState,
+  ExerciseRow,
+  ExerciseThumbnail,
+  GroupedItem,
+  NumberedCueList,
+  SearchField,
+  type ExerciseRowProps,
+} from './exercises';
+export { AlphabetScrubber } from './AlphabetScrubber';
+export { DemoPlayer } from './DemoPlayer';
+export { MediaUploadField } from './MediaUploadField';
+export { ExercisePicker, type ExercisePickerProps } from './ExercisePicker';

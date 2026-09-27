@@ -39,6 +39,20 @@ const PATHS = {
     'M12 21a9 9 0 100-18 9 9 0 000 18zM3 12h18M12 3c2.5 2.6 3.5 5.6 3.5 9s-1 6.4-3.5 9c-2.5-2.6-3.5-5.6-3.5-9s1-6.4 3.5-9z',
   sparkle: 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z',
   drop: 'M12 3.5s6 6.4 6 10.5a6 6 0 01-12 0c0-4.1 6-10.5 6-10.5z',
+  camera:
+    'M4 8h3l2-3h6l2 3h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1zM12 16.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z',
+  image:
+    'M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1zM4 16l5-5 4 4 2-2 5 5M15 9h.01',
+  video: 'M4 6h11a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 011-1zM16 10l5-3v10l-5-3',
+  // Muscle-group glyphs for exercise thumbnails (screens/README: glyphs, never photos).
+  'muscle-chest': 'M8 16a4 4 0 100-8 4 4 0 000 8zM16 16a4 4 0 100-8 4 4 0 000 8z',
+  'muscle-back': 'M5 6h14l-2 13H7L5 6zM12 6v13M6 11h12',
+  'muscle-shoulders': 'M4 17a8 8 0 0116 0M8 17l.8-2.6M12 17v-3M16 17l-.8-2.6',
+  'muscle-arms': 'M3 12h18M6 8v8M3.5 9.5v5M18 8v8M20.5 9.5v5',
+  'muscle-legs': 'M8 20V7a3 3 0 013-3h2a3 3 0 013 3v13M8 10h8',
+  'muscle-core':
+    'M8 4h8a1 1 0 011 1v14a1 1 0 01-1 1H8a1 1 0 01-1-1V5a1 1 0 011-1zM7 9.5h10M7 14.5h10M12 4v16',
+  'muscle-full-body': 'M3 12h4l2-5 4 10 2-5h6',
 } as const;
 
 export type IconName = keyof typeof PATHS;
