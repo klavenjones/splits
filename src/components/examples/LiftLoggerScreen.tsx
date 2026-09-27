@@ -1,8 +1,16 @@
 import { ScrollView, Text, View } from 'react-native';
 import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  Button,
+  Card,
+  Icon,
+  IconButton,
+  MicroLabel,
+  RestTimer,
+  SetRow,
+} from '@/components';
 
-import { Button, Card, Icon, IconButton, MicroLabel, RestTimer, SetRow } from '@/components';
 import { useTheme } from '@/theme';
 
 /** The lift logger from the design system: set table, one current set, and the frosted rest timer. */

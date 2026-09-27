@@ -1,4 +1,4 @@
-import 'expo-sqlite/localStorage/install';
+import './storage';
 
 import { createClient } from '@supabase/supabase-js';
 import { AppState, Platform } from 'react-native';
@@ -14,13 +14,19 @@ if (!url || !anonKey) {
   );
 }
 
+// Static web rendering runs in Node, which has no usable session storage (Node 25's global
+// localStorage exists but is unusable without a file). There's no session to keep there anyway.
+const isServer = Platform.OS === 'web' && typeof window === 'undefined';
+
 export const supabase = createClient<Database>(url, anonKey, {
   auth: {
-    // expo-sqlite provides localStorage on native; the browser has its own. Absent during static rendering.
-    storage: typeof localStorage === 'undefined' ? undefined : localStorage,
-    autoRefreshToken: true,
-    persistSession: true,
+    // Native: expo-sqlite's localStorage (see storage.native.ts). Web: the browser's.
+    storage: isServer ? undefined : globalThis.localStorage,
+    autoRefreshToken: !isServer,
+    persistSession: !isServer,
     detectSessionInUrl: false,
+    // Email links carry a `code` that src/app/auth/callback.tsx exchanges for a session.
+    flowType: 'pkce',
   },
 });
 

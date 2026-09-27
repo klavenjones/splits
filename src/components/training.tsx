@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Text, View, Pressable, TextInput } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { cn } from './cn';
 import { Icon } from './Icon';
@@ -496,7 +496,8 @@ export function RestTimer({
       <BlurView
         intensity={blur.md * 2}
         tint={scheme === 'dark' ? 'dark' : 'light'}
-        className="absolute inset-0"
+        // Third-party view: NativeWind classes don't apply on native, so use a style.
+        style={StyleSheet.absoluteFill}
       />
       <View className="rounded-card border border-glass-edge bg-glass pt-4 pr-4 pb-4 pl-5">
         <View className="absolute top-2 right-5 left-5 h-1 rounded-pill bg-track">

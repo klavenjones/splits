@@ -7,7 +7,8 @@ insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-00000000000b', 'rls-b@example.test');
 insert into public.users (id) values
   ('00000000-0000-0000-0000-00000000000a'),
-  ('00000000-0000-0000-0000-00000000000b');
+  ('00000000-0000-0000-0000-00000000000b')
+on conflict (id) do nothing; -- created by the handle_new_user trigger since step 1
 insert into public.exercises (id, owner_id, name) values
   ('00000000-0000-0000-0000-0000000000e1', null, 'rls smoke built-in');
 insert into public.foods (id, owner_id, source, external_id, name, serving_qty, serving_unit, kcal)
