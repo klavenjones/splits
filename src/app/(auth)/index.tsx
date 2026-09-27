@@ -1,9 +1,8 @@
 import { router } from 'expo-router';
 import { Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, Button, cn, MicroLabel } from '@/components';
 
 import { AUTH_PROVIDERS } from '@/auth';
-import { Button, cn, MicroLabel } from '@/components';
 
 type Plate = 'run' | 'lift' | 'fuel' | 'body';
 const FILL: Record<Plate, string> = {

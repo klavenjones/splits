@@ -105,18 +105,25 @@ export function FocusSlider({ value, onChange }: { value: Focus; onChange: (f: F
             <Icon name="lift" size={size.iconMd} color={c.onLift} />
           </View>
 
+          {/* Animated.View only moves the thumb; styling classes live on core Views (NativeWind). */}
           <Animated.View
             pointerEvents="none"
-            className={cn(
-              'absolute items-center justify-center rounded-pill bg-surface-card shadow-float',
-              dragging && 'border-4 border-glass-edge',
-            )}
-            style={[{ left: INSET, top: INSET, width: THUMB, height: THUMB }, thumbStyle]}
+            style={[
+              { position: 'absolute', left: INSET, top: INSET, width: THUMB, height: THUMB },
+              thumbStyle,
+            ]}
           >
-            <View className="flex-row gap-1">
-              {[0, 1, 2].map((i) => (
-                <View key={i} className="h-5 w-0.5 rounded-pill bg-text" />
-              ))}
+            <View
+              className={cn(
+                'flex-1 items-center justify-center rounded-pill bg-surface-card shadow-float',
+                dragging && 'border-4 border-glass-edge',
+              )}
+            >
+              <View className="flex-row gap-1">
+                {[0, 1, 2].map((i) => (
+                  <View key={i} className="h-5 w-0.5 rounded-pill bg-text" />
+                ))}
+              </View>
             </View>
           </Animated.View>
         </View>

@@ -1,9 +1,16 @@
 import { router } from 'expo-router';
 import { Alert, Platform, Pressable, ScrollView, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  Avatar,
+  displayNameOf,
+  Icon,
+  SettingsGroup,
+  SettingsRow,
+  TopNav,
+} from '@/components';
 
 import { signOut, useAuth } from '@/auth';
-import { Avatar, displayNameOf, Icon, SettingsGroup, SettingsRow, TopNav } from '@/components';
 import { FOCUS_LABEL } from '@/engine/focus';
 import { size, useTheme } from '@/theme';
 

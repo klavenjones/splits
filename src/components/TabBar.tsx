@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cn } from './cn';
@@ -68,7 +68,8 @@ export function TabBar({
       <BlurView
         intensity={blur.sm * 3}
         tint={scheme === 'dark' ? 'dark' : 'light'}
-        className="absolute inset-0"
+        // Third-party view: NativeWind classes don't apply on native, so use a style.
+        style={StyleSheet.absoluteFill}
       />
       <View className="absolute inset-0 bg-glass" />
       <View className="flex-row items-start px-2 pt-1.5">

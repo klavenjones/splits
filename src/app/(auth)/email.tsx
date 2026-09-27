@@ -34,7 +34,7 @@ export default function EmailScreen() {
 
   return (
     <StepScreen
-      onBack={() => router.back()}
+      onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
       title={login ? 'log in' : 'sign up'}
       subtitle="We'll email you a code. No password needed."
       footer={

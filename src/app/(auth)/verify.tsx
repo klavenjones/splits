@@ -49,7 +49,7 @@ export default function VerifyScreen() {
 
   return (
     <StepScreen
-      onBack={() => router.back()}
+      onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
       title="check your email"
       subtitle={`Enter the code we sent to ${email}. Or open the link in the email on this phone.`}
       footer={

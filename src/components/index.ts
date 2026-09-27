@@ -45,3 +45,4 @@ export {
 export { FocusSlider } from './FocusSlider';
 export { StepScreen } from './StepScreen';
 export { Avatar, displayNameOf } from './Avatar';
+export { SafeAreaView } from './SafeAreaView';

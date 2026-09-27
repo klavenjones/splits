@@ -1,9 +1,8 @@
 import { router } from 'expo-router';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, Avatar, Card, displayNameOf, MicroLabel } from '@/components';
 
 import { useAuth } from '@/auth';
-import { Avatar, Card, displayNameOf, MicroLabel } from '@/components';
 import { useCurrentTargets } from '@/db/queries/targets';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
