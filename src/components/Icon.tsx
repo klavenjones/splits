@@ -55,14 +55,7 @@ export function Icon({
   strokeWidth?: number;
 }) {
   return (
-    <Svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants"
-    >
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
       <Path
         d={PATHS[name]}
         stroke={color}
