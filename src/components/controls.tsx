@@ -9,7 +9,7 @@ import {
   type TextInputProps,
 } from 'react-native';
 
-import { size } from '../theme/tokens';
+import { size, type } from '../theme/tokens';
 import { useTheme } from '../theme/useTheme';
 import { cn } from './cn';
 import { Icon } from './Icon';
@@ -162,8 +162,21 @@ export const TextField = forwardRef<TextInput, FieldProps>(function TextField(
           editable={editable}
           placeholderTextColor={c.textSubtle}
           accessibilityLabel={label}
-          className={cn('flex-1 text-text', large ? 'type-stat' : 'type-body')}
+          className="flex-1 text-text"
+          // Font and size from the type tokens but no lineHeight: on iOS a single-line
+          // TextInput with a lineHeight clips descenders (g, j, y).
           {...p}
+          style={[
+            {
+              fontFamily: (large ? type.stat : type.body).fontFamily,
+              fontSize: (large ? type.stat : type.body).fontSize,
+              letterSpacing: (large ? type.stat : type.body).letterSpacing,
+              paddingVertical: 0,
+              // Fill the field so iOS centers the text in the full height instead of a short box.
+              alignSelf: 'stretch',
+            },
+            p.style,
+          ]}
         />
         {unit ? <Text className="ml-2 type-label text-text-muted">{unit}</Text> : null}
       </View>
