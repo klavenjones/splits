@@ -23,6 +23,18 @@ begin
   end if;
 end $$;
 
+-- Built-in media: every built-in with an image carries its license credit.
+do $$
+begin
+  if exists (select 1 from public.exercises
+             where owner_id is null and thumbnail_url is not null
+               and (media_credit ->> 'author' is null or media_credit ->> 'license_url' is null)) then
+    raise exception 'built-in exercise media without a credit';
+  end if;
+end $$;
+
+insert into storage.objects (bucket_id, name) values ('exercise-media', 'builtin/smoke-test.png');
+
 insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-0000000002a1', 'library-a@example.test'),
   ('00000000-0000-0000-0000-0000000002b1', 'library-b@example.test');
@@ -81,12 +93,24 @@ begin
   if (select count(*) from public.exercises where owner_id is null) < 150 then
     raise exception 'B cannot read the built-in library';
   end if;
-  if exists (select 1 from storage.objects where bucket_id = 'exercise-media') then
+  if exists (select 1 from storage.objects
+             where bucket_id = 'exercise-media'
+               and name like '00000000-0000-0000-0000-0000000002a1/%') then
     raise exception 'B can see A''s media';
   end if;
+  if not exists (select 1 from storage.objects where name = 'builtin/smoke-test.png') then
+    raise exception 'B cannot read built-in media';
+  end if;
+  -- Nobody but the service role writes built-in media.
+  begin
+    insert into storage.objects (bucket_id, name) values ('exercise-media', 'builtin/sneaky.png');
+    raise exception 'B wrote into builtin/';
+  exception when insufficient_privilege then null;
+  end;
   update public.exercises set name = 'hijacked' where name = 'landmine press smoke';
   update storage.objects set name = '00000000-0000-0000-0000-0000000002b1/stolen.mp4'
   where bucket_id = 'exercise-media';
+  update storage.objects set name = 'builtin/renamed.png' where name = 'builtin/smoke-test.png';
 end $$;
 
 reset role;
@@ -94,7 +118,8 @@ do $$
 begin
   if not exists (select 1 from public.exercises where name = 'landmine press smoke')
      or not exists (select 1 from storage.objects
-       where name = '00000000-0000-0000-0000-0000000002a1/clip.mp4') then
+       where name = '00000000-0000-0000-0000-0000000002a1/clip.mp4')
+     or not exists (select 1 from storage.objects where name = 'builtin/smoke-test.png') then
     raise exception 'B changed A''s exercise or media';
   end if;
 end $$;

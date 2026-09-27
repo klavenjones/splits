@@ -73,6 +73,7 @@ export type Database = {
           id: string
           instructions: Json | null
           is_archived: boolean
+          media_credit: Json | null
           name: string
           notes: string | null
           owner_id: string | null
@@ -90,6 +91,7 @@ export type Database = {
           id?: string
           instructions?: Json | null
           is_archived?: boolean
+          media_credit?: Json | null
           name: string
           notes?: string | null
           owner_id?: string | null
@@ -107,6 +109,7 @@ export type Database = {
           id?: string
           instructions?: Json | null
           is_archived?: boolean
+          media_credit?: Json | null
           name?: string
           notes?: string | null
           owner_id?: string | null

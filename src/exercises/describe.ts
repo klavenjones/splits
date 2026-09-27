@@ -23,3 +23,26 @@ export function readInstructions(json: unknown): Instructions {
     Array.isArray(v) ? v.filter((s): s is string => typeof s === 'string' && s.trim() !== '') : [];
   return { steps: list(o.steps), cues: list(o.cues), mistakes: list(o.mistakes) };
 }
+
+/** Credit for third-party media (exercises.media_credit), or null when missing or malformed. */
+export type MediaCredit = {
+  author: string;
+  authorUrl: string | null;
+  license: string;
+  licenseUrl: string;
+  sourceUrl: string;
+};
+
+const httpsUrl = (v: unknown): string | null =>
+  typeof v === 'string' && /^https?:\/\//.test(v) ? v : null;
+
+export function readCredit(json: unknown): MediaCredit | null {
+  if (!json || typeof json !== 'object' || Array.isArray(json)) return null;
+  const o = json as Record<string, unknown>;
+  const author = typeof o.author === 'string' ? o.author.trim() : '';
+  const license = typeof o.license === 'string' ? o.license.trim() : '';
+  const licenseUrl = httpsUrl(o.license_url);
+  const sourceUrl = httpsUrl(o.source_url);
+  if (!author || !license || !licenseUrl || !sourceUrl) return null;
+  return { author, authorUrl: httpsUrl(o.author_url), license, licenseUrl, sourceUrl };
+}
