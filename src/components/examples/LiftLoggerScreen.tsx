@@ -13,13 +13,21 @@ export default function LiftLoggerScreen() {
       <SafeAreaView edges={['top']} className="flex-1">
         <View className="flex-row items-center justify-between px-4 py-1">
           <IconButton icon="chevron-left" label="Back to Today" onPress={() => router.back()} />
-          <Text className="font-display-bold text-[17px] leading-[22px] text-text">upper body A</Text>
+          <Text className="font-display-bold text-[17px] leading-[22px] text-text">
+            upper body A
+          </Text>
           <Button size="sm">finish</Button>
         </View>
         <View className="flex-row px-5 pt-2 pb-4">
-          {[['24:18', 'elapsed'], ['6,840', 'volume lb'], ['1/5', 'exercises']].map(([v, l]) => (
+          {[
+            ['24:18', 'elapsed'],
+            ['6,840', 'volume lb'],
+            ['1/5', 'exercises'],
+          ].map(([v, l]) => (
             <View key={l} className="flex-1 gap-0.5">
-              <Text className="font-display text-[24px] leading-[28px] tracking-[-0.5px] text-text tabular-nums">{v}</Text>
+              <Text className="font-display text-[24px] leading-[28px] tracking-[-0.5px] text-text tabular-nums">
+                {v}
+              </Text>
               <MicroLabel>{l}</MicroLabel>
             </View>
           ))}
@@ -27,12 +35,16 @@ export default function LiftLoggerScreen() {
         <ScrollView contentContainerClassName="gap-3 px-4 pb-48">
           <Card padding="pb-2">
             <View className="flex-row items-center gap-3 p-4 pb-3">
-              <View className="h-12 w-12 items-center justify-center rounded-md bg-lift-soft"><Icon name="lift" color={c.liftText} /></View>
+              <View className="h-12 w-12 items-center justify-center rounded-md bg-lift-soft">
+                <Icon name="lift" color={c.liftText} />
+              </View>
               <View className="flex-1">
                 <Text className="type-headline text-text">bench press</Text>
                 <Text className="type-caption text-text-muted">4 × 8 @ 185 · 3/4 sets</Text>
               </View>
-              <Button variant="secondary" size="sm" icon="swap">swap</Button>
+              <Button variant="secondary" size="sm" icon="swap">
+                swap
+              </Button>
             </View>
             <View className="px-2">
               <SetRow warmup previous="95 × 10" weight="95" reps="10" state="completed" />
@@ -44,7 +56,7 @@ export default function LiftLoggerScreen() {
           </Card>
         </ScrollView>
       </SafeAreaView>
-      <SafeAreaView edges={['bottom']} className="absolute bottom-0 left-3 right-3">
+      <SafeAreaView edges={['bottom']} className="absolute right-3 bottom-0 left-3">
         <RestTimer seconds={83} total={120} next="bench set 4 · 185 × 8" running={false} />
       </SafeAreaView>
     </View>
