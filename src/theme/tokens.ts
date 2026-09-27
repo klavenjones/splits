@@ -411,3 +411,9 @@ export const easing = {
 } as const;
 
 export const opacity = { disabled: 0.4, planned: 0.55 } as const;
+
+/** Type scale under the name used in docs and prompts. Same objects as `type`. */
+export const typography = type;
+
+/** Motion tokens: durations in ms and cubic-bezier easings. */
+export const motion = { duration, easing } as const;

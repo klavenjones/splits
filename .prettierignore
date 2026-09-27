@@ -1,0 +1,17 @@
+node_modules/
+.expo/
+dist/
+web-build/
+ios/
+android/
+package-lock.json
+src/db/types.ts
+supabase/.temp/
+
+# Generated from the design-system export; do not reformat
+src/global.css
+src/theme/tokens.ts
+
+# Hand-authored docs and generated assets
+*.md
+assets/

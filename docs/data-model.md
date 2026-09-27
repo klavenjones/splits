@@ -6,7 +6,7 @@ Target database: Postgres (Supabase). 18 tables in five areas. Every user-owned 
 
 - **IDs:** `uuid`, default `gen_random_uuid()`. `users.id` equals the Supabase `auth.users.id`.
 - **Timestamps:** `created_at` and `updated_at` (`timestamptz`, UTC) on every table. Not repeated below.
-- **Units:** store metric internally — kilograms, meters, centimeters, seconds, seconds-per-km. Convert to lb / mi / in only in the UI based on `users.unit_system`. The nutrition engine uses 7,700 kcal per kg (equivalent to 3,500 kcal per lb).
+- **Units:** store metric internally — kilograms, meters, centimeters, seconds, seconds-per-km. Convert to lb / mi / in only in the UI based on `users.unit_system`. The nutrition engine uses 3,500 kcal per lb, i.e. ~7,716 kcal per kg (3,500 × 2.20462). A rounded 7,700 would miss the spreadsheet fixture by 1 kcal.
 - **Dates vs timestamps:** anything tied to a calendar day (`scheduled_date`, `log_date`, `checkin_date`, `week_start`) is a `date` in the user's local timezone (`users.timezone`). Events (`started_at`, `completed_at`) are `timestamptz`.
 - **Weeks start on Monday.** `week_start` is always a Monday.
 - **Soft references:** `template_id` on sessions is nullable; templates can be deleted without losing history.

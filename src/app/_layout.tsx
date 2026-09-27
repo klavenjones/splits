@@ -5,7 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
-import { useSplitsFonts } from '@/theme';
+import { radius, useSplitsFonts } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,7 +21,18 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="sheets/add"
+          options={{
+            presentation: 'formSheet',
+            sheetAllowedDetents: 'fitToContents',
+            sheetGrabberVisible: true,
+            sheetCornerRadius: radius.sheet,
+          }}
+        />
+      </Stack>
     </ThemeProvider>
   );
 }

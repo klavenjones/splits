@@ -61,14 +61,14 @@ The MVP automates my Weight\_LOSS\_2024 spreadsheet: it sets starting calorie an
 
 | Step | Rule carried over from the spreadsheet |
 | --- | --- |
-| Phase | Men at 25%+ body fat (women 30%+) are told to cut; otherwise the phase follows the chosen goal |
-| Weekly rate | Percent of bodyweight: cut −0.7% (higher body fat) to −0.3% (lean); lean bulk +0.375% for beginners, +0.25% for intermediates; manual override allowed |
+| Phase | A "maintain" goal always maintains. Otherwise men at 25%+ body fat (women 30%+) are told to cut, and everyone else follows their goal (lose fat → cut, build muscle → lean bulk) |
+| Weekly rate | Percent of the latest average bodyweight. Cut: −0.7% above 15% body fat (women 25%), −0.5% above 12% (women 22%), −0.3% at or below. Lean bulk: +0.375% for beginners, +0.25% for intermediates. Maintain: 0. Manual override allowed |
 | Starting maintenance | (370 + 9.8 × lean mass in lb) × 1.5 for men, 1.55 for women |
-| Daily calories | Maintenance + (weekly rate × 3,500 ÷ 7), floor of 1,500 for men and 1,200 for women, shown as a ±100 range |
-| Protein | Men: 1.0 g/lb under 20% body fat, 0.8 at 20–25%, 0.73 above 25%; women: 1.0 up to 25%, 0.8 above |
-| Fat | 22–25% of calories for men, 30% for women, ÷ 9 |
+| Daily calories | Maintenance + (weekly rate × weight in lb × 3,500 ÷ 7), floor of 1,500 for men and 1,200 for women, shown as a ±100 range rounded to 50 (when −100 would cross the floor, the range runs from the target to +100) |
+| Protein | Grams per lb of bodyweight. Men: 1.0 under 20% body fat, 0.8 at 20–25%, 0.73 above 25%; women: 1.0 up to 25%, 0.8 above |
+| Fat | Men: 22% of calories under 25% body fat, 25% at or above; women: 30%; ÷ 9 |
 | Carbs | Remaining calories ÷ 4 |
-| Weekly update (from week 4) | New maintenance = average daily calories + (−weekly weight change × 3,500 ÷ days logged), then all targets recalculate |
+| Weekly update (from week 4) | Missed days carry forward the previous value. Each week's estimate = average daily calories + (−change in weekly average weight × 3,500 ÷ days logged). Maintenance is the running mean of the weekly estimates from week 2 on; once 4 weeks have weigh-ins it uses the previous week's running mean. Then all targets recalculate from the latest weight and body fat |
 | Body-fat re-check | Optional weekly waist and neck entries re-estimate body fat and flag when the recommended phase changes |
 
 Example from the sheet: 205 lb, 32% body fat, male beginner cutting → 2,604 maintenance, 1,887 calories (1,800–2,000), 150 g protein, 52 g fat, 204 g carbs.
