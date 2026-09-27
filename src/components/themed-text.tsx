@@ -1,7 +1,5 @@
 import { Text, type TextProps } from 'react-native';
 
-import type { ThemeColor } from '@/hooks/use-theme';
-
 const typeClasses = {
   default: 'text-body',
   title: 'text-title',
@@ -13,14 +11,16 @@ const typeClasses = {
   code: 'font-mono text-code android:font-bold',
 } as const;
 
-const colorClasses: Record<ThemeColor, string> = {
+const colorClasses = {
   label: 'text-label',
   labelSecondary: 'text-label-secondary',
   background: 'text-background',
   backgroundElement: 'text-background-element',
   backgroundSelected: 'text-background-selected',
   link: 'text-link',
-};
+} as const;
+
+export type ThemeColor = keyof typeof colorClasses;
 
 export type ThemedTextProps = TextProps & {
   type?: keyof typeof typeClasses;

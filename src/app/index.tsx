@@ -1,9 +1,9 @@
 import * as Device from 'expo-device';
 import { Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AnimatedIcon } from '@/components/animated-icon';
 import { HintRow } from '@/components/hint-row';
+import { SafeAreaView } from '@/components/safe-area-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
@@ -32,7 +32,8 @@ export default function HomeScreen() {
   return (
     <ThemedView className="flex-1 flex-row justify-center">
       <SafeAreaView
-        className="max-w-content flex-1 items-center gap-4 px-6"
+        // pl/pr, not px: SafeAreaView ignores the logical paddingInline that px compiles to.
+        className="max-w-content flex-1 items-center gap-4 pl-6 pr-6"
         // Tab bar height is platform-specific, so this padding can't be a static class.
         style={{ paddingBottom: BottomTabInset + 16 }}>
         <ThemedView className="flex-1 items-center justify-center gap-6 px-6">

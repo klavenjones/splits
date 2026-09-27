@@ -1,15 +1,79 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+/* Utilities stay unlayered so React Native Web defaults don't override them. */
+@import 'tailwindcss/utilities.css';
+@import 'nativewind/theme';
 
-/* Color variables (--color-*) are generated from src/theme/colors.js in tailwind.config.js. */
+/* Design tokens. Each becomes a utility: bg-background, text-label-secondary, text-title, max-w-content.
+   Line heights are ratios (line height / font size): a px value inside Tailwind's var() fallback
+   compiles to a unitless number on native, which React Native multiplies by the font size. */
+@theme {
+  --color-label: #000000;
+  --color-label-secondary: #60646c;
+  --color-background: #ffffff;
+  --color-background-element: #f0f0f3;
+  --color-background-selected: #e0e1e6;
+  --color-link: #3c87f7;
+
+  --text-title: 48px;
+  --text-title--line-height: calc(52 / 48);
+  --text-title--font-weight: 600;
+  --text-subtitle: 32px;
+  --text-subtitle--line-height: calc(44 / 32);
+  --text-subtitle--font-weight: 600;
+  --text-body: 16px;
+  --text-body--line-height: calc(24 / 16);
+  --text-body--font-weight: 500;
+  --text-small: 14px;
+  --text-small--line-height: calc(20 / 14);
+  --text-small--font-weight: 500;
+  --text-code: 12px;
+  --text-code--font-weight: 500;
+
+  --container-content: 800px;
+}
 
 :root {
+  /* NativeWind defaults to a 14px rem on native; 16px keeps the spacing/radius scale on the 4pt grid. */
+  font-size: 16px;
+
+  /* Colors are repeated here so the variables have runtime values (required by NativeWind v5). */
+  --color-label: #000000;
+  --color-label-secondary: #60646c;
+  --color-background: #ffffff;
+  --color-background-element: #f0f0f3;
+  --color-background-selected: #e0e1e6;
+  --color-link: #3c87f7;
+
   --font-display:
     Spline Sans, Inter, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
     Segoe UI Symbol, Noto Color Emoji;
+  /* Font stack for web. Native can't read a stack through a variable, so each platform gets one family below. */
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
   --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
+}
+
+@media ios {
+  :root {
+    --font-mono: ui-monospace;
+  }
+}
+
+@media android {
+  :root {
+    --font-mono: monospace;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-label: #ffffff;
+    --color-label-secondary: #b0b4ba;
+    --color-background: #000000;
+    --color-background-element: #212225;
+    --color-background-selected: #2e3135;
+    --color-link: #3c87f7;
+  }
 }

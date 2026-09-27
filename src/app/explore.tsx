@@ -1,15 +1,14 @@
-import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
 import { Platform, Pressable, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ExternalLink } from '@/components/external-link';
+import { Image } from '@/components/image';
+import { SymbolIcon } from '@/components/symbol-icon';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Collapsible } from '@/components/ui/collapsible';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset } from '@/constants/layout';
-import { useTheme } from '@/hooks/use-theme';
 
 export default function TabTwoScreen() {
   const safeAreaInsets = useSafeAreaInsets();
@@ -18,7 +17,6 @@ export default function TabTwoScreen() {
     ...safeAreaInsets,
     bottom: safeAreaInsets.bottom + BottomTabInset + 16,
   };
-  const theme = useTheme();
 
   const contentPlatformStyle = Platform.select({
     android: {
@@ -48,8 +46,8 @@ export default function TabTwoScreen() {
                 type="backgroundElement"
                 className="flex-row items-center justify-center gap-1 rounded-full px-6 py-2">
                 <ThemedText type="link">Expo documentation</ThemedText>
-                <SymbolView
-                  tintColor={theme.label}
+                <SymbolIcon
+                  className="text-label"
                   name={{ ios: 'arrow.up.right.square', android: 'link', web: 'link' }}
                   size={12}
                 />
