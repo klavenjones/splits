@@ -15,3 +15,19 @@ One entry per build step.
 - Theme: `typography` and `motion` exports; `TabBar` sizes come from `size` tokens; `docs/design-tokens.md` regenerated from `src/theme/tokens.ts`.
 - Docs: weekly-update, rate, protein and fat rules in `product.md` now match the spreadsheet; kcal/kg constant corrected in `data-model.md`; `stack.md` layout uses `src/app`.
 - New dependencies: `@supabase/supabase-js`, `expo-sqlite`; dev: `jest`, `jest-expo`, `@types/jest`, `prettier`, `eslint-config-prettier`, `supabase`.
+
+## Step 1: auth, onboarding and settings (2026-09-28)
+- Email sign-in with Supabase Auth (6–10 digit code plus a link), structured so Apple and Google can be added (`src/auth/providers.ts`). Session persists; `Stack.Protected` routes signed out → welcome, not onboarded → onboarding, otherwise the tabs.
+- Onboarding (about you, training focus, main goal, your targets, connect apps) saves the profile, `nutrition_profiles` and the first accepted `weekly_targets` row through the `save_starting_targets` RPC. Settings: profile name, units, focus, log out.
+- Migration `20260928120000_auth_onboarding.sql`: `handle_new_user` trigger and the RPC; `supabase/tests/onboarding_smoke.sql`.
+- Auth email templates in `supabase/templates` sent through custom SMTP (Resend); `config.toml` mirrors the hosted auth settings.
+- Native `className` on third-party views goes through `styled()` (e.g. `SafeAreaView`).
+- New dependency: `@tanstack/react-query`.
+
+## Step 2: exercise library and custom exercises (2026-09-29)
+- Built-in library of 193 exercises (strength plus 16 conditioning moves, no running), seeded by migration from `supabase/seed-data/exercises.json`; names and muscles curated from free-exercise-db (Unlicense), how-to text written for Splits.
+- Private `exercise-media` Storage bucket with per-user folder policies, and an `exercises (owner_id)` index (`20260929120000_exercise_media.sql`); `supabase/tests/exercise_library_smoke.sql`.
+- Screens: exercise library (search, muscle and equipment filters, your custom exercises first, A–Z with a scrubber), create/edit custom exercise with an optional photo or ≤30 s video, and exercise detail with history, charts (empty states for now) and how to. Reached from the Plan tab.
+- Reusable: `ExerciseRow`, `ExerciseThumbnail` (muscle-group glyphs), `SearchField`, `Checkbox`, `EmptyState`, `AlphabetScrubber`, `MediaUploadField`, `DemoPlayer`, `NumberedCueList`, and the multi-select `ExercisePicker`, opened with `pickExercises()` (`/dev/picker` is a harness until step 3 uses it).
+- Pure, tested modules in `src/exercises` (vocab, filter, sections, validate, media, picker requests, seed data checks).
+- New dependencies: `expo-image-picker`, `expo-video`, `expo-file-system`.
