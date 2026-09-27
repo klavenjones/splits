@@ -1002,7 +1002,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      save_starting_targets: {
+        Args: {
+          p_carbs_g: number
+          p_experience: Database["public"]["Enums"]["experience"]
+          p_fat_g: number
+          p_focus: Database["public"]["Enums"]["training_focus"]
+          p_goal: Database["public"]["Enums"]["nutrition_goal"]
+          p_height_cm: number
+          p_kcal_high: number
+          p_kcal_low: number
+          p_kcal_target: number
+          p_maintenance_kcal: number
+          p_phase: Database["public"]["Enums"]["nutrition_phase"]
+          p_protein_g: number
+          p_rate_mode: Database["public"]["Enums"]["rate_mode"]
+          p_sex: Database["public"]["Enums"]["sex"]
+          p_start_body_fat_pct: number
+          p_start_date: string
+          p_start_weight_kg: number
+          p_timezone: string
+          p_unit_system: Database["public"]["Enums"]["unit_system"]
+          p_week_start: string
+          p_weekly_rate_pct: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       demo_type: "animation" | "video" | "none"
