@@ -97,6 +97,24 @@ Target database: Postgres (Supabase). 18 tables in five areas. Every user-owned 
 | **unique** | | (owner_id, lower(name)) — allows a custom exercise to shadow nothing; built-ins unique by name |
 
 Custom-exercise media is uploaded to Supabase Storage bucket `exercise-media/{user_id}/…`; `thumbnail_url` / `demo_url` hold the storage paths.
+- **Bucket:** private, 50 MB per file, `image/jpeg|png|heic`, `video/mp4|quicktime`. Policies on `storage.objects` let a user read and write only under their own `{user_id}/` folder; the app shows media through short-lived signed URLs.
+- **Which column:** a photo goes in `thumbnail_url` (`demo_type = none`); a video goes in `demo_url` with `demo_type = video`. List rows always show the muscle-group glyph, never the media (screens/README); media plays on the detail page's How to tab.
+- **Delete = archive.** `template_exercises` and `session_exercises` reference exercises without an on-delete rule, so the app sets `is_archived` instead of deleting.
+- **Built-in library:** 193 rows seeded by migration `20260929120100_exercise_seed.sql`, generated from `supabase/seed-data/exercises.json` (`node scripts/build-exercise-seed.mjs`). Names, muscles and equipment were curated from [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (Unlicense); the instructions are original. No third-party images are used.
+
+**Exercise vocabulary.** `primary_muscle`, `secondary_muscles` and `equipment` stay free text; the app writes only these values (`src/exercises/vocab.ts`) and filters by group:
+
+| Group | Muscles |
+|---|---|
+| chest | chest, upper chest |
+| back | lats, upper back, lower back, traps |
+| shoulders | front delts, side delts, rear delts |
+| arms | biceps, triceps, forearms |
+| legs | quads, hamstrings, glutes, calves, adductors, abductors |
+| core | abs, obliques |
+| full body | full body (conditioning) |
+
+Equipment: barbell, dumbbell, kettlebell, cable, machine, bodyweight, band, landmine, ez bar, smith machine, sled, box, rower, bike, other.
 
 ### templates
 | Column | Type | Notes |

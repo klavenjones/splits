@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 import {
   Pressable,
   Switch,
@@ -12,7 +12,7 @@ import {
 import { size, type } from '../theme/tokens';
 import { useTheme } from '../theme/useTheme';
 import { cn } from './cn';
-import { Icon } from './Icon';
+import { Icon, type IconName } from './Icon';
 
 /* ---------------- StepProgressBar ---------------- */
 
@@ -114,12 +114,17 @@ export function SegmentedControl<T extends string>({
             accessibilityRole="radio"
             accessibilityState={{ checked: on }}
             className={cn(
-              'flex-1 items-center justify-center rounded-pill',
+              'flex-1 items-center justify-center rounded-pill px-2',
               on ? 'bg-primary-fill' : 'active:bg-surface-control-pressed',
             )}
             style={{ minHeight: size.controlHSm }}
           >
-            <Text className={cn('type-label', on ? 'text-on-primary' : 'text-text')}>
+            <Text
+              className={cn('type-label', on ? 'text-on-primary' : 'text-text')}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.8}
+            >
               {s.label}
             </Text>
           </Pressable>
@@ -217,33 +222,90 @@ export function NumericField({ allowNegative, ...p }: FieldProps & { allowNegati
 
 /* ---------------- Chip ---------------- */
 
-/** Selectable pill (filters, single-choice options). */
+/**
+ * Selectable pill. Single-choice by default (radio); `multi` makes it a checkbox with a check
+ * when selected; `role="button"` with `trailingIcon` makes a dropdown trigger ("muscle ▾").
+ */
 export function Chip({
   label,
   selected,
   onPress,
   disabled,
+  multi,
+  role,
+  leadingIcon,
+  tone = 'primary',
 }: {
   label: string;
   selected?: boolean;
   onPress?: () => void;
   disabled?: boolean;
+  multi?: boolean;
+  role?: 'button';
+  leadingIcon?: IconName;
+  /** `lift` = red when selected (the picker's "my gym only"). */
+  tone?: 'primary' | 'lift';
 }) {
+  const { c } = useTheme();
+  const icon = leadingIcon ?? (multi && selected ? 'check' : undefined);
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      accessibilityRole="radio"
-      accessibilityState={{ checked: !!selected, disabled: !!disabled }}
+      accessibilityRole={role ?? (multi ? 'checkbox' : 'radio')}
+      accessibilityState={
+        role ? { disabled: !!disabled } : { checked: !!selected, disabled: !!disabled }
+      }
       className={cn(
-        'items-center justify-center rounded-pill px-5',
-        selected ? 'bg-primary-fill' : 'bg-surface-card shadow-card active:bg-surface-control',
+        'flex-row items-center justify-center gap-2 rounded-pill',
+        icon ? 'pr-5 pl-4' : 'px-5',
+        selected
+          ? tone === 'lift'
+            ? 'bg-lift-fill'
+            : 'bg-primary-fill'
+          : 'bg-surface-card shadow-card active:bg-surface-control',
         disabled && 'opacity-40',
       )}
       style={{ minHeight: size.controlHSm }}
     >
-      <Text className={cn('type-label', selected ? 'text-on-primary' : 'text-text')}>{label}</Text>
+      {icon ? (
+        <Icon
+          name={icon}
+          size={size.iconSm}
+          color={selected ? (tone === 'lift' ? c.onLift : c.onPrimary) : c.text}
+          strokeWidth={2.5}
+        />
+      ) : null}
+      <Text
+        className={cn(
+          'type-label',
+          selected ? (tone === 'lift' ? 'text-on-lift' : 'text-on-primary') : 'text-text',
+        )}
+      >
+        {label}
+      </Text>
     </Pressable>
+  );
+}
+
+/** Wrapping row of chips. */
+export function ChipGroup({
+  children,
+  label,
+  multi,
+}: {
+  children: ReactNode;
+  label?: string;
+  multi?: boolean;
+}) {
+  return (
+    <View
+      className="flex-row flex-wrap gap-2.5"
+      accessibilityRole={multi ? undefined : 'radiogroup'}
+      accessibilityLabel={label}
+    >
+      {children}
+    </View>
   );
 }
 

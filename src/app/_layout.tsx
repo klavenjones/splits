@@ -60,6 +60,8 @@ function RootStack() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="sheets/add" options={sheet} />
           <Stack.Screen name="settings" />
+          <Stack.Screen name="exercises" />
+          <Stack.Screen name="sheets/pick-exercises" options={{ presentation: 'modal' }} />
         </Stack.Protected>
         <Stack.Screen name="auth/callback" />
       </Stack>
