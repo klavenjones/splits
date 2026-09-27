@@ -1,4 +1,4 @@
-import { detailSubtitle, readInstructions, rowSubtitle } from './describe';
+import { detailSubtitle, readCredit, readInstructions, rowSubtitle } from './describe';
 
 describe('describe', () => {
   it('builds row and detail subtitles', () => {
@@ -18,5 +18,35 @@ describe('describe', () => {
       cues: [],
       mistakes: [],
     });
+  });
+});
+
+describe('readCredit', () => {
+  const ok = {
+    author: 'Everkinetic',
+    license: 'CC-BY-SA 3',
+    license_url: 'https://creativecommons.org/licenses/by-sa/3.0/deed.en',
+    source_url: 'https://wger.de/en/exercise/73/view/',
+  };
+
+  it('reads a complete credit', () => {
+    expect(readCredit(ok)).toEqual({
+      author: 'Everkinetic',
+      authorUrl: null,
+      license: 'CC-BY-SA 3',
+      licenseUrl: ok.license_url,
+      sourceUrl: ok.source_url,
+    });
+    expect(readCredit({ ...ok, author_url: 'https://example.org' })?.authorUrl).toBe(
+      'https://example.org',
+    );
+  });
+
+  it('rejects missing, partial or unsafe credits', () => {
+    expect(readCredit(null)).toBeNull();
+    expect(readCredit([])).toBeNull();
+    expect(readCredit({ ...ok, author: ' ' })).toBeNull();
+    expect(readCredit({ ...ok, source_url: 'javascript:alert(1)' })).toBeNull();
+    expect(readCredit({ ...ok, author_url: 'ftp://x' })?.authorUrl).toBeNull();
   });
 });

@@ -1,10 +1,12 @@
 import { router, useLocalSearchParams } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
 import {
   ActionSheetIOS,
   ActivityIndicator,
   Alert,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   View,
@@ -28,7 +30,12 @@ import {
   type Exercise,
 } from '@/db/queries/exercises';
 import { useSignedMediaUrl } from '@/db/storage/exerciseMedia';
-import { detailSubtitle, readInstructions } from '@/exercises/describe';
+import {
+  detailSubtitle,
+  readCredit,
+  readInstructions,
+  type MediaCredit,
+} from '@/exercises/describe';
 import { TRACKING_LABEL } from '@/exercises/vocab';
 import { useTheme } from '@/theme';
 
@@ -138,17 +145,22 @@ function HowTo({ exercise: e }: { exercise: Exercise }) {
   const media = storedMedia(e);
   const signed = useSignedMediaUrl(media?.source === 'stored' ? media.path : null);
   const { steps, cues, mistakes } = readInstructions(e.instructions);
+  const credit = readCredit(e.media_credit);
+  const illustration = e.owner_id === null && media?.source === 'stored' && media.kind === 'photo';
   const muscles = [e.primary_muscle, ...e.secondary_muscles].filter((m): m is string => !!m);
 
   return (
     <View className="gap-5">
       {media?.source === 'stored' ? (
         signed.data ? (
-          <DemoPlayer kind={media.kind} uri={signed.data} />
+          <View className="gap-2">
+            <DemoPlayer kind={media.kind} uri={signed.data} illustration={illustration} />
+            {credit ? <MediaCreditLine credit={credit} /> : null}
+          </View>
         ) : (
           <View
             className="items-center justify-center rounded-card bg-surface-inset"
-            style={{ aspectRatio: 4 / 5 }}
+            style={{ aspectRatio: illustration ? 1 : 4 / 5 }}
           >
             {signed.error ? (
               <Text className="type-caption text-danger-text">Couldn’t load the demo.</Text>
@@ -214,5 +226,27 @@ function HowTo({ exercise: e }: { exercise: Exercise }) {
         />
       ) : null}
     </View>
+  );
+}
+
+/** "Illustration: Everkinetic · CC-BY-SA 3 · via wger". Opens the source; long-press opens the license. */
+function MediaCreditLine({ credit }: { credit: MediaCredit }) {
+  // RN's URL polyfill has no hostname getter, so read it from the string.
+  const via = /^https?:\/\/(?:www\.)?([^./]+)/.exec(credit.sourceUrl)?.[1] ?? 'source';
+  return (
+    <Pressable
+      onPress={() => WebBrowser.openBrowserAsync(credit.sourceUrl)}
+      onLongPress={() => WebBrowser.openBrowserAsync(credit.licenseUrl)}
+      accessibilityRole="link"
+      accessibilityLabel={`Illustration by ${credit.author}, license ${credit.license}, via ${via}`}
+      accessibilityHint="Opens the source page. Long press for the license."
+      className="self-start px-1 active:opacity-60"
+      hitSlop={8}
+    >
+      <Text className="type-caption text-text-muted">
+        Illustration: {credit.author} · <Text className="underline">{credit.license}</Text> · via{' '}
+        {via}
+      </Text>
+    </Pressable>
   );
 }

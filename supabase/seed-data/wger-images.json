@@ -1,0 +1,431 @@
+[
+  {
+    "name": "back extension",
+    "wger_exercise_id": 301,
+    "wger_image_id": 11,
+    "image_url": "https://wger.de/media/exercise-images/128/Hyperextensions-1.png",
+    "file": "builtin/back-extension.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/301/view/hyperextensions"
+    }
+  },
+  {
+    "name": "barbell curl",
+    "wger_exercise_id": 91,
+    "wger_image_id": 27,
+    "image_url": "https://wger.de/media/exercise-images/74/Bicep-curls-1.png",
+    "file": "builtin/barbell-curl.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/91/view/biceps-curls-with-barbell"
+    }
+  },
+  {
+    "name": "barbell row",
+    "wger_exercise_id": 83,
+    "wger_image_id": 84,
+    "image_url": "https://wger.de/media/exercise-images/109/Barbell-rear-delt-row-1.png",
+    "file": "builtin/barbell-row.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/83/view/bent-over-rowing"
+    }
+  },
+  {
+    "name": "barbell shrug",
+    "wger_exercise_id": 571,
+    "wger_image_id": 43,
+    "image_url": "https://wger.de/media/exercise-images/150/Barbell-shrugs-1.png",
+    "file": "builtin/barbell-shrug.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/571/view/shrugs-barbells"
+    }
+  },
+  {
+    "name": "bench dip",
+    "wger_exercise_id": 197,
+    "wger_image_id": 35,
+    "image_url": "https://wger.de/media/exercise-images/83/Bench-dips-1.png",
+    "file": "builtin/bench-dip.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/197/view/dips-between-two-benches"
+    }
+  },
+  {
+    "name": "bench press",
+    "wger_exercise_id": 73,
+    "wger_image_id": 68,
+    "image_url": "https://wger.de/media/exercise-images/192/Bench-press-1.png",
+    "file": "builtin/bench-press.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/73/view/bench-press"
+    }
+  },
+  {
+    "name": "cable curl",
+    "wger_exercise_id": 95,
+    "wger_image_id": 19,
+    "image_url": "https://wger.de/media/exercise-images/129/Standing-biceps-curl-1.png",
+    "file": "builtin/cable-curl.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/95/view/biceps-curl-with-cable"
+    }
+  },
+  {
+    "name": "chin-up",
+    "wger_exercise_id": 152,
+    "wger_image_id": 73,
+    "image_url": "https://wger.de/media/exercise-images/152/6c1a7459-266d-491a-bd50-7cbaea2bc771.png",
+    "file": "builtin/chin-up.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/152/view/chin-up"
+    }
+  },
+  {
+    "name": "close-grip bench press",
+    "wger_exercise_id": 76,
+    "wger_image_id": 15,
+    "image_url": "https://wger.de/media/exercise-images/88/Narrow-grip-bench-press-1.png",
+    "file": "builtin/close-grip-bench-press.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/76/view/bench-press-narrow-grip"
+    }
+  },
+  {
+    "name": "crunch",
+    "wger_exercise_id": 167,
+    "wger_image_id": 4,
+    "image_url": "https://wger.de/media/exercise-images/91/Crunches-2.png",
+    "file": "builtin/crunch.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/167/view/crunches"
+    }
+  },
+  {
+    "name": "decline bench press",
+    "wger_exercise_id": 185,
+    "wger_image_id": 115,
+    "image_url": "https://wger.de/media/exercise-images/100/Decline-bench-press-1.png",
+    "file": "builtin/decline-bench-press.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/185/view/decline-bench-press-barbell"
+    }
+  },
+  {
+    "name": "dumbbell bench press",
+    "wger_exercise_id": 75,
+    "wger_image_id": 113,
+    "image_url": "https://wger.de/media/exercise-images/97/Dumbbell-bench-press-1.png",
+    "file": "builtin/dumbbell-bench-press.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/75/view/benchpress-dumbbells"
+    }
+  },
+  {
+    "name": "dumbbell curl",
+    "wger_exercise_id": 92,
+    "wger_image_id": 23,
+    "image_url": "https://wger.de/media/exercise-images/81/Biceps-curl-1.png",
+    "file": "builtin/dumbbell-curl.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/92/view/biceps-curls-with-dumbbell"
+    }
+  },
+  {
+    "name": "dumbbell shoulder press",
+    "wger_exercise_id": 567,
+    "wger_image_id": 173,
+    "image_url": "https://wger.de/media/exercise-images/123/dumbbell-shoulder-press-large-1.png",
+    "file": "builtin/dumbbell-shoulder-press.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/567/view/shoulder-press-dumbbells"
+    }
+  },
+  {
+    "name": "dumbbell shrug",
+    "wger_exercise_id": 572,
+    "wger_image_id": 39,
+    "image_url": "https://wger.de/media/exercise-images/151/Dumbbell-shrugs-2.png",
+    "file": "builtin/dumbbell-shrug.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/572/view/shrugs-dumbbells"
+    }
+  },
+  {
+    "name": "front squat",
+    "wger_exercise_id": 257,
+    "wger_image_id": 149,
+    "image_url": "https://wger.de/media/exercise-images/191/Front-squat-1-857x1024.png",
+    "file": "builtin/front-squat.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/257/view/front-squats"
+    }
+  },
+  {
+    "name": "good morning",
+    "wger_exercise_id": 1392,
+    "wger_image_id": 66,
+    "image_url": "https://wger.de/media/exercise-images/1392/a02c9c7d-f42d-43e0-9946-1b99b014daee.png",
+    "file": "builtin/good-morning.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/1392/view/good-morning"
+    }
+  },
+  {
+    "name": "hammer curl",
+    "wger_exercise_id": 272,
+    "wger_image_id": 47,
+    "image_url": "https://wger.de/media/exercise-images/86/Bicep-hammer-curl-1.png",
+    "file": "builtin/hammer-curl.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/272/view/hammer-curls"
+    }
+  },
+  {
+    "name": "incline bench press",
+    "wger_exercise_id": 538,
+    "wger_image_id": 129,
+    "image_url": "https://wger.de/media/exercise-images/41/Incline-bench-press-1.png",
+    "file": "builtin/incline-bench-press.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/538/view/incline-bench-press-barbell"
+    }
+  },
+  {
+    "name": "incline dumbbell press",
+    "wger_exercise_id": 537,
+    "wger_image_id": 105,
+    "image_url": "https://wger.de/media/exercise-images/16/Incline-press-1.png",
+    "file": "builtin/incline-dumbbell-press.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/537/view/incline-bench-press-dumbbell"
+    }
+  },
+  {
+    "name": "lateral raise",
+    "wger_exercise_id": 348,
+    "wger_image_id": 177,
+    "image_url": "https://wger.de/media/exercise-images/148/lateral-dumbbell-raises-large-2.png",
+    "file": "builtin/lateral-raise.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/348/view/lateral-raises"
+    }
+  },
+  {
+    "name": "lying leg curl",
+    "wger_exercise_id": 365,
+    "wger_image_id": 179,
+    "image_url": "https://wger.de/media/exercise-images/154/lying-leg-curl-machine-large-1.png",
+    "file": "builtin/lying-leg-curl.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/365/view/leg-curls-laying"
+    }
+  },
+  {
+    "name": "machine shoulder press",
+    "wger_exercise_id": 543,
+    "wger_image_id": 195,
+    "image_url": "https://wger.de/media/exercise-images/53/Shoulder-press-machine-2.png",
+    "file": "builtin/machine-shoulder-press.png",
+    "credit": {
+      "author": "wger.de",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/543/view/shoulder-press-on-machine"
+    }
+  },
+  {
+    "name": "pec deck",
+    "wger_exercise_id": 135,
+    "wger_image_id": 111,
+    "image_url": "https://wger.de/media/exercise-images/98/Butterfly-machine-2.png",
+    "file": "builtin/pec-deck.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/135/view/butterfly"
+    }
+  },
+  {
+    "name": "preacher curl",
+    "wger_exercise_id": 465,
+    "wger_image_id": 93,
+    "image_url": "https://wger.de/media/exercise-images/193/Preacher-curl-3-1.png",
+    "file": "builtin/preacher-curl.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/465/view/preacher-curls"
+    }
+  },
+  {
+    "name": "rack pull",
+    "wger_exercise_id": 484,
+    "wger_image_id": 145,
+    "image_url": "https://wger.de/media/exercise-images/161/Dead-lifts-2.png",
+    "file": "builtin/rack-pull.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/484/view/rack-deadlift"
+    }
+  },
+  {
+    "name": "rope hammer curl",
+    "wger_exercise_id": 275,
+    "wger_image_id": 51,
+    "image_url": "https://wger.de/media/exercise-images/138/Hammer-curls-with-rope-1.png",
+    "file": "builtin/rope-hammer-curl.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/275/view/hammercurls-on-cable"
+    }
+  },
+  {
+    "name": "seated cable row",
+    "wger_exercise_id": 394,
+    "wger_image_id": 143,
+    "image_url": "https://wger.de/media/exercise-images/143/Cable-seated-rows-2.png",
+    "file": "builtin/seated-cable-row.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/394/view/long-pulley-low-row"
+    }
+  },
+  {
+    "name": "seated leg curl",
+    "wger_exercise_id": 366,
+    "wger_image_id": 181,
+    "image_url": "https://wger.de/media/exercise-images/117/seated-leg-curl-large-1.png",
+    "file": "builtin/seated-leg-curl.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/366/view/leg-curls-sitting"
+    }
+  },
+  {
+    "name": "skull crusher",
+    "wger_exercise_id": 246,
+    "wger_image_id": 60,
+    "image_url": "https://wger.de/media/exercise-images/84/Lying-close-grip-triceps-press-to-chin-1.png",
+    "file": "builtin/skull-crusher.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/246/view/skullcrusher-sz-bar"
+    }
+  },
+  {
+    "name": "smith machine incline press",
+    "wger_exercise_id": 539,
+    "wger_image_id": 107,
+    "image_url": "https://wger.de/media/exercise-images/61/Close-grip-bench-press-1.png",
+    "file": "builtin/smith-machine-incline-press.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/539/view/incline-bench-press-mp"
+    }
+  },
+  {
+    "name": "T-bar row",
+    "wger_exercise_id": 513,
+    "wger_image_id": 77,
+    "image_url": "https://wger.de/media/exercise-images/106/T-bar-row-1.png",
+    "file": "builtin/t-bar-row.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/513/view/rowing-t-bar"
+    }
+  },
+  {
+    "name": "walking lunge",
+    "wger_exercise_id": 206,
+    "wger_image_id": 121,
+    "image_url": "https://wger.de/media/exercise-images/113/Walking-lunges-1.png",
+    "file": "builtin/walking-lunge.png",
+    "credit": {
+      "author": "Everkinetic",
+      "license": "CC-BY-SA 3",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
+      "source_url": "https://wger.de/en/exercise/206/view/dumbbell-lunges-walking"
+    }
+  }
+]

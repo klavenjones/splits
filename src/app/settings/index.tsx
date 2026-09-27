@@ -67,6 +67,10 @@ export default function Settings() {
             />
           </SettingsGroup>
 
+          <SettingsGroup title="about">
+            <SettingsRow label="credits" onPress={() => router.push('/settings/credits')} last />
+          </SettingsGroup>
+
           <SettingsGroup title="account">
             <SettingsRow label="log out" destructive onPress={logOut} last />
           </SettingsGroup>

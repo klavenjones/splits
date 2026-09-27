@@ -94,12 +94,14 @@ Target database: Postgres (Supabase). 18 tables in five areas. Every user-owned 
 | instructions | jsonb | `{ steps: string[], cues: string[], mistakes: string[] }` |
 | notes | text | user notes on custom exercises |
 | is_archived | bool | |
+| media_credit | jsonb, nullable | credit for third-party media: `{ author, author_url?, license, license_url, source_url }`; null for your own uploads |
 | **unique** | | (owner_id, lower(name)) — allows a custom exercise to shadow nothing; built-ins unique by name |
 
 Custom-exercise media is uploaded to Supabase Storage bucket `exercise-media/{user_id}/…`; `thumbnail_url` / `demo_url` hold the storage paths.
 - **Bucket:** private, 50 MB per file, `image/jpeg|png|heic`, `video/mp4|quicktime`. Policies on `storage.objects` let a user read and write only under their own `{user_id}/` folder; the app shows media through short-lived signed URLs.
 - **Which column:** a photo goes in `thumbnail_url` (`demo_type = none`); a video goes in `demo_url` with `demo_type = video`. List rows always show the muscle-group glyph, never the media (screens/README); media plays on the detail page's How to tab.
 - **Delete = archive.** `template_exercises` and `session_exercises` reference exercises without an on-delete rule, so the app sets `is_archived` instead of deleting.
+- **Built-in illustrations:** 33 built-ins show Everkinetic / wger.de line art (CC-BY-SA 3.0, via [wger](https://wger.de)), stored unmodified under `exercise-media/builtin/`, which every signed-in user can read and only the service role writes. The path is in `thumbnail_url` and the credit in `media_credit`; the How to tab shows the credit line. wger's user-uploaded photos are not used: several look copied from other sites.
 - **Built-in library:** 193 rows seeded by migration `20260929120100_exercise_seed.sql`, generated from `supabase/seed-data/exercises.json` (`node scripts/build-exercise-seed.mjs`). Names, muscles and equipment were curated from [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (Unlicense); the instructions are original. No third-party images are used.
 
 **Exercise vocabulary.** `primary_muscle`, `secondary_muscles` and `equipment` stay free text; the app writes only these values (`src/exercises/vocab.ts`) and filters by group:

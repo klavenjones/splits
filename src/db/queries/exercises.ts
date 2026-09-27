@@ -9,7 +9,10 @@ import { cleanSecondary, type ExerciseDraft } from '@/exercises/validate';
 
 export type Exercise = Tables<'exercises'>;
 /** List rows skip the instructions jsonb; the detail screen loads the full row. */
-export type ExerciseListItem = Omit<Exercise, 'instructions' | 'created_at' | 'updated_at'>;
+export type ExerciseListItem = Omit<
+  Exercise,
+  'instructions' | 'media_credit' | 'created_at' | 'updated_at'
+>;
 
 const LIST_COLUMNS =
   'id, owner_id, name, primary_muscle, secondary_muscles, equipment, tracking_type, thumbnail_url, demo_url, demo_type, notes, is_archived';

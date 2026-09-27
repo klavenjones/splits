@@ -31,3 +31,9 @@ One entry per build step.
 - Reusable: `ExerciseRow`, `ExerciseThumbnail` (muscle-group glyphs), `SearchField`, `Checkbox`, `EmptyState`, `AlphabetScrubber`, `MediaUploadField`, `DemoPlayer`, `NumberedCueList`, and the multi-select `ExercisePicker`, opened with `pickExercises()` (`/dev/picker` is a harness until step 3 uses it).
 - Pure, tested modules in `src/exercises` (vocab, filter, sections, validate, media, picker requests, seed data checks).
 - New dependencies: `expo-image-picker`, `expo-video`, `expo-file-system`.
+
+## Step 2b: exercise illustrations (2026-09-30)
+- 33 built-in exercises show Everkinetic / wger.de line art (CC-BY-SA 3.0, via wger) on the How to tab, whole on a paper card in both themes, with a tappable credit line; Settings → credits lists sources.
+- New nullable column `exercises.media_credit`; built-in media lives in `exercise-media/builtin/`, readable by signed-in users and written only by the service role (`20260930120000_exercise_media_credit.sql`, plus `…120100_fix_wger_source_urls.sql` for the wger page links).
+- Pipeline in `scripts/wger-images.mjs` and `scripts/build-exercise-media-migration.mjs` (see `supabase/seed-data/README.md`). Only line art is used: wger's user-uploaded photos were excluded because several look copied from other sites.
+- WorkoutX was evaluated and not used: its data and GIFs appear to be ExerciseDB / Gym Visual content with no license shown.
