@@ -27,22 +27,26 @@ Post-MVP native extras (small Expo native modules in Swift): WorkoutKit (push in
 ## Project layout (target)
 
 ```
-app/                      # Expo Router routes
-  (tabs)/today, plan, nutrition, progress
-  onboarding/
-  workout/[sessionId]
-  sheets/                 # picker, swap, demo, food-search, weigh-in
 src/
+  app/                    # Expo Router routes (SDK 57 default location)
+    (tabs)/today, plan, nutrition, progress
+    sheets/add            # center "+" action sheet
+    onboarding/
+    workout/[sessionId]
+    sheets/               # picker, swap, demo, food-search, weigh-in
+    dev/                  # design-system previews, not linked from the app
   engine/nutrition.ts     # pure functions + tests
   engine/metrics.ts       # e1RM, PRs, volume, mileage (pure)
+  units.ts                # metric <-> imperial, display only
   db/                     # supabase client, generated types, queries
   local/                  # expo-sqlite schema + sync for active workout
   health/                 # HealthKit import + matching
   food/                   # USDA + OFF clients, normalizer
   store/                  # zustand stores
-  theme/                  # tokens from docs/design-tokens.md
+  theme/                  # tokens (export from Claude Design; see docs/design-tokens.md)
   components/             # design-system components
 supabase/migrations/      # SQL, one file per change
+supabase/tests/           # SQL checks (RLS smoke test)
 docs/                     # this folder
 ```
 
@@ -55,7 +59,7 @@ docs/                     # this folder
 - **Snapshots:** `food_logs` copy nutrition values at log time; `session_exercises` copy template rows at start.
 - **RLS everywhere:** every table with `user_id` has policies; built-in `exercises`/`foods` (owner null) are read-only to users.
 - **Dependencies:** ask before adding one; prefer Expo SDK modules.
-- **Testing:** unit tests for engine and metrics; a small integration test for offline sync; manual device test for HealthKit.
+- **Testing:** Jest (`jest-expo`), `npm test`; unit tests for engine and metrics; a small integration test for offline sync; manual device test for HealthKit.
 - **Secrets:** `.env` only (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `USDA_API_KEY`, `SENTRY_DSN`); never in prompts or commits.
 
 ## Build order
