@@ -1,5 +1,11 @@
 import {
   cmToIn,
+  fromDisplayLength,
+  fromDisplayWeight,
+  lengthUnit,
+  toDisplayLength,
+  toDisplayWeight,
+  weightUnit,
   inToCm,
   kgToLb,
   lbToKg,
@@ -31,5 +37,17 @@ describe('units', () => {
     // 5:00 /km ≈ 8:03 /mi
     expect(secPerKmToSecPerMi(300)).toBeCloseTo(482.8, 1);
     expect(secPerMiToSecPerKm(secPerKmToSecPerMi(300))).toBeCloseTo(300, 10);
+  });
+});
+
+describe('display units', () => {
+  it('shows imperial users lb and in, metric users kg and cm', () => {
+    expect(weightUnit('imperial')).toBe('lb');
+    expect(lengthUnit('metric')).toBe('cm');
+    expect(toDisplayWeight(lbToKg(205), 'imperial')).toBeCloseTo(205, 10);
+    expect(toDisplayWeight(90, 'metric')).toBe(90);
+    expect(fromDisplayLength(70, 'imperial')).toBeCloseTo(177.8, 10);
+    expect(toDisplayLength(fromDisplayLength(70, 'imperial'), 'imperial')).toBeCloseTo(70, 10);
+    expect(fromDisplayWeight(90, 'metric')).toBe(90);
   });
 });
