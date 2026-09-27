@@ -1,79 +1,365 @@
-@import 'tailwindcss/theme.css' layer(theme);
-@import 'tailwindcss/preflight.css' layer(base);
-/* Utilities stay unlayered so React Native Web defaults don't override them. */
-@import 'tailwindcss/utilities.css';
-@import 'nativewind/theme';
+/* Splits design system for NativeWind v5 + Tailwind CSS v4.
+   Generated from tokens.json. Import this file once, in app/_layout.tsx. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+@import "nativewind/theme";
 
-/* Design tokens. Each becomes a utility: bg-background, text-label-secondary, text-title, max-w-content.
-   Line heights are ratios (line height / font size): a px value inside Tailwind's var() fallback
-   compiles to a unitless number on native, which React Native multiplies by the font size. */
-@theme {
-  --color-label: #000000;
-  --color-label-secondary: #60646c;
-  --color-background: #ffffff;
-  --color-background-element: #f0f0f3;
-  --color-background-selected: #e0e1e6;
-  --color-link: #3c87f7;
-
-  --text-title: 48px;
-  --text-title--line-height: calc(52 / 48);
-  --text-title--font-weight: 600;
-  --text-subtitle: 32px;
-  --text-subtitle--line-height: calc(44 / 32);
-  --text-subtitle--font-weight: 600;
-  --text-body: 16px;
-  --text-body--line-height: calc(24 / 16);
-  --text-body--font-weight: 500;
-  --text-small: 14px;
-  --text-small--line-height: calc(20 / 14);
-  --text-small--font-weight: 500;
-  --text-code: 12px;
-  --text-code--font-weight: 500;
-
-  --container-content: 800px;
+/* ---- Semantic colors: values switch with the system color scheme ---- */
+:root {
+  --sp-bg: #fdf0d5;
+  --sp-surface-card: #fffcf5;
+  --sp-surface-inset: #fef6e5;
+  --sp-surface-raised: #fffcf5;
+  --sp-surface-control: #f5ead3;
+  --sp-surface-control-pressed: #e4d8be;
+  --sp-text: #003049;
+  --sp-text-muted: #4b5b63;
+  --sp-text-subtle: #657277;
+  --sp-text-disabled: #9fa5a1;
+  --sp-hairline: #00304914;
+  --sp-border-control: #828b8c;
+  --sp-primary-fill: #003049;
+  --sp-primary-pressed: #001b2b;
+  --sp-on-primary: #fdf0d5;
+  --sp-anchor-card: #003049;
+  --sp-on-anchor: #fdf0d5;
+  --sp-on-anchor-muted: #d2dae1;
+  --sp-lift-fill: #c1121f;
+  --sp-lift-pressed: #780000;
+  --sp-on-lift: #fef6e5;
+  --sp-lift-text: #c1121f;
+  --sp-lift-soft: #fee7e4;
+  --sp-run-fill: #669bbc;
+  --sp-run-pressed: #7caac7;
+  --sp-on-run: #003049;
+  --sp-run-text: #325d77;
+  --sp-run-soft: #e4eff6;
+  --sp-fuel-fill: #780000;
+  --sp-fuel-pressed: #590000;
+  --sp-on-fuel: #fef6e5;
+  --sp-fuel-text: #780000;
+  --sp-fuel-soft: #f8e9e7;
+  --sp-body-fill: #5d4f7c;
+  --sp-on-body: #fef6e5;
+  --sp-body-text: #5d4f7c;
+  --sp-body-soft: #eeebf4;
+  --sp-macro-protein: #c1121f;
+  --sp-macro-carbs: #669bbc;
+  --sp-macro-fat: #e0a030;
+  --sp-success-fill: #2e7d5b;
+  --sp-on-success: #fef6e5;
+  --sp-success-text: #1b6748;
+  --sp-success-soft: #e5f0ea;
+  --sp-warning-fill: #e0a030;
+  --sp-on-warning: #003049;
+  --sp-warning-text: #765003;
+  --sp-warning-soft: #fbead3;
+  --sp-info-fill: #3c5c72;
+  --sp-info-text: #3c5c72;
+  --sp-info-soft: #e9edf1;
+  --sp-danger-fill: #c1121f;
+  --sp-danger-pressed: #780000;
+  --sp-on-danger: #fef6e5;
+  --sp-danger-text: #a70215;
+  --sp-focus-ring: #325d77;
+  --sp-glass: #fffcf5b8;
+  --sp-glass-edge: #ffffff99;
+  --sp-scrim: #00182666;
+  --sp-chart-grid: #0030491a;
+  --sp-chart-trend: #003049;
+  --sp-track: #0030490f;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sp-bg: #001b2b;
+    --sp-surface-card: #003049;
+    --sp-surface-inset: #00263b;
+    --sp-surface-raised: #0a3a55;
+    --sp-surface-control: #0c3b57;
+    --sp-surface-control-pressed: #16496a;
+    --sp-text: #fdf0d5;
+    --sp-text-muted: #b2c0ca;
+    --sp-text-subtle: #93a6b3;
+    --sp-text-disabled: #4d6b80;
+    --sp-hairline: #fdf0d51a;
+    --sp-border-control: #758d9d;
+    --sp-primary-fill: #fdf0d5;
+    --sp-primary-pressed: #e4d8be;
+    --sp-on-primary: #003049;
+    --sp-anchor-card: #fdf0d5;
+    --sp-on-anchor: #003049;
+    --sp-on-anchor-muted: #4b5b63;
+    --sp-lift-fill: #e78279;
+    --sp-lift-pressed: #f3a79f;
+    --sp-on-lift: #003049;
+    --sp-lift-text: #f3a79f;
+    --sp-lift-soft: #4a0d18;
+    --sp-run-text: #a2c3d9;
+    --sp-run-soft: #0d3d5b;
+    --sp-fuel-fill: #edd2cd;
+    --sp-fuel-pressed: #ddb2ab;
+    --sp-on-fuel: #003049;
+    --sp-fuel-text: #edd2cd;
+    --sp-fuel-soft: #3d1822;
+    --sp-body-fill: #a79cc1;
+    --sp-on-body: #003049;
+    --sp-body-text: #c0b9d5;
+    --sp-body-soft: #2a2a4f;
+    --sp-macro-protein: #e78279;
+    --sp-macro-carbs: #7caac7;
+    --sp-macro-fat: #e8b363;
+    --sp-success-fill: #81af97;
+    --sp-on-success: #003049;
+    --sp-success-text: #a5c7b5;
+    --sp-success-soft: #0f3a33;
+    --sp-warning-text: #e8b363;
+    --sp-warning-soft: #3a2f1a;
+    --sp-info-fill: #a2c3d9;
+    --sp-info-text: #c8dcea;
+    --sp-info-soft: #0c3550;
+    --sp-danger-text: #f3a79f;
+    --sp-focus-ring: #a2c3d9;
+    --sp-glass: #001b2bb8;
+    --sp-glass-edge: #fdf0d51f;
+    --sp-scrim: #00000080;
+    --sp-chart-grid: #fdf0d51a;
+    --sp-chart-trend: #fdf0d5;
+    --sp-track: #fdf0d514;
+  }
 }
 
 :root {
-  /* NativeWind defaults to a 14px rem on native; 16px keeps the spacing/radius scale on the 4pt grid. */
-  font-size: 16px;
-
-  /* Colors are repeated here so the variables have runtime values (required by NativeWind v5). */
-  --color-label: #000000;
-  --color-label-secondary: #60646c;
-  --color-background: #ffffff;
-  --color-background-element: #f0f0f3;
-  --color-background-selected: #e0e1e6;
-  --color-link: #3c87f7;
-
-  --font-display:
-    Spline Sans, Inter, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
-    Segoe UI Symbol, Noto Color Emoji;
-  /* Font stack for web. Native can't read a stack through a variable, so each platform gets one family below. */
-  --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
-  --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
-  --font-serif: Georgia, 'Times New Roman', serif;
+  --sp-shadow-card: 0 1px 2px #0030490a, 0 8px 24px #00304912;
+  --sp-shadow-raised: 0 2px 6px #00304914, 0 16px 40px #0030491f;
+  --sp-shadow-float: 0 6px 16px #00304926, 0 20px 40px #0030491f;
+  --sp-shadow-sheet: 0 -8px 40px #0030491f;
+  --sp-shadow-none: none;
 }
-
-@media ios {
-  :root {
-    --font-mono: ui-monospace;
-  }
-}
-
-@media android {
-  :root {
-    --font-mono: monospace;
-  }
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-label: #ffffff;
-    --color-label-secondary: #b0b4ba;
-    --color-background: #000000;
-    --color-background-element: #212225;
-    --color-background-selected: #2e3135;
-    --color-link: #3c87f7;
+    --sp-shadow-card: 0 1px 2px #00000033, 0 8px 24px #00000040;
+    --sp-shadow-raised: 0 2px 6px #0000004d, 0 16px 40px #00000066;
+    --sp-shadow-float: 0 6px 16px #00000066, 0 20px 40px #00000066;
+    --sp-shadow-sheet: 0 -8px 40px #00000080;
   }
 }
+
+@theme {
+  /* Remove Tailwind's default palette so only Splits colors exist. */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-cream-0: #fffcf5;
+  --color-cream-50: #fef6e5;
+  --color-cream-100: #fdf0d5;
+  --color-cream-200: #e4d8be;
+  --color-cream-300: #c8bda5;
+  --color-cream-400: #ada28c;
+  --color-cream-500: #928873;
+  --color-cream-600: #786f5c;
+  --color-cream-700: #5f5746;
+  --color-cream-800: #484030;
+  --color-cream-900: #312a1c;
+  --color-navy-50: #f5f7f9;
+  --color-navy-100: #e9edf1;
+  --color-navy-200: #d2dae1;
+  --color-navy-300: #b2c0ca;
+  --color-navy-400: #93a6b3;
+  --color-navy-500: #758d9d;
+  --color-navy-600: #587487;
+  --color-navy-700: #3c5c72;
+  --color-navy-800: #20455d;
+  --color-navy-900: #003049;
+  --color-navy-950: #001b2b;
+  --color-red-50: #fff4f3;
+  --color-red-100: #fee7e4;
+  --color-red-200: #fcccc6;
+  --color-red-300: #f3a79f;
+  --color-red-400: #e78279;
+  --color-red-500: #d85c54;
+  --color-red-600: #c1121f;
+  --color-red-700: #a70215;
+  --color-red-800: #7f000c;
+  --color-red-900: #580006;
+  --color-blue-50: #f2f8fb;
+  --color-blue-100: #e4eff6;
+  --color-blue-200: #c8dcea;
+  --color-blue-300: #a2c3d9;
+  --color-blue-400: #7caac7;
+  --color-blue-500: #669bbc;
+  --color-blue-600: #477693;
+  --color-blue-700: #325d77;
+  --color-blue-800: #1d465d;
+  --color-blue-900: #082f43;
+  --color-oxblood-50: #fcf5f4;
+  --color-oxblood-100: #f8e9e7;
+  --color-oxblood-200: #edd2cd;
+  --color-oxblood-300: #ddb2ab;
+  --color-oxblood-400: #cc9389;
+  --color-oxblood-500: #b97469;
+  --color-oxblood-600: #a6554a;
+  --color-oxblood-700: #91362b;
+  --color-oxblood-800: #780000;
+  --color-oxblood-900: #590000;
+  --color-heather-50: #f7f6fa;
+  --color-heather-100: #eeebf4;
+  --color-heather-200: #dbd6e7;
+  --color-heather-300: #c0b9d5;
+  --color-heather-400: #a79cc1;
+  --color-heather-500: #8e80ae;
+  --color-heather-600: #7a6a9e;
+  --color-heather-700: #5d4f7c;
+  --color-heather-800: #463861;
+  --color-heather-900: #2f2446;
+  --color-pine-50: #f3f8f5;
+  --color-pine-100: #e5f0ea;
+  --color-pine-200: #cadfd4;
+  --color-pine-300: #a5c7b5;
+  --color-pine-400: #81af97;
+  --color-pine-500: #5d987b;
+  --color-pine-600: #2e7d5b;
+  --color-pine-700: #1b6748;
+  --color-pine-800: #014e33;
+  --color-pine-900: #013521;
+  --color-amber-50: #fef6ea;
+  --color-amber-100: #fbead3;
+  --color-amber-200: #f4d4a5;
+  --color-amber-300: #e8b363;
+  --color-amber-400: #e0a030;
+  --color-amber-500: #b67c02;
+  --color-amber-600: #956500;
+  --color-amber-700: #765003;
+  --color-amber-800: #583a01;
+  --color-amber-900: #3c2600;
+  --color-stone-50: #fef6e5;
+  --color-stone-100: #f3ecdd;
+  --color-stone-200: #dcd9cd;
+  --color-stone-300: #bdbfb7;
+  --color-stone-400: #9fa5a1;
+  --color-stone-500: #828b8c;
+  --color-stone-600: #657277;
+  --color-stone-700: #4b5b63;
+  --color-stone-800: #304450;
+  --color-stone-900: #172f3c;
+
+  /* 4pt grid: p-1 = 4px, p-5 = 20px, gap-3 = 12px (matches space-* tokens). */
+  --spacing: 4px;
+
+  /* Radii */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-card: 24px;
+  --radius-sheet: 28px;
+  --radius-pill: 999px;
+
+  /* Fonts: one family per weight (React Native picks weights by family name).
+     Named display/body so they do not collide with the NativeWind platform --font-sans. */
+  --font-display: "ArchivoExpanded-ExtraBold";
+  --font-display-bold: "ArchivoExpanded-Bold";
+  --font-body: "Archivo-Regular";
+  --font-body-medium: "Archivo-Medium";
+  --font-body-semibold: "Archivo-SemiBold";
+  --font-body-bold: "Archivo-Bold";
+
+  /* Type scale. Line heights and tracking in px (React Native has no unitless line-height). */
+  --text-hero: 88px; --text-hero--line-height: 80px; --text-hero--letter-spacing: -2.6px;
+  --text-hero-sm: 64px; --text-hero-sm--line-height: 59px; --text-hero-sm--letter-spacing: -1.9px;
+  --text-timer: 56px; --text-timer--line-height: 56px; --text-timer--letter-spacing: -1.1px;
+  --text-display: 36px; --text-display--line-height: 40px; --text-display--letter-spacing: -0.7px;
+  --text-title: 24px; --text-title--line-height: 28px; --text-title--letter-spacing: -0.2px;
+  --text-stat: 28px; --text-stat--line-height: 32px; --text-stat--letter-spacing: -0.6px;
+  --text-headline: 18px; --text-headline--line-height: 22px;
+  --text-body: 17px; --text-body--line-height: 24px;
+  --text-subhead: 15px; --text-subhead--line-height: 20px;
+  --text-label: 15px; --text-label--line-height: 20px;
+  --text-caption: 13px; --text-caption--line-height: 18px;
+  --text-micro: 11px; --text-micro--line-height: 14px; --text-micro--letter-spacing: 0.9px;
+}
+
+/* Tailwind theme. Semantic colors point at the variables above (inline, so they stay dynamic). */
+@theme inline {
+  --color-bg: var(--sp-bg);
+  --color-surface-card: var(--sp-surface-card);
+  --color-surface-inset: var(--sp-surface-inset);
+  --color-surface-raised: var(--sp-surface-raised);
+  --color-surface-control: var(--sp-surface-control);
+  --color-surface-control-pressed: var(--sp-surface-control-pressed);
+  --color-text: var(--sp-text);
+  --color-text-muted: var(--sp-text-muted);
+  --color-text-subtle: var(--sp-text-subtle);
+  --color-text-disabled: var(--sp-text-disabled);
+  --color-hairline: var(--sp-hairline);
+  --color-border-control: var(--sp-border-control);
+  --color-primary-fill: var(--sp-primary-fill);
+  --color-primary-pressed: var(--sp-primary-pressed);
+  --color-on-primary: var(--sp-on-primary);
+  --color-anchor-card: var(--sp-anchor-card);
+  --color-on-anchor: var(--sp-on-anchor);
+  --color-on-anchor-muted: var(--sp-on-anchor-muted);
+  --color-lift-fill: var(--sp-lift-fill);
+  --color-lift-pressed: var(--sp-lift-pressed);
+  --color-on-lift: var(--sp-on-lift);
+  --color-lift-text: var(--sp-lift-text);
+  --color-lift-soft: var(--sp-lift-soft);
+  --color-run-fill: var(--sp-run-fill);
+  --color-run-pressed: var(--sp-run-pressed);
+  --color-on-run: var(--sp-on-run);
+  --color-run-text: var(--sp-run-text);
+  --color-run-soft: var(--sp-run-soft);
+  --color-fuel-fill: var(--sp-fuel-fill);
+  --color-fuel-pressed: var(--sp-fuel-pressed);
+  --color-on-fuel: var(--sp-on-fuel);
+  --color-fuel-text: var(--sp-fuel-text);
+  --color-fuel-soft: var(--sp-fuel-soft);
+  --color-body-fill: var(--sp-body-fill);
+  --color-on-body: var(--sp-on-body);
+  --color-body-text: var(--sp-body-text);
+  --color-body-soft: var(--sp-body-soft);
+  --color-macro-protein: var(--sp-macro-protein);
+  --color-macro-carbs: var(--sp-macro-carbs);
+  --color-macro-fat: var(--sp-macro-fat);
+  --color-success-fill: var(--sp-success-fill);
+  --color-on-success: var(--sp-on-success);
+  --color-success-text: var(--sp-success-text);
+  --color-success-soft: var(--sp-success-soft);
+  --color-warning-fill: var(--sp-warning-fill);
+  --color-on-warning: var(--sp-on-warning);
+  --color-warning-text: var(--sp-warning-text);
+  --color-warning-soft: var(--sp-warning-soft);
+  --color-info-fill: var(--sp-info-fill);
+  --color-info-text: var(--sp-info-text);
+  --color-info-soft: var(--sp-info-soft);
+  --color-danger-fill: var(--sp-danger-fill);
+  --color-danger-pressed: var(--sp-danger-pressed);
+  --color-on-danger: var(--sp-on-danger);
+  --color-danger-text: var(--sp-danger-text);
+  --color-focus-ring: var(--sp-focus-ring);
+  --color-glass: var(--sp-glass);
+  --color-glass-edge: var(--sp-glass-edge);
+  --color-scrim: var(--sp-scrim);
+  --color-chart-grid: var(--sp-chart-grid);
+  --color-chart-trend: var(--sp-chart-trend);
+  --color-track: var(--sp-track);
+  --shadow-card: var(--sp-shadow-card);
+  --shadow-raised: var(--sp-shadow-raised);
+  --shadow-float: var(--sp-shadow-float);
+  --shadow-sheet: var(--sp-shadow-sheet);
+  --shadow-none: var(--sp-shadow-none);
+}
+
+/* Splits text styles: family + size + tracking in one class.
+   Use these instead of combining font-bold with a family. */
+@utility type-hero { font-family: var(--font-display); font-size: var(--text-hero); line-height: var(--text-hero--line-height); letter-spacing: var(--text-hero--letter-spacing); @apply tabular-nums; }
+@utility type-hero-sm { font-family: var(--font-display); font-size: var(--text-hero-sm); line-height: var(--text-hero-sm--line-height); letter-spacing: var(--text-hero-sm--letter-spacing); @apply tabular-nums; }
+@utility type-timer { font-family: var(--font-display-bold); font-size: var(--text-timer); line-height: var(--text-timer--line-height); letter-spacing: var(--text-timer--letter-spacing); @apply tabular-nums; }
+@utility type-display { font-family: var(--font-display); font-size: var(--text-display); line-height: var(--text-display--line-height); letter-spacing: var(--text-display--letter-spacing); }
+@utility type-title { font-family: var(--font-display-bold); font-size: var(--text-title); line-height: var(--text-title--line-height); letter-spacing: var(--text-title--letter-spacing); }
+@utility type-stat { font-family: var(--font-display); font-size: var(--text-stat); line-height: var(--text-stat--line-height); letter-spacing: var(--text-stat--letter-spacing); @apply tabular-nums; }
+@utility type-headline { font-family: var(--font-display); font-size: var(--text-headline); line-height: var(--text-headline--line-height); }
+@utility type-body { font-family: var(--font-body); font-size: var(--text-body); line-height: var(--text-body--line-height); }
+@utility type-body-strong { font-family: var(--font-body-semibold); font-size: var(--text-body); line-height: var(--text-body--line-height); }
+@utility type-subhead { font-family: var(--font-body-medium); font-size: var(--text-subhead); line-height: var(--text-subhead--line-height); }
+@utility type-label { font-family: var(--font-body-semibold); font-size: var(--text-label); line-height: var(--text-label--line-height); @apply tabular-nums; }
+@utility type-caption { font-family: var(--font-body-medium); font-size: var(--text-caption); line-height: var(--text-caption--line-height); }
+@utility type-micro { font-family: var(--font-body-bold); font-size: var(--text-micro); line-height: var(--text-micro--line-height); letter-spacing: var(--text-micro--letter-spacing); text-transform: uppercase; }
