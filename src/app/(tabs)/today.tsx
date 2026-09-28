@@ -1,18 +1,65 @@
 import { router } from 'expo-router';
-import { Pressable, ScrollView, Text, View } from 'react-native';
-import { SafeAreaView, Avatar, Card, displayNameOf, MicroLabel } from '@/components';
+import { useState } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { useAuth } from '@/auth';
-import { useCurrentTargets } from '@/db/queries/targets';
+import {
+  AnchorCard,
+  Avatar,
+  Button,
+  Card,
+  displayNameOf,
+  EmptyState,
+  MicroLabel,
+  PlateRack,
+  SafeAreaView,
+  SessionCard,
+  Tag,
+} from '@/components';
+import { useSessions } from '@/db/queries/sessions';
+import { useTemplate } from '@/db/queries/templates';
+import { mondayOf, toLocalDate } from '@/engine/calendar';
+import { startSession } from '@/lib/nav';
+import { averagePace, distanceNumber, liftCounts } from '@/plan/describe';
+import {
+  addDays,
+  byDay,
+  longDay,
+  rackDays,
+  weekDays,
+  weekdayCode,
+  weekTotals,
+  type PlanSession,
+} from '@/plan/week';
+import { aboutMinutes, repsText } from '@/templates/liftTemplate';
+import { useTheme } from '@/theme';
+import { formatDistance, paceUnit, type UnitSystem } from '@/units';
 
-const fmt = (n: number) => n.toLocaleString('en-US');
+const open = (s: PlanSession) => router.push({ pathname: '/sessions/[id]', params: { id: s.id } });
 
-/** Today (placeholder until build step 4): settings avatar and the current targets. */
+/** Today (v1): the week's plate rack, the day's sessions, and weekly totals. */
 export default function TodayScreen() {
+  const { c } = useTheme();
   const { userId, session, profile } = useAuth();
-  const targets = useCurrentTargets(userId);
+  const units = profile?.unit_system ?? 'imperial';
   const name = displayNameOf(profile?.display_name, session?.user.email);
-  const t = targets.data;
+  const today = toLocalDate(new Date());
+  const monday = mondayOf(today);
+  const sunday = addDays(monday, 6);
+  // This week for the rack and totals, plus the coming 7 days for "next up" on a rest day.
+  const horizon = addDays(today, 7) > sunday ? addDays(today, 7) : sunday;
+  const week = useSessions(userId, monday, horizon);
+  const days = weekDays(monday);
+  const todayIndex = days.indexOf(today);
+  const [selected, setSelected] = useState(today);
+
+  const all = week.data ?? [];
+  const list = all.filter((s) => s.scheduled_date <= sunday);
+  const onDay = (byDay(list).get(selected) ?? []).filter((s) => s.status !== 'skipped');
+  const isToday = selected === today;
+  const next = isToday ? onDay.find((s) => s.status === 'planned') : undefined;
+  const rest = onDay.filter((s) => s !== next);
+  const upcoming = all.find((s) => s.status === 'planned' && s.scheduled_date > selected);
 
   return (
     <View className="flex-1 bg-bg">
@@ -22,7 +69,7 @@ export default function TodayScreen() {
             <View>
               <MicroLabel>
                 {new Date().toLocaleDateString('en-US', {
-                  weekday: 'short',
+                  weekday: 'long',
                   month: 'short',
                   day: 'numeric',
                 })}
@@ -41,34 +88,160 @@ export default function TodayScreen() {
             </Pressable>
           </View>
 
-          <Card className="gap-3">
-            <MicroLabel className="text-fuel-text">daily targets</MicroLabel>
-            {t ? (
-              <>
-                <Text className="type-stat text-text">
-                  {fmt(t.kcal_target)}
-                  <Text className="type-subhead text-text-muted"> kcal</Text>
-                </Text>
-                <Text className="type-subhead text-text-muted">
-                  aim for {fmt(t.kcal_low)} to {fmt(t.kcal_high)} · maintenance{' '}
-                  {fmt(t.maintenance_kcal)}
-                </Text>
-                <Text className="type-label text-text">
-                  {t.protein_g} g protein · {t.fat_g} g fat · {t.carbs_g} g carbs
-                </Text>
-              </>
-            ) : (
-              <Text className="type-subhead text-text-muted">
-                {targets.isPending ? 'loading…' : 'No targets yet.'}
-              </Text>
-            )}
-          </Card>
+          <PlateRack
+            days={rackDays(monday, list)}
+            today={todayIndex}
+            onSelect={(i) => setSelected(days[i])}
+          />
 
-          <Text className="px-1 type-subhead text-text-muted">
-            Sessions, food and weigh-ins arrive in the next build steps.
+          <Text className="px-1 pt-2 type-headline text-text" accessibilityRole="header">
+            {isToday ? 'today’s plan' : `${weekdayCode(selected).toLowerCase()}’s plan`}
           </Text>
+
+          {week.isPending ? (
+            <ActivityIndicator color={c.textMuted} />
+          ) : week.error ? (
+            <EmptyState icon="alert" title="Couldn’t load your plan" body={week.error.message} />
+          ) : onDay.length === 0 && upcoming ? (
+            <View className="gap-2">
+              <Text className="px-1 type-subhead text-text-muted">
+                rest day · next up{' '}
+                {upcoming.scheduled_date === addDays(selected, 1)
+                  ? 'tomorrow'
+                  : longDay(upcoming.scheduled_date)}
+              </Text>
+              <SessionTile session={upcoming} units={units} />
+            </View>
+          ) : onDay.length === 0 ? (
+            <EmptyState
+              icon="today"
+              title="rest day"
+              body={
+                list.length ? 'Nothing planned for this day.' : 'Nothing planned this week yet.'
+              }
+            >
+              <Button variant="secondary" size="md" onPress={() => router.navigate('/plan')}>
+                plan the week
+              </Button>
+            </EmptyState>
+          ) : (
+            <>
+              {next ? <UpNext session={next} units={units} /> : null}
+              {rest.map((s) => (
+                <SessionTile key={s.id} session={s} units={units} />
+              ))}
+            </>
+          )}
+
+          {week.data ? <WeekTotalsCard sessions={list} units={units} /> : null}
         </ScrollView>
       </SafeAreaView>
     </View>
+  );
+}
+
+/** The "up next" anchor card: big estimated minutes, what it is, the first target, start. */
+function UpNext({ session: s, units }: { session: PlanSession; units: UnitSystem }) {
+  const template = useTemplate(s.template_id ?? undefined);
+  const t = s.template;
+  const first = template.data?.exercises[0];
+  return (
+    <Pressable onPress={() => open(s)} accessibilityRole="button" className="active:opacity-95">
+      <AnchorCard title="up next" icon={s.kind}>
+        <View className="mt-3 mb-5 gap-2">
+          {t?.est_duration_s ? (
+            <View className="flex-row items-baseline">
+              <Text className="type-hero text-on-anchor">{aboutMinutes(t.est_duration_s)}</Text>
+              <Text className="ml-1 type-body-strong text-on-anchor-muted">min</Text>
+            </View>
+          ) : null}
+          <Text className="type-subhead text-on-anchor-muted">
+            {s.name}
+            {t
+              ? ` · ${t.kind === 'lift' ? liftCounts(t) : t.est_distance_m ? formatDistance(t.est_distance_m, units) : 'run'}`
+              : ''}
+          </Text>
+          <View className="flex-row flex-wrap items-center gap-2">
+            <Tag kind={s.kind} solid size="sm" />
+            {first ? (
+              <Text className="type-subhead text-on-anchor">
+                {first.name} {first.target_sets} × {repsText(first)} is first
+              </Text>
+            ) : null}
+          </View>
+        </View>
+        <Button variant="inverse" icon="play" block onPress={() => startSession(s.name)}>
+          {s.kind === 'lift' ? 'start workout' : 'start run'}
+        </Button>
+      </AnchorCard>
+    </Pressable>
+  );
+}
+
+function SessionTile({ session: s, units }: { session: PlanSession; units: UnitSystem }) {
+  const t = s.template;
+  const minutes = t?.est_duration_s ? String(aboutMinutes(t.est_duration_s)) : '–';
+  const status =
+    s.status === 'completed' ? 'done' : s.status === 'in_progress' ? 'current' : 'planned';
+  return (
+    <SessionCard
+      kind={s.kind}
+      title={s.name}
+      subtitle={!t ? 'template deleted' : t.kind === 'lift' ? liftCounts(t) : undefined}
+      status={status}
+      meta={
+        t?.kind === 'run'
+          ? [
+              {
+                value: t.est_distance_m ? distanceNumber(t.est_distance_m, units) : '–',
+                label: units === 'imperial' ? 'mi' : 'km',
+              },
+              { value: averagePace(t, units) ?? '–', label: paceUnit(units) },
+              { value: minutes, label: 'min' },
+            ]
+          : t
+            ? [{ value: minutes, label: 'min' }]
+            : undefined
+      }
+      onPress={() => open(s)}
+    />
+  );
+}
+
+function WeekTotalsCard({ sessions, units }: { sessions: PlanSession[]; units: UnitSystem }) {
+  const t = weekTotals(sessions);
+  const unit = units === 'imperial' ? 'mi' : 'km';
+  const stats = [
+    { value: `${t.runsDone}/${t.runs}`, label: 'runs' },
+    {
+      value: `${distanceNumber(t.runMetersDone, units)}/${distanceNumber(t.runMeters, units)}`,
+      label: unit,
+    },
+    { value: `${t.liftsDone}/${t.lifts}`, label: 'lifts' },
+  ];
+  return (
+    <Card className="gap-4">
+      <View className="flex-row items-center justify-between">
+        <Text className="type-headline text-text" accessibilityRole="header">
+          this week
+        </Text>
+        <Text className="type-caption text-text-muted">done / planned</Text>
+      </View>
+      <View className="flex-row">
+        {stats.map((m) => (
+          <View
+            key={m.label}
+            className="flex-1 gap-0.5"
+            accessible
+            accessibilityLabel={`${m.label}: ${m.value.replace('/', ' of ')}`}
+          >
+            <Text className="font-display text-[22px] leading-[26px] text-text tabular-nums">
+              {m.value}
+            </Text>
+            <MicroLabel>{m.label}</MicroLabel>
+          </View>
+        ))}
+      </View>
+    </Card>
   );
 }
