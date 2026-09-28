@@ -8,6 +8,8 @@ import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { AuthProvider, useAuth } from '@/auth';
+import { persistQueryCache, restoreQueryCache, wireOnlineManager } from '@/db/persist';
+import { WorkoutProvider } from '@/workout/WorkoutProvider';
 import { radius, useSplitsFonts } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -20,9 +22,17 @@ const sheet = {
 } as const;
 
 export default function RootLayout() {
-  const [queryClient] = useState(
-    () => new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30_000 } } }),
-  );
+  const [queryClient] = useState(() => {
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: 1, staleTime: 30_000, gcTime: 24 * 60 * 60_000 } },
+    });
+    // Offline: restore the last saved cache before anything renders, keep saving it, and pause
+    // queries while there's no connection.
+    restoreQueryCache(qc);
+    persistQueryCache(qc);
+    wireOnlineManager();
+    return qc;
+  });
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
@@ -63,10 +73,15 @@ function RootStack() {
           <Stack.Screen name="exercises" />
           <Stack.Screen name="templates" options={{ presentation: 'modal' }} />
           <Stack.Screen name="sessions" options={{ presentation: 'modal' }} />
+          <Stack.Screen
+            name="workout"
+            options={{ presentation: 'fullScreenModal', gestureEnabled: false }}
+          />
           <Stack.Screen name="sheets/pick-exercises" options={{ presentation: 'modal' }} />
         </Stack.Protected>
         <Stack.Screen name="auth/callback" />
       </Stack>
+      {status === 'ready' ? <WorkoutProvider /> : null}
     </ThemeProvider>
   );
 }

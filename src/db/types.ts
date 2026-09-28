@@ -1005,8 +1005,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      discard_workout: {
+        Args: { p_back_to_planned: boolean; p_id: string }
+        Returns: undefined
+      }
       duplicate_template: { Args: { p_id: string }; Returns: string }
+      exercise_bests: {
+        Args: never
+        Returns: {
+          e1rm_kg: number
+          exercise_id: string
+          reps: number
+          weight_kg: number
+        }[]
+      }
       plan_sessions: { Args: { p_items: Json }; Returns: string[] }
+      previous_sets: {
+        Args: { p_exercise_ids?: string[] }
+        Returns: {
+          exercise_id: string
+          performed_on: string
+          reps: number
+          set_number: number
+          set_type: Database["public"]["Enums"]["set_type"]
+          weight_kg: number
+        }[]
+      }
       save_starting_targets: {
         Args: {
           p_carbs_g: number
@@ -1047,6 +1071,7 @@ export type Database = {
         Returns: string
       }
       shift_sessions: { Args: { p_session_id: string }; Returns: number }
+      sync_workout: { Args: { p: Json }; Returns: string }
     }
     Enums: {
       demo_type: "animation" | "video" | "none"

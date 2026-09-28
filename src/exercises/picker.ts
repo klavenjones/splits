@@ -12,6 +12,10 @@ export type PickOptions = {
   excludeIds?: string[];
   /** Pick exactly one (swap). Default is multi-select. */
   single?: boolean;
+  /** "suggested for this workout": shown first, with a one-line reason. */
+  suggested?: { note: string; ids: string[] };
+  /** exercise id → "40 lb × 15", shown as each row's "last" line. */
+  last?: Record<string, string>;
 };
 
 type Pending = { options: PickOptions; resolve: (ids: string[] | null) => void };

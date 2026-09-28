@@ -54,3 +54,14 @@ One entry per build step.
 - Migration `20261002120000_week_planner.sql`: `plan_sessions` and `shift_sessions`; no new tables or columns. `supabase/tests/sessions_smoke.sql`.
 - Pure, tested: `src/plan/week.ts`, `fill.ts`, `coach.ts`, `describe.ts`.
 - Fix: bare `text-label` / `text-micro` / `text-caption` classes gave huge line heights on native, stretching the plate rack and hiding the tab bar labels; they now use explicit sizes.
+
+## Step 5: live workout logging, offline first (2026-10-03)
+- Start a planned lift (session detail, Today's up-next, the + sheet) or an empty workout. The template is copied into the workout; weights and reps are pre-filled from last time.
+- Lift logger: thumbnails open a demo sheet; set rows show previous, lb/kg and reps inputs (tabular numerals), optional RPE and warm-up via the set badge, check to complete; add set, add exercise (picker with "suggested for this workout" from muscles not trained today, and last-time lines), swap (same muscle, your equipment or any, "also update the template"). Supersets alternate and rest after the round.
+- Rest timer: starts on completing a set; −15 / +15 / skip; runs off an absolute end time so it survives backgrounding and restarts; a local notification fires when rest ends.
+- Offline: every edit is written to SQLite first (`src/local`), mirrored in a Zustand store, and synced whole and idempotently with `sync_workout` a few seconds after edits, on finish, when the connection returns, on foreground and at launch (backoff 5 s → 5 min; polls while offline). The app reopens into an in-progress workout after a kill; a resume bar sits above the tab bar. The TanStack Query cache is persisted and queries pause while offline, so the app opens without signal.
+- Summary: duration, volume, sets, PRs with est. 1RM (Epley), how did it feel, note, and "update the template?" after swaps or additions (applied through `save_template`, after the sync if offline). Today and Plan show a workout finished offline as done before it syncs.
+- Migration `20261003120000_workout_logging.sql`: `sync_workout`, `discard_workout`, `previous_sets`, `exercise_bests`; the set-number uniqueness is now deferrable. `supabase/tests/workout_smoke.sql`.
+- Pure, tested: `src/engine/metrics.ts`, `src/workout/model.ts`, `suggest.ts`, `templateUpdate.ts`, and the SQLite repo and sync against an in-memory SQLite.
+- New dependencies: `zustand`, `expo-notifications`, `expo-network`, `expo-crypto`.
+

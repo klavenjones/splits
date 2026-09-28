@@ -39,10 +39,11 @@ src/
   engine/metrics.ts       # e1RM, PRs, volume, mileage (pure)
   units.ts                # metric <-> imperial, display only
   db/                     # supabase client, generated types, queries
-  local/                  # expo-sqlite schema + sync for active workout
+  local/                  # expo-sqlite schema, workout repo, sync + sync service
+  workout/                # pure workout model, suggestions, template update, start/resume
   health/                 # HealthKit import + matching
   food/                   # USDA + OFF clients, normalizer
-  store/                  # zustand stores
+  store/                  # zustand stores (live workout)
   theme/                  # tokens (export from Claude Design; see docs/design-tokens.md)
   components/             # design-system components
 supabase/migrations/      # SQL, one file per change

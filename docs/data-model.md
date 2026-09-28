@@ -218,9 +218,11 @@ Copied from `template_exercises` when a session starts, so later template edits 
 | distance_m | int, nullable | for `distance` tracking |
 | rpe | numeric, nullable | 1–10 |
 | completed_at | timestamptz, nullable | null = not done yet |
-| **unique** | | (session_exercise_id, set_number) |
+| **unique** | | (session_exercise_id, set_number), deferrable initially deferred (a sync may renumber sets) |
 
 "Previous" values in the logger = the most recent completed `set_logs` for the same `exercise_id`, matched by `set_number`.
+
+Logging (step 5): the active workout lives on the phone first (expo-sqlite, `src/local/`) with client-generated uuids that become the server ids. The whole workout is sent with `sync_workout(p jsonb)`: it upserts the session, its `session_exercises` and `set_logs` by id and deletes this session's rows missing from the payload, so a re-send is harmless. `discard_workout(id, back_to_planned)` puts a started planned session back on the plan (or deletes an empty workout). The local copy also keeps display and target fields (`name`, `primary_muscle`, `equipment`, `rep_min`, `rep_max`, whether the exercise came from the template) that are not stored on the server. "Previous" comes from `previous_sets(exercise_ids)` (the last completed session per exercise; warm-ups and working sets are matched separately, by order) and PRs from `exercise_bests()`; both are derived, cached on the phone, and updated locally when a workout finishes. A PR is a completed working set whose Epley e1RM beats the exercise's previous best; the first time an exercise is logged sets the baseline. Swapping keeps done sets on the original exercise and sets `swapped_from_exercise_id` on the new one.
 
 ### run_logs (1:1 with a run session)
 | Column | Type | Notes |
