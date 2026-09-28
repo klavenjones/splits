@@ -119,3 +119,4 @@ export {
   NumberPad,
   type Macro,
 } from './fuel';
+export { ErrorBoundary } from './ErrorBoundary';

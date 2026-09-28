@@ -17,6 +17,7 @@ import {
   Avatar,
   Button,
   Card,
+  ErrorBoundary,
   displayNameOf,
   EmptyState,
   MatchCard,
@@ -144,7 +145,9 @@ export default function TodayScreen() {
             </Pressable>
           </View>
 
-          <CheckinPrompt userId={userId} />
+          <ErrorBoundary name="today.checkin" title="couldn’t show your check-in">
+            <CheckinPrompt userId={userId} />
+          </ErrorBoundary>
 
           <PlateRack
             days={rackDays(monday, list)}
@@ -156,49 +159,61 @@ export default function TodayScreen() {
             {isToday ? 'today’s plan' : `${weekdayCode(selected).toLowerCase()}’s plan`}
           </Text>
 
-          {week.isPending ? (
-            <ActivityIndicator color={c.textMuted} />
-          ) : week.error ? (
-            <EmptyState icon="alert" title="Couldn’t load your plan" body={week.error.message} />
-          ) : onDay.length === 0 && upcoming ? (
-            <View className="gap-2">
-              <Text className="px-1 type-subhead text-text-muted">
-                rest day · next up{' '}
-                {upcoming.scheduled_date === addDays(selected, 1)
-                  ? 'tomorrow'
-                  : longDay(upcoming.scheduled_date)}
-              </Text>
-              <SessionTile session={upcoming} units={units} />
-            </View>
-          ) : onDay.length === 0 ? (
-            <EmptyState
-              icon="today"
-              title="rest day"
-              body={
-                list.length ? 'Nothing planned for this day.' : 'Nothing planned this week yet.'
-              }
-            >
-              <Button variant="secondary" size="md" onPress={() => router.navigate('/plan')}>
-                plan the week
-              </Button>
-            </EmptyState>
-          ) : (
-            <>
-              {next ? <UpNext session={next} units={units} /> : null}
-              {rest.map((s) => (
+          <ErrorBoundary name="today.plan" title="couldn’t show today’s sessions and runs">
+            <View className="gap-4">
+              {week.isPending ? (
+                <ActivityIndicator color={c.textMuted} />
+              ) : week.error ? (
+                <EmptyState
+                  icon="alert"
+                  title="Couldn’t load your plan"
+                  body={week.error.message}
+                />
+              ) : onDay.length === 0 && upcoming ? (
+                <View className="gap-2">
+                  <Text className="px-1 type-subhead text-text-muted">
+                    rest day · next up{' '}
+                    {upcoming.scheduled_date === addDays(selected, 1)
+                      ? 'tomorrow'
+                      : longDay(upcoming.scheduled_date)}
+                  </Text>
+                  <SessionTile session={upcoming} units={units} />
+                </View>
+              ) : onDay.length === 0 ? (
+                <EmptyState
+                  icon="today"
+                  title="rest day"
+                  body={
+                    list.length ? 'Nothing planned for this day.' : 'Nothing planned this week yet.'
+                  }
+                >
+                  <Button variant="secondary" size="md" onPress={() => router.navigate('/plan')}>
+                    plan the week
+                  </Button>
+                </EmptyState>
+              ) : (
+                <>
+                  {next ? <UpNext session={next} units={units} /> : null}
+                  {rest.map((s) => (
+                    <SessionTile key={s.id} session={s} units={units} />
+                  ))}
+                </>
+              )}
+
+              {earlierUnmatched.map((s) => (
                 <SessionTile key={s.id} session={s} units={units} />
               ))}
-            </>
-          )}
-
-          {earlierUnmatched.map((s) => (
-            <SessionTile key={s.id} session={s} units={units} />
-          ))}
+            </View>
+          </ErrorBoundary>
 
           {isToday ? (
             <>
-              <FuelCard userId={userId} today={today} />
-              <BodyCard userId={userId} today={today} units={units} />
+              <ErrorBoundary name="today.fuel" title="couldn’t show today’s fuel">
+                <FuelCard userId={userId} today={today} />
+              </ErrorBoundary>
+              <ErrorBoundary name="today.body" title="couldn’t show your weigh-in">
+                <BodyCard userId={userId} today={today} units={units} />
+              </ErrorBoundary>
             </>
           ) : null}
 

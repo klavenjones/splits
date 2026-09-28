@@ -4,6 +4,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-nati
 
 import { useAuth } from '@/auth';
 import {
+  ErrorBoundary,
   AnchorCard,
   Button,
   Card,
@@ -48,7 +49,21 @@ const signed = (v: number, digits = 0) => {
  * the new targets, with keep or accept. `week` is the Monday of the week the targets are for;
  * the week reviewed is the one before it.
  */
-export default function CheckinScreen() {
+export default function CheckinRoute() {
+  return (
+    <ErrorBoundary
+      name="checkin"
+      screen
+      title="couldn’t show your check-in"
+      body="Your targets haven’t changed. It’s been reported; try again or close."
+      onClose={() => router.back()}
+    >
+      <CheckinScreen />
+    </ErrorBoundary>
+  );
+}
+
+function CheckinScreen() {
   const { c } = useTheme();
   const { week } = useLocalSearchParams<{ week: string }>();
   const { userId, profile } = useAuth();

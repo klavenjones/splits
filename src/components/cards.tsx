@@ -63,7 +63,10 @@ export function RadioOptionCard({
 
 /* ---------------- TipCard ---------------- */
 
-/** Informational note: icon, bold lead, body. `tone="info"` sits on a tinted surface. */
+/**
+ * Informational note: icon, bold lead, body. `tone="info"` sits on a tinted surface;
+ * `tone="warning"` is for something that failed and can be retried.
+ */
 export function TipCard({
   icon = 'info',
   title,
@@ -73,17 +76,25 @@ export function TipCard({
   icon?: IconName;
   title: string;
   children?: ReactNode;
-  tone?: 'card' | 'info';
+  tone?: 'card' | 'info' | 'warning';
 }) {
   const { c } = useTheme();
   return (
     <View
       className={cn(
         'flex-row gap-3 rounded-card p-5',
-        tone === 'info' ? 'bg-info-soft' : 'bg-surface-card shadow-card',
+        tone === 'info'
+          ? 'bg-info-soft'
+          : tone === 'warning'
+            ? 'bg-warning-soft'
+            : 'bg-surface-card shadow-card',
       )}
     >
-      <Icon name={icon} size={size.iconMd} color={tone === 'info' ? c.infoText : c.text} />
+      <Icon
+        name={icon}
+        size={size.iconMd}
+        color={tone === 'info' ? c.infoText : tone === 'warning' ? c.warningText : c.text}
+      />
       <View className="flex-1 gap-1">
         <Text className="type-body-strong text-text">{title}</Text>
         {typeof children === 'string' ? (

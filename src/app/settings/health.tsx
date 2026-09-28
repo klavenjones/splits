@@ -4,16 +4,25 @@ import { useState } from 'react';
 import { Alert, ScrollView, Text, View } from 'react-native';
 
 import { useAuth } from '@/auth';
-import { Button, SafeAreaView, SettingsGroup, SettingsRow, TopNav } from '@/components';
+import {
+  Button,
+  ErrorBoundary,
+  SafeAreaView,
+  SettingsGroup,
+  SettingsRow,
+  TipCard,
+  TopNav,
+} from '@/components';
 import {
   backgroundGranted,
   connectHealth,
   disconnectHealth,
   fetchIntegration,
-  importNow,
   useHealthConnected,
 } from '@/health/connection';
 import { addSampleRun, isAvailable } from '@/health/healthkit';
+import { useImportStatus } from '@/health/importStatus';
+import { runImport } from '@/health/runImport';
 
 const ago = (iso: string) => {
   const min = Math.round((Date.now() - Date.parse(iso)) / 60_000);
@@ -28,7 +37,20 @@ const ago = (iso: string) => {
 };
 
 /** Apple Health: connect, see the last import, import now, disconnect. */
-export default function HealthSettings() {
+export default function HealthSettingsScreen() {
+  return (
+    <ErrorBoundary
+      name="settings.health"
+      screen
+      title="couldn’t show Apple Health"
+      onClose={() => router.back()}
+    >
+      <HealthSettings />
+    </ErrorBoundary>
+  );
+}
+
+function HealthSettings() {
   const { userId, profile } = useAuth();
   const units = profile?.unit_system ?? 'imperial';
   const connected = useHealthConnected(userId);
@@ -57,13 +79,13 @@ export default function HealthSettings() {
 
   const connect = act('connect', async () => {
     const { background } = await connectHealth(userId!);
-    const r = await importNow(userId!, units);
+    const r = await runImport(userId!, units);
     return `${r ? `Imported ${r.runs} run${r.runs === 1 ? '' : 's'}. ` : ''}${
       background ? '' : 'New runs import when you open Splits.'
     }`;
   });
   const sync = act('sync', async () => {
-    const r = await importNow(userId!, units);
+    const r = await runImport(userId!, units);
     return r
       ? `${r.runs} new run${r.runs === 1 ? '' : 's'}, ${r.weights} weight${r.weights === 1 ? '' : 's'}.`
       : null;
@@ -90,6 +112,7 @@ export default function HealthSettings() {
       return `Added a ${miles} mi run at ${start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}.`;
     });
 
+  const failed = useImportStatus().failed;
   const last = integration.data?.last_synced_at;
   const bg = backgroundGranted(userId);
 
@@ -109,6 +132,18 @@ export default function HealthSettings() {
             </Text>
           ) : (
             <>
+              {connected && failed && busy !== 'sync' ? (
+                <TipCard tone="warning" icon="alert" title="last import failed">
+                  <View className="items-start gap-3">
+                    <Text className="type-body text-text">
+                      Your runs and weight will import on the next try. It’s been reported.
+                    </Text>
+                    <Button size="sm" variant="secondary" icon="undo" onPress={sync}>
+                      try again
+                    </Button>
+                  </View>
+                </TipCard>
+              ) : null}
               <SettingsGroup title="status">
                 <SettingsRow label="connection" value={connected ? 'connected' : 'not connected'} />
                 <SettingsRow label="last import" value={last && connected ? ago(last) : '–'} />

@@ -1,12 +1,15 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { useAuth } from '@/auth';
 import {
+  Button,
   CalorieBar,
   Card,
   EmptyState,
+  ErrorBoundary,
   FoodRow,
   Icon,
   IconButton,
@@ -28,7 +31,9 @@ import {
 } from '@/db/queries/nutrition';
 import { addDays, mondayOf, toLocalDate } from '@/engine/calendar';
 import { showMenu } from '@/lib/menu';
+import { useCheckinStatus } from '@/nutrition/checkinStatus';
 import { kcalText, servingText } from '@/nutrition/describe';
+import { runCheckinIfDue } from '@/nutrition/NutritionProvider';
 import { longDay } from '@/plan/week';
 import { size, useTheme } from '@/theme';
 
@@ -155,11 +160,13 @@ export default function NutritionScreen() {
             })
           )}
 
-          <CheckinReminder
-            weekday={profile?.checkin_weekday ?? 1}
-            weekStart={mondayOf(today)}
-            today={today}
-          />
+          <ErrorBoundary name="nutrition.checkin" title="couldn’t show your check-in">
+            <CheckinReminder
+              weekday={profile?.checkin_weekday ?? 1}
+              weekStart={mondayOf(today)}
+              today={today}
+            />
+          </ErrorBoundary>
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -177,7 +184,33 @@ function CheckinReminder({
   today: string;
 }) {
   const { userId } = useAuth();
+  const qc = useQueryClient();
   const logged = useDaysLogged(userId, weekStart, today).data;
+  const failed = useCheckinStatus().failed;
+  const [retrying, setRetrying] = useState(false);
+  if (failed && userId)
+    return (
+      <TipCard tone="warning" icon="alert" title="couldn’t prepare your check-in">
+        <View className="items-start gap-3">
+          <Text className="type-body text-text">
+            Your logs are safe. It’s been reported; try again now or it retries when you reopen
+            Splits.
+          </Text>
+          <Button
+            size="sm"
+            variant="secondary"
+            icon="undo"
+            loading={retrying}
+            onPress={() => {
+              setRetrying(true);
+              void runCheckinIfDue(userId, weekday, qc).finally(() => setRetrying(false));
+            }}
+          >
+            try again
+          </Button>
+        </View>
+      </TipCard>
+    );
   return (
     <TipCard tone="info" title={`weekly check-in on ${WEEKDAY[weekday]}`}>
       {logged === undefined ? '…' : `${logged} of 7 days logged so far.`}

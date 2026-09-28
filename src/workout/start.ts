@@ -9,6 +9,7 @@ import { Alert } from 'react-native';
 
 import { fetchTemplate, templateKey, type TemplateDetail } from '@/db/queries/templates';
 import { toLocalDate } from '@/engine/calendar';
+import { trace } from '@/lib/sentry';
 import { ActiveWorkoutError, useWorkout } from '@/store/workout';
 
 const openLogger = (id: string) => router.push({ pathname: '/workout/[id]', params: { id } });
@@ -46,7 +47,11 @@ export async function startPlannedSession(
     return;
   }
   try {
-    openLogger(store.startPlanned({ ...s, template_id: templateId }, template));
+    openLogger(
+      trace('logger.start', { origin: 'planned' }, () =>
+        store.startPlanned({ ...s, template_id: templateId }, template),
+      ),
+    );
   } catch (e) {
     if (e instanceof ActiveWorkoutError) alreadyActive(e.message);
     else throw e;
@@ -55,7 +60,11 @@ export async function startPlannedSession(
 
 export function startEmptyWorkout() {
   try {
-    openLogger(useWorkout.getState().startEmpty(toLocalDate(new Date())));
+    openLogger(
+      trace('logger.start', { origin: 'empty' }, () =>
+        useWorkout.getState().startEmpty(toLocalDate(new Date())),
+      ),
+    );
   } catch (e) {
     if (e instanceof ActiveWorkoutError) alreadyActive(e.message);
     else throw e;

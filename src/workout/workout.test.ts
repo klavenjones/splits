@@ -355,6 +355,40 @@ describe('local store and sync', () => {
     expect([1, 2, 3, 7, 20].map(backoffMs)).toEqual([5000, 10000, 20000, 300000, 300000]);
   });
 
+  it('reports failures with replay context (ids and counts, no values)', async () => {
+    const db = setup();
+    const w = finish(start(), NOW);
+    saveWorkout(db, { ...w, update_template: 'pending' });
+    const pg = { code: '23514', message: 'violates check constraint', details: 'Failing row…' };
+    const r = await syncPending(db, 'u1', api({ sync: async () => Promise.reject(pg) }).a);
+    const sets = w.exercises.flatMap((e) => e.sets);
+    expect(r.failed).toEqual([
+      {
+        id: 'w1',
+        error: pg,
+        context: {
+          session_id: 'w1',
+          step: 'sync',
+          origin: 'planned',
+          status: 'completed',
+          rev: 1,
+          synced_rev: 0,
+          discarded: false,
+          update_template: 'pending',
+          pending_exercises: w.exercises.length,
+          pending_sets: sets.length,
+          completed_sets: sets.filter((s) => s.completed_at !== null).length,
+        },
+      },
+    ]);
+    expect(JSON.stringify(r.failed[0].context)).not.toMatch(/weight|reps/);
+
+    const templ = api({ updateTemplate: async () => Promise.reject(new Error('boom')) });
+    const r2 = await syncPending(db, 'u1', templ.a);
+    expect(r2.synced).toEqual(['w1']);
+    expect(r2.failed[0].context).toMatchObject({ step: 'update_template', synced_rev: 1 });
+  });
+
   it('sends discards and skips a pending template update when told', async () => {
     const db = setup();
     const e = startEmpty({ id: 'w2', user_id: 'u1', scheduled_date: '2026-10-05', now: NOW });

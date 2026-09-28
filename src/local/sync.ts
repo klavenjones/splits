@@ -95,18 +95,57 @@ export type SyncApi = {
   updateTemplate(w: StoredWorkout): Promise<void>;
 };
 
+export type SyncStep = 'sync' | 'discard' | 'update_template';
+
+/**
+ * What a failed sync needs for replay, with no values: the workout stays in SQLite until it
+ * syncs, so the session id finds it again, and the counts show what was waiting.
+ */
+export type ReplayContext = {
+  session_id: string;
+  step: SyncStep;
+  origin: StoredWorkout['origin'];
+  status: StoredWorkout['status'];
+  rev: number;
+  synced_rev: number;
+  discarded: boolean;
+  update_template: StoredWorkout['update_template'];
+  pending_exercises: number;
+  pending_sets: number;
+  completed_sets: number;
+};
+
+export function replayContext(w: StoredWorkout, step: SyncStep): ReplayContext {
+  const sets = w.exercises.flatMap((e) => e.sets);
+  return {
+    session_id: w.id,
+    step,
+    origin: w.origin,
+    status: w.status,
+    rev: w.rev,
+    synced_rev: w.synced_rev,
+    discarded: w.discarded,
+    update_template: w.update_template,
+    pending_exercises: w.exercises.length,
+    pending_sets: sets.length,
+    completed_sets: sets.filter((s) => s.completed_at !== null).length,
+  };
+}
+
 export type SyncResult = {
   synced: string[];
   removed: string[];
-  failed: { id: string; error: unknown }[];
+  failed: { id: string; error: unknown; context: ReplayContext }[];
 };
 
 /** One pass over everything pending, oldest first. Failures are reported, not thrown. */
 export async function syncPending(db: SqlDb, userId: string, api: SyncApi): Promise<SyncResult> {
   const result: SyncResult = { synced: [], removed: [], failed: [] };
   for (const w of loadPending(db, userId)) {
+    let step: SyncStep = 'sync';
     try {
       if (w.discarded) {
+        step = 'discard';
         await api.discard(w.id, w.origin === 'planned');
         deleteWorkout(db, w.id);
         result.removed.push(w.id);
@@ -119,6 +158,7 @@ export async function syncPending(db: SqlDb, userId: string, api: SyncApi): Prom
         result.synced.push(w.id);
       }
       if (w.status === 'completed' && w.update_template === 'pending') {
+        step = 'update_template';
         await api.updateTemplate(w);
         setTemplateUpdate(db, w.id, 'done');
       }
@@ -133,7 +173,11 @@ export async function syncPending(db: SqlDb, userId: string, api: SyncApi): Prom
         result.removed.push(w.id);
       }
     } catch (error) {
-      result.failed.push({ id: w.id, error });
+      result.failed.push({
+        id: w.id,
+        error,
+        context: replayContext(loadWorkout(db, w.id) ?? w, step),
+      });
     }
   }
   return result;

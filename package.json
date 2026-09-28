@@ -5,6 +5,7 @@
   "dependencies": {
     "@expo/ui": "~57.0.20",
     "@kingstinct/react-native-healthkit": "15.1.0",
+    "@sentry/react-native": "~7.11.0",
     "@shopify/react-native-skia": "2.6.2",
     "@supabase/supabase-js": "^2.117.2",
     "@tanstack/react-query": "^5.104.0",
@@ -70,6 +71,8 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "ios:release": "expo run:ios --configuration Release",
+    "build:ios": "eas build --platform ios --profile production --auto-submit",
     "web": "expo start --web",
     "lint": "expo lint",
     "test": "jest",

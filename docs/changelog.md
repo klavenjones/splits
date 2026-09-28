@@ -95,3 +95,12 @@ One entry per build step.
 - Edge Functions `food` and `weekly-checkin`, sharing the engine through `npm run functions:sync`. Secrets: `USDA_API_KEY` (function secret); Vault `project_url` and `anon_key` for the cron call.
 - Migrations `20261006120000_nutrition_logging.sql` (`log_foods`, `log_saved_meal`, `save_weigh_in`, `propose_weekly_targets`, `decide_weekly_targets`, `update_nutrition_settings`, `daily_intake`; no new tables or columns), `…120100_checkin_schedule.sql`, `…120200_pg_net_schema.sql`. `supabase/tests/nutrition_smoke.sql`.
 - New dependency: `expo-camera` (dev client rebuilt; reinstall on the phone with `npx expo run:ios --device`).
+
+## Step 9: Sentry and EAS (2026-10-07)
+- Sentry (`@sentry/react-native` 7.11 with the Expo plugin): crashes, JavaScript errors and performance traces (app start, navigation, `logger.start`, `logger.set`, `sync.pass`, `health.import`, `checkin.propose`). Release builds only; the user is identified by id only.
+- Scrubbing (`src/lib/scrub.ts`): no set weights, reps, food logs, body weight, measurements or health data in any event, transaction or breadcrumb; PostgREST row details, URL query strings, console breadcrumbs and frame variables are removed. Tested rule by rule with a mutation check.
+- Sync failures are reported once per workout and error code, with replay context (session id, step, revisions, pending exercise and set counts); offline isn't reported. Settings shows "N workouts to sync" while anything is unsent.
+- Error boundaries with fallbacks: root, check-in screen, Settings → Apple Health, Today's plan / check-in / fuel / body cards. Failed Apple Health imports and check-in preparation are reported and shown with "try again".
+- Settings → diagnostics: version, environment, reporting status, sync status, test error, JavaScript and native test crashes.
+- EAS: `eas.json` (development, preview, production → TestFlight), remote build numbers, `usesNonExemptEncryption: false`; Metro uses `getSentryExpoConfig`; the Xcode build phase uploads source maps and dSYMs for Release builds (Debug builds skip it). Scripts `ios:release` and `build:ios`.
+- New dependency: `@sentry/react-native` (dev client rebuilt).
