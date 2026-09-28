@@ -7,6 +7,7 @@ import { EQUIPMENT, MUSCLE_GROUPS } from '../exercises/vocab';
 import { Chip, ChipGroup } from './controls';
 import { ActionRow, EmptyState, ExerciseRow, GroupedItem, SearchField } from './exercises';
 import { Button, MicroLabel } from './primitives';
+import type { ExerciseListItem } from '../db/queries/exercises';
 
 export type ExercisePickerProps = {
   userId: string | undefined;
@@ -19,12 +20,16 @@ export type ExercisePickerProps = {
   onCancel: () => void;
   /** "create custom exercise" (with the current search as the name). */
   onCreate?: (name: string) => void;
+  /** Shown first while not searching: "suggested for this workout". */
+  suggested?: { note: string; ids: readonly string[] };
+  /** exercise id → "40 lb × 15" for the rows' "last" line. */
+  last?: Readonly<Record<string, string>>;
 };
 
 /**
- * Search, filter and multi-select exercises (mockup 03/A2). Used by the picker sheet today, and
- * by the template builder and logger later. "suggested for this workout", "my gym only" and
- * "add as superset" arrive with those steps.
+ * Search, filter and multi-select exercises (mockup 03/A2), for the template builder and the
+ * logger. The logger passes "suggested for this workout" and last-time lines. ("my gym only" and
+ * "add as superset" aren't built yet.)
  */
 export function ExercisePicker({
   userId,
@@ -34,6 +39,8 @@ export function ExercisePicker({
   onConfirm,
   onCancel,
   onCreate,
+  suggested,
+  last,
 }: ExercisePickerProps) {
   const b = useExerciseBrowser(userId);
   const [selected, setSelected] = useState<string[]>([]);
@@ -53,10 +60,30 @@ export function ExercisePicker({
         ? `${b.equipment.length} types`
         : 'equipment';
 
+  const byId = new Map(b.all.map((e) => [e.id, e]));
+  const suggestedItems = (suggested?.ids ?? []).flatMap((id) => byId.get(id) ?? []);
+  const sections: {
+    key: string;
+    title: string;
+    note?: string;
+    data: ExerciseListItem[];
+  }[] =
+    suggestedItems.length && !b.filtering
+      ? [
+          {
+            key: 'suggested',
+            title: 'suggested for this workout',
+            note: suggested?.note,
+            data: suggestedItems,
+          },
+          ...b.sections,
+        ]
+      : b.sections;
+
   return (
     <View className="flex-1 bg-bg">
       <SectionList
-        sections={b.sections}
+        sections={sections}
         keyExtractor={(e) => e.id}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
@@ -135,7 +162,12 @@ export function ExercisePicker({
           </View>
         }
         renderSectionHeader={({ section }) => (
-          <MicroLabel className="px-1 pt-5 pb-2">{section.title}</MicroLabel>
+          <View className="gap-1 px-1 pt-5 pb-2">
+            <MicroLabel>{section.title}</MicroLabel>
+            {section.note ? (
+              <Text className="type-subhead text-text-muted">{section.note}</Text>
+            ) : null}
+          </View>
         )}
         renderItem={({ item, index, section }) => {
           const locked = excludeIds.includes(item.id);
@@ -145,7 +177,7 @@ export function ExercisePicker({
                 name={item.name}
                 primaryMuscle={item.primary_muscle}
                 subtitle={rowSubtitle(item)}
-                last={null}
+                last={last ? (last[item.id] ?? null) : null}
                 custom={item.owner_id !== null}
                 selectable={!single}
                 selected={selected.includes(item.id)}

@@ -311,51 +311,106 @@ export function PlateRack({
 
 /* ---------------- SetRow ---------------- */
 export type SetRowProps = {
-  index?: number;
+  number: number;
   warmup?: boolean;
+  /** "185 × 8" from last time. */
   previous?: string;
-  weight?: string;
-  reps?: string;
+  weight: string;
+  reps: string;
+  rpe?: number | null;
   unit?: string;
   state?: 'upcoming' | 'current' | 'completed';
   pr?: boolean;
-  onToggle?: (done: boolean) => void;
+  onWeight?: (text: string) => void;
+  onReps?: (text: string) => void;
+  onToggle?: () => void;
+  /** Tap on the set number (set type, RPE, delete). */
+  onBadge?: () => void;
 };
+
+/** Keeps what's being typed ("82.") until the field is left, then reports it. */
+function SetInput({
+  value,
+  onCommit,
+  current,
+  label,
+  decimal,
+  width,
+}: {
+  value: string;
+  onCommit?: (text: string) => void;
+  current?: boolean;
+  label: string;
+  decimal?: boolean;
+  width: string;
+}) {
+  const [text, setText] = useState(value);
+  const [prev, setPrev] = useState(value);
+  if (value !== prev) {
+    setPrev(value);
+    setText(value);
+  }
+  return (
+    <TextInput
+      value={text}
+      onChangeText={setText}
+      onEndEditing={() => text !== value && onCommit?.(text)}
+      selectTextOnFocus
+      keyboardType={decimal ? 'decimal-pad' : 'number-pad'}
+      returnKeyType="done"
+      accessibilityLabel={label}
+      placeholder="–"
+      className={cn(
+        'h-10 rounded-sm bg-surface-card text-center font-body-semibold text-[17px] leading-[22px] text-text tabular-nums',
+        width,
+        current ? 'border-2 border-lift-text' : 'border-[1.5px] border-hairline',
+      )}
+    />
+  );
+}
 
 /** One set in the lift logger: set number, previous, weight, reps, done checkbox. */
 export function SetRow({
-  index,
+  number,
   warmup,
   previous,
-  weight = '',
-  reps = '',
+  weight,
+  reps,
+  rpe,
   unit = 'lb',
   state = 'upcoming',
   pr,
+  onWeight,
+  onReps,
   onToggle,
+  onBadge,
 }: SetRowProps) {
   const { c } = useTheme();
-  const [w, setW] = useState(weight);
-  const [r, setR] = useState(reps);
-  const [done, setDone] = useState(state === 'completed');
-  const s = done ? 'completed' : state === 'completed' ? 'current' : state;
-  const cur = s === 'current';
+  const done = state === 'completed';
+  const cur = state === 'current';
+  const label = warmup ? 'Warm-up set' : `Set ${number}`;
   return (
     <View
       className={cn(
-        'min-h-12 flex-row items-center gap-1 rounded-sm px-2',
-        s === 'completed' && 'bg-success-soft',
+        'min-h-13 flex-row items-center gap-1.5 rounded-sm px-2',
         cur && 'bg-lift-soft',
       )}
     >
-      <View className="w-10 items-center">
+      <Pressable
+        onPress={onBadge}
+        disabled={!onBadge}
+        accessibilityRole="button"
+        accessibilityLabel={`${label} options`}
+        hitSlop={4}
+        className="w-9 items-center"
+      >
         <View
           className={cn(
-            'h-7 w-7 items-center justify-center rounded-pill',
+            'h-8 w-8 items-center justify-center rounded-pill',
             warmup
               ? 'bg-warning-soft'
-              : s === 'completed'
-                ? 'bg-success-fill'
+              : done
+                ? 'bg-lift-soft'
                 : cur
                   ? 'bg-lift-fill'
                   : 'border-[1.5px] border-border-control',
@@ -363,25 +418,27 @@ export function SetRow({
         >
           <Text
             className={cn(
-              'font-body-bold tabular-nums',
-              warmup ? 'text-[13px] leading-[18px]' : 'text-[15px] leading-[20px]',
+              'font-body-bold text-[15px] leading-[20px] tabular-nums',
               warmup
                 ? 'text-warning-text'
-                : s === 'completed'
-                  ? 'text-on-success'
+                : done
+                  ? 'text-lift-text'
                   : cur
                     ? 'text-on-lift'
                     : 'text-text-muted',
             )}
           >
-            {warmup ? 'W' : index}
+            {warmup ? 'W' : number}
           </Text>
         </View>
-      </View>
+      </Pressable>
       <View className="flex-1 flex-row items-center gap-1.5">
         <Text
           numberOfLines={1}
           className="font-body-medium text-[15px] leading-[20px] text-text-subtle tabular-nums"
+          accessibilityLabel={
+            previous ? `Last time ${previous.replace('×', 'times')}` : 'No previous'
+          }
         >
           {previous ?? '–'}
         </Text>
@@ -394,60 +451,57 @@ export function SetRow({
           </View>
         ) : null}
       </View>
-      {cur ? (
+      {done ? (
         <>
-          <TextInput
-            value={w}
-            onChangeText={setW}
-            keyboardType="decimal-pad"
-            accessibilityLabel={`Weight, ${unit}`}
-            className="h-10 w-[72px] rounded-sm border-2 border-lift-text bg-surface-card text-center font-body-semibold text-[17px] leading-[22px] text-text tabular-nums"
-          />
-          <TextInput
-            value={r}
-            onChangeText={setR}
-            keyboardType="number-pad"
-            accessibilityLabel="Reps"
-            className="h-10 w-[60px] rounded-sm border-[1.5px] border-border-control bg-surface-card text-center font-body-semibold text-[17px] leading-[22px] text-text tabular-nums"
-          />
+          <Text className="w-[72px] text-center font-body-semibold text-[17px] leading-[22px] text-text tabular-nums">
+            {weight || 'bw'}
+          </Text>
+          <Text className="w-[60px] text-center font-body-semibold text-[17px] leading-[22px] text-text tabular-nums">
+            {reps}
+            {rpe ? (
+              <Text className="text-[13px] leading-[18px] text-text-muted"> @{rpe}</Text>
+            ) : null}
+          </Text>
         </>
       ) : (
         <>
-          <Text
-            className={cn(
-              'w-[72px] text-center font-body-semibold text-[17px] leading-[22px] tabular-nums',
-              s === 'upcoming' ? 'text-text-muted' : 'text-text',
-            )}
-          >
-            {w || '–'}
-          </Text>
-          <Text
-            className={cn(
-              'w-[60px] text-center font-body-semibold text-[17px] leading-[22px] tabular-nums',
-              s === 'upcoming' ? 'text-text-muted' : 'text-text',
-            )}
-          >
-            {r || '–'}
-          </Text>
+          <SetInput
+            value={weight}
+            onCommit={onWeight}
+            current={cur}
+            label={`${label} weight, ${unit}`}
+            decimal
+            width="w-[72px]"
+          />
+          <SetInput
+            value={reps}
+            onCommit={onReps}
+            current={false}
+            label={`${label} reps`}
+            width="w-[60px]"
+          />
         </>
       )}
       <Pressable
         accessibilityRole="checkbox"
         accessibilityState={{ checked: done }}
-        accessibilityLabel={done ? 'Set done' : 'Mark set done'}
-        onPress={() => {
-          setDone(!done);
-          onToggle?.(!done);
-        }}
+        accessibilityLabel={done ? `${label} done` : `Mark ${label.toLowerCase()} done`}
+        onPress={onToggle}
         className="h-11 w-11 items-center justify-center"
       >
         <View
           className={cn(
-            'h-8 w-8 items-center justify-center rounded-xs',
-            done ? 'bg-success-fill' : 'border-[1.5px] border-border-control bg-surface-control',
+            'h-9 w-9 items-center justify-center rounded-xs',
+            done
+              ? 'bg-lift-fill'
+              : cur
+                ? 'border-[1.5px] border-text-muted bg-surface-card'
+                : 'border-[1.5px] border-border-control bg-surface-control',
           )}
         >
-          {done ? <Icon name="check" size={20} color={c.onSuccess} /> : null}
+          {done || cur ? (
+            <Icon name="check" size={20} color={done ? c.onLift : c.textMuted} />
+          ) : null}
         </View>
       </Pressable>
     </View>
@@ -457,43 +511,38 @@ export function SetRow({
 /* ---------------- RestTimer ---------------- */
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.max(0, s % 60)).padStart(2, '0')}`;
 
-/** Frosted bar docked at the bottom with a giant countdown, −15 / +15 and Skip. */
+/**
+ * Frosted bar docked at the bottom with a giant countdown, −15 / +15 and Skip. Controlled: the
+ * countdown is `endsAt - now`, so it's right after the app was backgrounded or restarted.
+ */
 export function RestTimer({
-  seconds,
+  endsAt,
   total,
   next,
-  running = true,
-  onDone,
+  onAdjust,
+  onSkip,
 }: {
-  seconds: number;
+  /** ms since epoch */
+  endsAt: number;
   total: number;
   next?: string;
-  running?: boolean;
-  onDone?: () => void;
+  onAdjust?: (deltaS: number) => void;
+  onSkip?: () => void;
 }) {
   const { scheme } = useTheme();
-  const [t, setT] = useState(seconds);
-  // Restart the countdown when the parent passes a new duration (adjusting state during render, not in an effect).
-  const [prevSeconds, setPrevSeconds] = useState(seconds);
-  if (seconds !== prevSeconds) {
-    setPrevSeconds(seconds);
-    setT(seconds);
-  }
+  const [clock, setClock] = useState(() => Date.now());
   useEffect(() => {
-    if (!running || t <= 0) {
-      if (t <= 0) onDone?.();
-      return;
-    }
-    const id = setTimeout(() => setT((x) => x - 1), 1000);
-    return () => clearTimeout(id);
-  }, [running, t]);
+    const id = setInterval(() => setClock(Date.now()), 250);
+    return () => clearInterval(id);
+  }, []);
+  const t = Math.max(0, Math.ceil((endsAt - clock) / 1000));
   const done = t <= 0;
-  const pct = Math.max(0, Math.min(1, t / total));
+  const pct = Math.max(0, Math.min(1, t / Math.max(1, total)));
   return (
     <View
       className="overflow-hidden rounded-card shadow-float"
       accessibilityRole="timer"
-      accessibilityLabel={`Rest ${fmt(t)} remaining`}
+      accessibilityLabel={done ? 'Rest done' : `Rest ${fmt(t)} remaining`}
     >
       <BlurView
         intensity={blur.md * 2}
@@ -512,7 +561,7 @@ export function RestTimer({
           <MicroLabel>{done ? 'rest done' : 'rest'}</MicroLabel>
           {next ? (
             <Text numberOfLines={1} className="flex-1 type-caption text-text-muted">
-              next · {next}
+              {next}
             </Text>
           ) : null}
         </View>
@@ -521,26 +570,32 @@ export function RestTimer({
             {done ? 'go' : fmt(t)}
           </Text>
           <View className="flex-row gap-2">
+            {done ? null : (
+              <>
+                <Pressable
+                  onPress={() => onAdjust?.(-15)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Subtract 15 seconds"
+                  className="h-11 min-w-13 items-center justify-center rounded-pill bg-surface-control px-3 active:bg-surface-control-pressed"
+                >
+                  <Text className="type-label text-text">−15</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => onAdjust?.(15)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Add 15 seconds"
+                  className="h-11 min-w-13 items-center justify-center rounded-pill bg-surface-control px-3 active:bg-surface-control-pressed"
+                >
+                  <Text className="type-label text-text">+15</Text>
+                </Pressable>
+              </>
+            )}
             <Pressable
-              onPress={() => setT(Math.max(0, t - 15))}
-              accessibilityLabel="Subtract 15 seconds"
-              className="h-11 min-w-13 items-center justify-center rounded-pill bg-surface-control px-3 active:bg-surface-control-pressed"
-            >
-              <Text className="type-label text-text">−15</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setT(t + 15)}
-              accessibilityLabel="Add 15 seconds"
-              className="h-11 min-w-13 items-center justify-center rounded-pill bg-surface-control px-3 active:bg-surface-control-pressed"
-            >
-              <Text className="type-label text-text">+15</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setT(0)}
+              onPress={onSkip}
               accessibilityRole="button"
-              className="h-11 min-w-13 items-center justify-center rounded-pill bg-primary-fill px-3 active:bg-primary-pressed"
+              className="h-11 min-w-13 items-center justify-center rounded-pill bg-primary-fill px-4 active:bg-primary-pressed"
             >
-              <Text className="type-label text-on-primary">skip</Text>
+              <Text className="type-label text-on-primary">{done ? 'done' : 'skip'}</Text>
             </Pressable>
           </View>
         </View>

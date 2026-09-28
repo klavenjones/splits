@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
@@ -19,7 +20,8 @@ import {
 import { useSessions } from '@/db/queries/sessions';
 import { useTemplate } from '@/db/queries/templates';
 import { mondayOf, toLocalDate } from '@/engine/calendar';
-import { startSession } from '@/lib/nav';
+import { startRun } from '@/lib/nav';
+import { startPlannedSession } from '@/workout/start';
 import { averagePace, distanceNumber, liftCounts } from '@/plan/describe';
 import {
   addDays,
@@ -57,7 +59,9 @@ export default function TodayScreen() {
   const list = all.filter((s) => s.scheduled_date <= sunday);
   const onDay = (byDay(list).get(selected) ?? []).filter((s) => s.status !== 'skipped');
   const isToday = selected === today;
-  const next = isToday ? onDay.find((s) => s.status === 'planned') : undefined;
+  const next = isToday
+    ? (onDay.find((s) => s.status === 'in_progress') ?? onDay.find((s) => s.status === 'planned'))
+    : undefined;
   const rest = onDay.filter((s) => s !== next);
   const upcoming = all.find((s) => s.status === 'planned' && s.scheduled_date > selected);
 
@@ -142,12 +146,14 @@ export default function TodayScreen() {
 
 /** The "up next" anchor card: big estimated minutes, what it is, the first target, start. */
 function UpNext({ session: s, units }: { session: PlanSession; units: UnitSystem }) {
+  const qc = useQueryClient();
+  const resume = s.status === 'in_progress';
   const template = useTemplate(s.template_id ?? undefined);
   const t = s.template;
   const first = template.data?.exercises[0];
   return (
     <Pressable onPress={() => open(s)} accessibilityRole="button" className="active:opacity-95">
-      <AnchorCard title="up next" icon={s.kind}>
+      <AnchorCard title={resume ? 'in progress' : 'up next'} icon={s.kind}>
         <View className="mt-3 mb-5 gap-2">
           {t?.est_duration_s ? (
             <View className="flex-row items-baseline">
@@ -170,8 +176,19 @@ function UpNext({ session: s, units }: { session: PlanSession; units: UnitSystem
             ) : null}
           </View>
         </View>
-        <Button variant="inverse" icon="play" block onPress={() => startSession(s.name)}>
-          {s.kind === 'lift' ? 'start workout' : 'start run'}
+        <Button
+          variant="inverse"
+          icon="play"
+          block
+          onPress={() =>
+            resume
+              ? router.push({ pathname: '/workout/[id]', params: { id: s.id } })
+              : s.kind === 'lift'
+                ? void startPlannedSession(s, qc)
+                : startRun(s.name)
+          }
+        >
+          {resume ? 'resume workout' : s.kind === 'lift' ? 'start workout' : 'start run'}
         </Button>
       </AnchorCard>
     </Pressable>

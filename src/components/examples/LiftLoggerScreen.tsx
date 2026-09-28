@@ -14,6 +14,8 @@ import {
 import { useTheme } from '@/theme';
 
 /** The lift logger from the design system: set table, one current set, and the frosted rest timer. */
+const endsAt = Date.now() + 83_000; // a static preview
+
 export default function LiftLoggerScreen() {
   const { c } = useTheme();
   return (
@@ -55,17 +57,24 @@ export default function LiftLoggerScreen() {
               </Button>
             </View>
             <View className="px-2">
-              <SetRow warmup previous="95 × 10" weight="95" reps="10" state="completed" />
-              <SetRow index={1} previous="185 × 8" weight="185" reps="8" state="completed" />
-              <SetRow index={2} previous="180 × 8" weight="185" reps="8" state="completed" pr />
-              <SetRow index={3} previous="180 × 7" weight="185" state="current" />
-              <SetRow index={4} previous="180 × 6" />
+              <SetRow
+                number={1}
+                warmup
+                previous="95 × 10"
+                weight="95"
+                reps="10"
+                state="completed"
+              />
+              <SetRow number={2} previous="185 × 8" weight="185" reps="8" state="completed" />
+              <SetRow number={3} previous="180 × 8" weight="185" reps="8" state="completed" pr />
+              <SetRow number={4} previous="180 × 7" weight="185" reps="8" state="current" />
+              <SetRow number={5} previous="180 × 6" weight="185" reps="8" />
             </View>
           </Card>
         </ScrollView>
       </SafeAreaView>
       <SafeAreaView edges={['bottom']} className="absolute right-3 bottom-0 left-3">
-        <RestTimer seconds={83} total={120} next="bench set 4 · 185 × 8" running={false} />
+        <RestTimer endsAt={endsAt} total={120} next="next: bench · set 4 · 185 × 8" />
       </SafeAreaView>
     </View>
   );

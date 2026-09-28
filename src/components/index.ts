@@ -84,3 +84,12 @@ export {
   type BoardScroller,
 } from './week';
 export { TemplatePickRow } from './TemplatePickRow';
+export {
+  LoggerExerciseCard,
+  PRCard,
+  ResumeBar,
+  SummaryHero,
+  SyncBadge,
+  WorkoutStats,
+  type SyncStatus,
+} from './logger';

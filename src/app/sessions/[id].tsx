@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
 
@@ -17,7 +18,8 @@ import {
 import { useDeleteSession, useRestoreSession, useSession } from '@/db/queries/sessions';
 import { useTemplate, type TemplateDetail } from '@/db/queries/templates';
 import { showMenu } from '@/lib/menu';
-import { closeOr, startSession } from '@/lib/nav';
+import { closeOr, startRun } from '@/lib/nav';
+import { startPlannedSession } from '@/workout/start';
 import { averagePace, distanceNumber } from '@/plan/describe';
 import { longDay, type PlanSession } from '@/plan/week';
 import {
@@ -44,6 +46,7 @@ export default function SessionDetail() {
   const { c } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { userId, profile } = useAuth();
+  const qc = useQueryClient();
   const units = profile?.unit_system ?? 'imperial';
   const q = useSession(id);
   const s = q.data;
@@ -149,7 +152,13 @@ export default function SessionDetail() {
 
         {planned ? (
           <View className="gap-3">
-            <Button block icon="play" onPress={() => startSession(s.name)}>
+            <Button
+              block
+              icon="play"
+              onPress={() =>
+                s.kind === 'lift' ? void startPlannedSession(s, qc) : startRun(s.name)
+              }
+            >
               start
             </Button>
             <View className="flex-row gap-3">
@@ -171,6 +180,14 @@ export default function SessionDetail() {
               </Button>
             </View>
           </View>
+        ) : s.status === 'in_progress' ? (
+          <Button
+            block
+            icon="play"
+            onPress={() => router.push({ pathname: '/workout/[id]', params: { id: s.id } })}
+          >
+            resume workout
+          </Button>
         ) : s.status === 'skipped' ? (
           <Button
             block

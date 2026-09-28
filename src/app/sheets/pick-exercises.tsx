@@ -19,6 +19,8 @@ export default function PickExercisesSheet() {
       title={options.title}
       excludeIds={options.excludeIds}
       single={options.single}
+      suggested={options.suggested}
+      last={options.last}
       onCancel={() => router.back()}
       onConfirm={(ids) => {
         settlePick(ids);
