@@ -18,3 +18,9 @@ export function exitWorkout() {
   if (router.canDismiss()) router.dismissAll();
   router.navigate('/today');
 }
+
+/** Closes the food sheets (search, detail, quick add…) and shows the diary. */
+export function exitFood() {
+  if (router.canDismiss()) router.dismissAll();
+  router.navigate('/nutrition');
+}

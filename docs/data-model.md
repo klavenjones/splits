@@ -304,6 +304,13 @@ Import (step 6): runs are read from HealthKit on the phone (`src/health/`) and s
 | kcal / protein_g / fat_g / carbs_g | numeric | **snapshot at log time**, never recomputed |
 | source_saved_meal_id | uuid, nullable | |
 
+Food data (step 8): the `food` Edge Function searches USDA FoodData Central (`?q=`, Foundation, SR Legacy and Branded) and looks up barcodes on Open Food Facts (`?barcode=`, UPC-A and EAN-13 forms), normalized to one serving per food (`src/food/normalize.ts`). A search result is cached only when it's first logged: `POST {source, external_id, serving_grams}` re-fetches the food from its source and inserts a shared row (`owner_id` null) with the service role, so the app never writes shared foods. The first cached copy wins and is never updated, so earlier snapshots and saved meals keep their serving. Custom foods are ordinary rows with `owner_id` set.
+
+Logging RPCs (all security invoker):
+- `log_foods(p jsonb)` inserts a batch (`[{food_id, servings, log_date, meal}]`, or quick add with `food_id` null plus name and values). Snapshots are computed in SQL from `foods` × servings; numbers sent by the app are ignored for real foods.
+- `log_saved_meal(p_saved_meal_id, p_log_date, p_meal)` logs every item, setting `source_saved_meal_id`.
+- `daily_intake(p_from, p_to)` returns kcal and macros per logged day (the engine's calorie input).
+
 ## 5. Body and adaptive-target engine
 
 ### body_checkins
@@ -319,6 +326,8 @@ Import (step 6): runs are read from HealthKit on the phone (`src/health/`) and s
 | **unique** | | (user_id, checkin_date) |
 
 Apple Health weight (step 6): `import_body_mass(p jsonb)` upserts one row per day (`[{date, kg}]`, the day's earliest reading) with `source = apple_health`; it never overwrites a `manual` row.
+
+Weigh-in (step 8): `save_weigh_in(p jsonb)` upserts the day's row with `source = manual` (a manual weight replaces an Apple Health one); measurements and `body_fat_pct` (Navy formula, computed on the phone) update the same row, and fields left out keep their value.
 
 ### weekly_targets
 | Column | Type | Notes |
@@ -340,6 +349,12 @@ Apple Health weight (step 6): `import_body_mass(p jsonb)` upserts one row per da
 | **unique** | | (user_id, week_start) |
 
 The app always reads the latest row with status `accepted` or `kept` for the current targets. A `kept` row copies the previous targets but records the week's averages.
+
+Weekly check-in (step 8):
+- `propose_weekly_targets(p jsonb)` inserts `method = adaptive`, `status = proposed` with the week's averages; `on conflict (user_id, week_start) do nothing`, and it returns whether a row was inserted, so the scheduled function and the phone can both try.
+- `decide_weekly_targets(p_week_start, p_accept)`: accept sets `accepted`; keep copies the previous accepted or kept targets into the row and sets `kept`. Both set `decided_at`.
+- `update_nutrition_settings(p_profile, p_targets)` updates goal, phase, experience and the rate override; with targets ("recalculate now") it writes this week's row as `method = manual`, `accepted`.
+- Schedule: `pg_cron` job `weekly-checkin` calls the Edge Function every 15 minutes through `pg_net` (the URL and anon key come from Vault secrets `project_url` and `anon_key`). The function uses `users.timezone` (IANA) to find users whose local time is on or after the check-in weekday at 04:00 in a week that has no row, excluding the start week, and proposes with the same engine code as the phone. The phone runs the same check at launch and on foreground, and keeps `users.timezone` in step with the device.
 
 ## Relationships (summary)
 

@@ -1,4 +1,4 @@
-import { inToCm, lbToKg } from '../units';
+import { inToCm, kgToLb, lbToKg } from '../units';
 import {
   adaptiveMaintenance,
   computeTargets,
@@ -11,6 +11,7 @@ import {
   weeklyUpdate,
   type WeekLog,
 } from './nutrition';
+import { sheetModel } from './sheetModel';
 
 // Spreadsheet fixture (docs/product.md): 205 lb, 32% body fat, male, beginner, lose fat.
 const FIXTURE = {
@@ -201,21 +202,9 @@ describe('macroTargets', () => {
 });
 
 /*
- * Weekly adaptive update. Five synthetic weeks from the fixture's start (205 lb, 32%),
- * with missed weigh-ins (including a Monday) and missed food days (including week 1's Monday).
- * Expected values come from a separate transcription of the sheet's cells
- * (AP–AW fill and averages, AZ weekly change, BD/BE estimates, U history, Q23 maintenance):
- *
- * | week | avg lb (fill) | avg kcal | days | Δ lb    | estimate  | running (BD) |
- * |------|---------------|----------|------|---------|-----------|--------------|
- * | 1    | 203.6         | 2050.00  | 6    | -1.4    | 2866.667  | 2866.667     |
- * | 2    | 202.057143    | 2002.86  | 7    | -1.5429 | 2774.286  | 2774.286     |
- * | 3    | 200.685714    | 1987.14  | 7    | -1.3714 | 2672.857  | 2723.571     |
- * | 4    | 199.057143    | 1988.57  | 7    | -1.6286 | 2802.857  | 2750.000     |
- * | 5    | 197.685714    | 1994.29  | 7    | -1.3714 | 2680.000  | 2732.500     |
- *
- * Maintenance stays at the starting value until 4 weeks have weigh-ins, then uses the
- * previous week's running value: after week 4 → 2723.571, after week 5 → 2750.000.
+ * Weekly adaptive update. Five synthetic weeks from the fixture's start (205 lb, 32%), with
+ * missed weigh-ins (including week 3's Monday) and missed food days (including week 1's Monday).
+ * Days fill within a week only, from the week's first entry (AP–AV), as the sheet does.
  */
 const N = null;
 const LB: (number | null)[][] = [
@@ -232,98 +221,227 @@ const KCAL: (number | null)[][] = [
   [1900, 1870, 1910, 1860, 1880, 2200, 2300],
   [1890, N, 1880, 1900, 1870, 2250, 2280],
 ];
-const WEEKS: WeekLog[] = LB.map((week, w) =>
-  week.map((lb, d) => ({ weightKg: lb === null ? null : lbToKg(lb), kcal: KCAL[w][d] })),
-);
-const START = { startWeightKg: lbToKg(205), startingMaintenanceKcal: 2604.18 };
+const toWeeks = (lb: (number | null)[][], kcal: (number | null)[][], bf: (number | null)[] = []) =>
+  lb.map((week, w) =>
+    week.map((v, d) => ({
+      weightKg: v === null ? null : lbToKg(v),
+      kcal: kcal[w][d],
+      bodyFatPct: d === 6 ? (bf[w] ?? null) : null,
+    })),
+  );
+const WEEKS: WeekLog[] = toWeeks(LB, KCAL);
+const BASE = {
+  sex: 'male',
+  experience: 'beginner',
+  goal: 'lose_fat',
+  startWeightKg: lbToKg(205),
+  startBodyFatPct: 32,
+} as const;
+const sheetInputs = (
+  lb: (number | null)[][],
+  kcal: (number | null)[][],
+  bf: (number | null)[] = [],
+) =>
+  ({
+    sex: 'male',
+    experience: 'beginner',
+    goal: 'lose_fat',
+    startLb: 205,
+    startBf: 32,
+    weeks: lb.map((w, i) => ({ lb: w, kcal: kcal[i], bf: bf[i] ?? null })),
+  }) as const;
 
 describe('adaptiveMaintenance', () => {
-  const a = adaptiveMaintenance({ ...START, weeks: WEEKS });
+  const a = adaptiveMaintenance({ ...BASE, startingMaintenanceKcal: 2604.18, weeks: WEEKS });
 
-  it('summarizes each week like the sheet', () => {
-    const expected = [
-      { avgLb: 203.6, avgKcal: 2050, days: 6, est: 2866.666667, running: 2866.666667 },
-      { avgLb: 202.057143, avgKcal: 2002.857143, days: 7, est: 2774.285714, running: 2774.285714 },
-      { avgLb: 200.685714, avgKcal: 1987.142857, days: 7, est: 2672.857143, running: 2723.571429 },
-      { avgLb: 199.057143, avgKcal: 1988.571429, days: 7, est: 2802.857143, running: 2750.0 },
-      { avgLb: 197.685714, avgKcal: 1994.285714, days: 7, est: 2680.0, running: 2732.5 },
-    ];
-    expected.forEach((e, i) => {
-      const w = a.weeks[i];
-      expect(w.avgWeightKg).toBeCloseTo(lbToKg(e.avgLb), 5);
-      expect(w.avgKcal).toBeCloseTo(e.avgKcal, 5);
-      expect(w.daysLogged).toBe(e.days);
-      expect(w.estimateKcal).toBeCloseTo(e.est, 4);
-      expect(w.runningKcal).toBeCloseTo(e.running, 4);
-    });
+  it('fills days within a week only, from the first entry (AP–AV)', () => {
+    // Week 1: Monday calories are missing, so 6 intake days; weights fill Tue and Fri.
+    expect(a.weeks[0].daysLogged).toBe(6);
+    expect(a.weeks[0].avgKcal).toBeCloseTo((1900 + 1850 + 2000 + 1950 + 2200 + 2400) / 6, 6);
+    expect(kgToLb(a.weeks[0].avgWeightKg)).toBeCloseTo(
+      (204.2 + 204.2 + 203.8 + 203.6 + 203.6 + 203.0 + 202.8) / 7,
+      5,
+    );
+    // Week 3: Monday's weigh-in is missing and is NOT filled from week 2's Sunday.
+    expect(a.weeks[2].weightDays).toBe(6);
+    expect(kgToLb(a.weeks[2].avgWeightKg)).toBeCloseTo(
+      (201.0 + 200.8 + 200.8 + 200.2 + 200.4 + 199.8) / 6,
+      5,
+    );
+    // Week 2's Wednesday calories take Tuesday's value.
+    expect(a.weeks[1].avgKcal).toBeCloseTo((1880 + 1900 + 1900 + 1920 + 1870 + 2300 + 2250) / 7, 6);
   });
 
-  it('keeps the starting maintenance for the first three weeks', () => {
-    const three = adaptiveMaintenance({ ...START, weeks: WEEKS.slice(0, 3) });
+  it('estimates each week from intake and weight change, and averages from week 2 (BE, BD)', () => {
+    const w1 = a.weeks[0];
+    const d1 = kgToLb(w1.avgWeightKg) - 205;
+    expect(w1.estimateKcal).toBeCloseTo(w1.avgKcal! + (-d1 * 3500) / 6, 6);
+    expect(a.weeks[1].runningKcal).toBeCloseTo(a.weeks[1].estimateKcal, 6);
+    expect(a.weeks[2].runningKcal).toBeCloseTo(
+      (a.weeks[1].estimateKcal + a.weeks[2].estimateKcal) / 2,
+      6,
+    );
+    expect(a.weeks[4].runningKcal).toBeCloseTo(
+      (a.weeks[1].estimateKcal +
+        a.weeks[2].estimateKcal +
+        a.weeks[3].estimateKcal +
+        a.weeks[4].estimateKcal) /
+        4,
+      6,
+    );
+  });
+
+  it('keeps the starting maintenance until 4 weeks have weigh-ins, then uses the previous week', () => {
+    const three = adaptiveMaintenance({
+      ...BASE,
+      startingMaintenanceKcal: 2604.18,
+      weeks: WEEKS.slice(0, 3),
+    });
     expect(three.adaptive).toBe(false);
     expect(three.maintenanceKcal).toBeCloseTo(2604.18, 2);
-  });
-
-  it('switches to the previous week’s running value from week 4', () => {
-    const four = adaptiveMaintenance({ ...START, weeks: WEEKS.slice(0, 4) });
+    const four = adaptiveMaintenance({
+      ...BASE,
+      startingMaintenanceKcal: 2604.18,
+      weeks: WEEKS.slice(0, 4),
+    });
     expect(four.adaptive).toBe(true);
-    expect(four.maintenanceKcal).toBeCloseTo(2723.571429, 4);
-    expect(a.maintenanceKcal).toBeCloseTo(2750.0, 4);
+    expect(four.maintenanceKcal).toBeCloseTo(four.weeks[2].runningKcal, 6);
+    expect(a.maintenanceKcal).toBeCloseTo(a.weeks[3].runningKcal, 6);
   });
 
-  it('carries intake forward across weeks when a whole week has no food logs', () => {
+  it('repeats the previous estimate for a week without food logs, and fills nothing across weeks', () => {
     const noFood: WeekLog = Array.from({ length: 7 }, () => ({
       weightKg: lbToKg(200),
       kcal: null,
     }));
-    const b = adaptiveMaintenance({ ...START, weeks: [...WEEKS.slice(0, 2), noFood] });
-    // Week 2's Sunday (2,250) fills all 7 days: 2250 + 2.057143 lb × 3500 / 7.
-    expect(b.weeks[2].daysLogged).toBe(7);
-    expect(b.weeks[2].avgKcal).toBe(2250);
-    expect(b.weeks[2].estimateKcal).toBeCloseTo(3278.571429, 4);
+    const b = adaptiveMaintenance({
+      ...BASE,
+      startingMaintenanceKcal: 2604.18,
+      weeks: [...WEEKS.slice(0, 2), noFood],
+    });
+    expect(b.weeks[2].daysLogged).toBe(0);
+    expect(b.weeks[2].estimateKcal).toBeCloseTo(b.weeks[1].estimateKcal, 6);
+    expect(b.weeks[2].runningKcal).toBeCloseTo(b.weeks[1].runningKcal, 6);
   });
 
   it('keeps the starting maintenance when nothing has been logged yet', () => {
     const empty: WeekLog = Array.from({ length: 7 }, () => ({ weightKg: null, kcal: null }));
-    const b = adaptiveMaintenance({ ...START, weeks: [empty] });
+    const b = adaptiveMaintenance({ ...BASE, startingMaintenanceKcal: 2604.18, weeks: [empty] });
     expect(b.weeks[0].daysLogged).toBe(0);
     expect(b.weeks[0].avgKcal).toBeNull();
-    expect(b.weeks[0].estimateKcal).toBeCloseTo(2604.18, 2);
     expect(b.maintenanceKcal).toBeCloseTo(2604.18, 2);
   });
 });
 
 describe('weeklyUpdate', () => {
-  const base = { sex: 'male', experience: 'beginner', goal: 'lose_fat', bodyFatPct: 32 } as const;
-
-  it('recalculates all targets after week 4', () => {
-    const t = weeklyUpdate({ ...base, ...START, weeks: WEEKS.slice(0, 4) });
-    // Latest weight = week 4's average of actual weigh-ins (L column): 199.0 lb.
-    expect(t.adaptive).toBe(true);
-    expect(t.maintenanceKcal).toBe(2724);
-    expect(t.raw.kcalTarget).toBeCloseTo(2027.071429, 4);
-    expect(t.kcalTarget).toBe(2027);
-    expect([t.kcalLow, t.kcalHigh]).toEqual([1950, 2150]);
-    expect([t.proteinG, t.fatG, t.carbsG]).toEqual([145, 56, 235]);
-    expect(t.week.daysLogged).toBe(7);
-    expect(t.week.weightChangeKg).toBeCloseTo(lbToKg(-1.628571), 5);
+  it('uses start weight and body fat for protein in weeks 1–4, then the latest weigh-ins', () => {
+    const four = weeklyUpdate({ ...BASE, weeks: WEEKS.slice(0, 4) });
+    expect(four.raw.proteinG).toBeCloseTo(205 * 0.73, 6);
+    const five = weeklyUpdate({ ...BASE, weeks: WEEKS });
+    // Week 5's weigh-ins average 197.63 lb → 144.27 g: more than 5 g below 149.65, so it moves.
+    const wk5 = (198.2 + 198.0 + 197.6 + 197.4 + 197.6 + 197.0) / 6;
+    expect(five.raw.proteinG).toBeCloseTo(wk5 * 0.73, 6);
   });
 
-  it('recalculates all targets after week 5', () => {
-    const t = weeklyUpdate({ ...base, ...START, weeks: WEEKS });
-    expect(t.maintenanceKcal).toBe(2750);
-    expect(t.raw.kcalTarget).toBeCloseTo(2058.283333, 4);
-    expect([t.kcalLow, t.kcalHigh]).toEqual([1950, 2150]);
-    expect(t.raw.proteinG).toBeCloseTo(144.272333, 4);
-    expect(t.raw.fatG).toBeCloseTo(57.174537, 4);
-    expect(t.raw.carbsG).toBeCloseTo(241.655792, 4);
+  it('only moves protein by 5 g or more (BW)', () => {
+    const lb = [...LB, [196.8, N, N, N, N, N, N], [N, N, N, N, 196.0, N, N]];
+    const kcal = [...KCAL, [1900, N, N, N, N, N, N], [N, N, N, N, 1900, N, N]];
+    const t = weeklyUpdate({ ...BASE, weeks: toWeeks(lb, kcal) });
+    const wk5 = (198.2 + 198.0 + 197.6 + 197.4 + 197.6 + 197.0) / 6;
+    // 196.0 × 0.73 = 143.08 is within 5 g of week 5's 144.27, so protein stays.
+    expect(t.raw.proteinG).toBeCloseTo(wk5 * 0.73, 6);
   });
 
-  it('keeps starting maintenance but uses the latest weight before week 4', () => {
-    const t = weeklyUpdate({ ...base, ...START, weeks: WEEKS.slice(0, 3) });
+  it('ignores body-fat measurements in weeks 1–4 and uses them from week 5', () => {
+    const early = weeklyUpdate({ ...BASE, weeks: toWeeks(LB, KCAL, [N, 24]) });
+    expect(early.week.bodyFatPct).toBe(32);
+    const late = weeklyUpdate({ ...BASE, weeks: toWeeks(LB, KCAL, [N, N, N, N, 24]) });
+    expect(late.week.bodyFatPct).toBe(24);
+    expect(late.raw.fatG).toBeCloseTo((0.22 * late.raw.kcalTarget) / 9, 6);
+  });
+
+  it('keeps the starting maintenance at the start weight before week 4', () => {
+    const t = weeklyUpdate({ ...BASE, weeks: WEEKS.slice(0, 3) });
     expect(t.adaptive).toBe(false);
     expect(t.maintenanceKcal).toBe(2604);
-    expect(t.raw.kcalTarget).toBeCloseTo(1902.64, 2);
-    expect(t.raw.proteinG).toBeCloseTo(146.3212, 4);
+  });
+
+  it('bases a manual rate on the start weight (a fixed amount per week, P16)', () => {
+    const t = weeklyUpdate({ ...BASE, rateOverridePct: (-1.2 / 205) * 100, weeks: WEEKS });
+    expect(t.raw.kcalTarget).toBeCloseTo(t.raw.maintenanceKcal + (-1.2 * 3500) / 7, 6);
+  });
+});
+
+/* ---------------- Parity with the spreadsheet ---------------- */
+
+/** Deterministic PRNG so failures reproduce. */
+function rng(seed: number) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 2 ** 32;
+  };
+}
+
+describe('matches the spreadsheet (sheetModel)', () => {
+  const compare = (
+    lb: (number | null)[][],
+    kcal: (number | null)[][],
+    bf: (number | null)[],
+    manual?: number,
+  ) => {
+    const sheet = sheetModel({ ...sheetInputs(lb, kcal, bf), manualRateLbPerWeek: manual });
+    const app = weeklyUpdate({
+      ...BASE,
+      rateOverridePct: manual === undefined ? undefined : (manual / 205) * 100,
+      weeks: toWeeks(lb, kcal, bf),
+    });
+    expect(app.raw.maintenanceKcal).toBeCloseTo(sheet.maintenance, 6);
+    expect(app.raw.kcalTarget).toBeCloseTo(sheet.kcal, 6);
+    expect([app.kcalLow, app.kcalHigh]).toEqual([sheet.low, sheet.high]);
+    expect(app.raw.proteinG).toBeCloseTo(sheet.protein, 6);
+    expect(app.raw.fatG).toBeCloseTo(sheet.fat, 6);
+    expect(app.raw.carbsG).toBeCloseTo(sheet.carbs, 6);
+    app.weeks.forEach((w, k) => {
+      const s = sheet.weeks[k];
+      expect(kgToLb(w.avgWeightKg)).toBeCloseTo(s.AW, 6);
+      expect(w.daysLogged).toBe(s.ALc);
+      expect(w.estimateKcal).toBeCloseTo(s.BE, 6);
+      expect(w.runningKcal).toBeCloseTo(s.BD, 6);
+    });
+  };
+
+  it('for the five-week example, week by week', () => {
+    for (let n = 1; n <= 5; n++) compare(LB.slice(0, n), KCAL.slice(0, n), []);
+  });
+
+  it('for 500 random logs with gaps, empty weeks, measurements and manual rates', () => {
+    const r = rng(42);
+    for (let run = 0; run < 500; run++) {
+      const weeks = 1 + Math.floor(r() * 12);
+      let lb = 150 + r() * 120;
+      const LBs: (number | null)[][] = [];
+      const Ks: (number | null)[][] = [];
+      const BFs: (number | null)[] = [];
+      const gap = r() * 0.5;
+      for (let w = 0; w < weeks; w++) {
+        const emptyW = r() < 0.08;
+        const emptyK = r() < 0.08;
+        LBs.push(
+          Array.from({ length: 7 }, () => {
+            lb += (r() - 0.6) * 0.8;
+            return emptyW || r() < gap ? null : Math.round(lb * 10) / 10;
+          }),
+        );
+        Ks.push(
+          Array.from({ length: 7 }, () =>
+            emptyK || r() < gap ? null : Math.round(1400 + r() * 1800),
+          ),
+        );
+        BFs.push(r() < 0.15 ? Math.round(10 + r() * 25) : null);
+      }
+      const manual = r() < 0.2 ? -Math.round(r() * 20) / 10 : undefined;
+      compare(LBs, Ks, BFs, manual);
+    }
   });
 });
