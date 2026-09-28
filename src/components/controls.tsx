@@ -323,3 +323,65 @@ export function Toggle(p: SwitchProps) {
     />
   );
 }
+
+/* ---------------- Stepper ---------------- */
+
+/** − value + on a pill. Screen readers get an adjustable control. */
+export function Stepper({
+  value,
+  onChange,
+  min = 0,
+  max = 99,
+  step = 1,
+  format = String,
+  label,
+  compact,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  format?: (v: number) => string;
+  label: string;
+  compact?: boolean;
+}) {
+  const { c } = useTheme();
+  const set = (v: number) => onChange(Math.max(min, Math.min(max, v)));
+  const btn = compact ? size.touchMin - 4 : size.touchMin;
+  const button = (dir: -1 | 1) => {
+    const disabled = dir < 0 ? value <= min : value >= max;
+    return (
+      <Pressable
+        onPress={() => set(value + dir * step)}
+        disabled={disabled}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+        className={cn(
+          'items-center justify-center rounded-pill bg-surface-card shadow-card active:bg-surface-control',
+          disabled && 'opacity-40',
+        )}
+        style={{ width: btn, height: btn }}
+      >
+        <Icon name={dir < 0 ? 'minus' : 'plus'} size={size.iconMd} color={c.text} />
+      </Pressable>
+    );
+  };
+  return (
+    <View
+      className="flex-row items-center gap-1 rounded-pill bg-surface-control p-1"
+      accessible
+      accessibilityRole="adjustable"
+      accessibilityLabel={label}
+      accessibilityValue={{ text: format(value) }}
+      accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+      onAccessibilityAction={(e) =>
+        set(value + (e.nativeEvent.actionName === 'increment' ? step : -step))
+      }
+    >
+      {button(-1)}
+      <Text className="min-w-10 text-center type-stat text-text">{format(value)}</Text>
+      {button(1)}
+    </View>
+  );
+}

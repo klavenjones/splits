@@ -301,7 +301,9 @@ export function Tag({
       <Text
         className={cn(
           'font-body-bold uppercase',
-          size === 'md' ? 'text-[13px] leading-4 tracking-[0.8px]' : 'text-micro tracking-[0.9px]',
+          size === 'md'
+            ? 'text-[13px] leading-4 tracking-[0.8px]'
+            : 'text-[11px] leading-[14px] tracking-[0.9px]',
           solid ? t.solidText : t.softText,
         )}
       >
