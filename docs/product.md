@@ -68,7 +68,8 @@ The MVP automates my Weight\_LOSS\_2024 spreadsheet: it sets starting calorie an
 | Protein | Grams per lb of bodyweight. Men: 1.0 under 20% body fat, 0.8 at 20–25%, 0.73 above 25%; women: 1.0 up to 25%, 0.8 above |
 | Fat | Men: 22% of calories under 25% body fat, 25% at or above; women: 30%; ÷ 9 |
 | Carbs | Remaining calories ÷ 4 |
-| Weekly update (from week 4) | Missed days carry forward the previous value. Each week's estimate = average daily calories + (−change in weekly average weight × 3,500 ÷ days logged). Maintenance is the running mean of the weekly estimates from week 2 on; once 4 weeks have weigh-ins it uses the previous week's running mean. Then all targets recalculate from the latest weight and body fat |
+| Weekly update (from week 4) | Missed days carry forward the previous value within the week, starting from the week's first entry; a missed Monday stays empty (week 1's weight takes the start weight), and a week with no entries repeats the previous week's estimate. Each week's estimate = average daily calories + (−change in weekly average weight × 3,500 ÷ days logged). Maintenance is the running mean of the weekly estimates from week 2 on; once 4 weeks have weigh-ins it uses the previous week's running mean. Before that, maintenance uses the start weight with the latest body fat. The weekly rate uses the latest average weight; a manual rate is a fixed amount per week |
+| Protein over time | The start weight and start body fat for weeks 1–4; after that the latest week with weigh-ins and the latest measured body fat, changing only when the new value differs by 5 g or more |
 | Body-fat re-check | Optional weekly waist and neck entries re-estimate body fat and flag when the recommended phase changes |
 
 Example from the sheet: 205 lb, 32% body fat, male beginner cutting → 2,604 maintenance, 1,887 calories (1,800–2,000), 150 g protein, 52 g fat, 204 g carbs.
@@ -88,7 +89,7 @@ Example from the sheet: 205 lb, 32% body fat, male beginner cutting → 2,604 ma
 - As a user, my targets update each week from my actual results, starting in week 4.
 - As a user, I can optionally log waist, neck, and hip to re-estimate my body fat.
 
-**Acceptance test:** for the same inputs and logs, the app's targets match the spreadsheet's output.
+**Acceptance test:** for the same inputs and logs, the app's targets match the spreadsheet's output. The app follows the sheet's formulas with one deliberate difference: from week 4 on, the sheet's Monday cell reads a cell three weeks back when Monday is missed; the app leaves it empty, as the sheet does in weeks 1–3. Parity is checked in Jest against a cell-by-cell model of the sheet (`src/engine/sheetModel.ts`), and the check-in screen's details table shows the sheet's columns (L, AW, AL, BE, BD) for comparing by hand.
 
 **Open question:** keep the fixed 3-week wait before adjusting, or start adjusting once 14 days of data exist?
 

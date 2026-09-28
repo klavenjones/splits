@@ -145,7 +145,7 @@ Use with `Easing.bezier(...)` from Reanimated. Respect iOS Reduce Motion: disabl
 Stroke icons on a 24pt grid, 2pt round strokes (`src/components/Icon.tsx`). Sizes: `iconLg` 24 in the tab bar, `iconMd` 20 inline, `iconSm` 16 in chips.
 
 ## Component index (names used in prompts and code)
-Button (primary, secondary, icon, destructive, floating), Tag (Run, Lift, Fuel, Body, PR, New), HeroStatCard, SessionCard, DarkAnchorCard, TipCard, PlateRackWeekStrip, SetRow, RestTimerBar, TextField, NumericField, Stepper, SegmentedControl, Chip, Toggle, Checkbox, RadioOptionCard, SearchField, NumberPad, CalorieBar, MacroBars, CircularProgress, StepProgressBar, BarChart, LineChart, SplitTable, TabBar, TopNav, BottomSheet, Dialog, Toast, ExerciseRow, FoodRow, SettingsRow, ExerciseThumbnail, DemoPlayer, MuscleMap, NumberedCueList, MediaUploadField, AlphabetScrubber, EmptyState, ExercisePicker, ActionRow, ChipGroup, SortableList (with DragHandle), TemplateCard, LiftExerciseCard, SupersetBlock, SegmentRow, RepeatBlock, WorkoutShape, WeekSwitcher, SummaryTile, DayRow, RestDay, PlannedSessionCard, DashedBar, WeekBoard, TemplatePickRow, WorkoutStats, SyncBadge, LoggerExerciseCard, ResumeBar, SummaryHero, PRCard, RunResultCard, MatchCard, OnTargetBadge, PaceHero, RangeChips, DeltaPill. Button also has a `run` variant (steel blue with navy text) for run actions.
+Button (primary, secondary, icon, destructive, floating), Tag (Run, Lift, Fuel, Body, PR, New), HeroStatCard, SessionCard, DarkAnchorCard, TipCard, PlateRackWeekStrip, SetRow, RestTimerBar, TextField, NumericField, Stepper, SegmentedControl, Chip, Toggle, Checkbox, RadioOptionCard, SearchField, NumberPad, CalorieBar, MacroBars, CircularProgress, StepProgressBar, BarChart, LineChart, SplitTable, TabBar, TopNav, BottomSheet, Dialog, Toast, ExerciseRow, FoodRow, SettingsRow, ExerciseThumbnail, DemoPlayer, MuscleMap, NumberedCueList, MediaUploadField, AlphabetScrubber, EmptyState, ExercisePicker, ActionRow, ChipGroup, SortableList (with DragHandle), TemplateCard, LiftExerciseCard, SupersetBlock, SegmentRow, RepeatBlock, WorkoutShape, WeekSwitcher, SummaryTile, DayRow, RestDay, PlannedSessionCard, DashedBar, WeekBoard, TemplatePickRow, WorkoutStats, SyncBadge, LoggerExerciseCard, ResumeBar, SummaryHero, PRCard, RunResultCard, MatchCard, OnTargetBadge, PaceHero, RangeChips, DeltaPill, MealCard, ImpactFooter. Button also has a `run` variant (steel blue with navy text) for run actions.
 
 ## Charts (step 7)
 Victory Native on Skia; labels use the Archivo files. Charts draw once, with no enter animation.
@@ -154,3 +154,13 @@ Victory Native on Skia; labels use the Archivo files. Charts draw once, with no 
 - **DeltaPill**: a change in words with an arrow (↗ ↘ —), never color alone; the kind's soft color (solid for the headline change). Body changes use body colors only: weight is neutral.
 - **RangeChips**: 1M · 3M · 6M · all; the selected chip is `text` on `bg`.
 
+
+## Fuel (step 8)
+Components in `src/components/fuel.tsx`.
+- **CalorieBar**: eaten vs target on a `track` with a `fuelFill` fill, eaten and target labelled below; over target the fill stays full (never red).
+- **MacroBars**: protein, fat and carbs, eaten / target g. `tone="fuel"` in the diary; `tone="macro"` uses the macro colors on Today.
+- **FoodRow**: name, serving text, kcal; in search it's selectable (`fuelSoft` when added).
+- **MealCard**: meal name, total kcal, food rows, and + (an empty meal shows "add food").
+- **NumberPad**: a 3×4 pad for weights and calories (decimal key, backspace), tabular numerals.
+- **ImpactFooter**: the sticky footer on food search and detail: items, kcal and protein added, then "after this" (kcal left, protein to go) and the log button.
+- Weigh-ins use body colors, and changes in weight stay neutral (no red or green).

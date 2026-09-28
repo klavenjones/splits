@@ -14,7 +14,7 @@ Decided Sep 2026. iPhone first (Android later), solo developer, TypeScript.
 | Server state | TanStack Query | caching, retries, background refetch |
 | App state | Zustand | live workout, timers, UI state |
 | Health data | HealthKit via `@kingstinct/react-native-healthkit`, pinned to 15.1.0 (16.0.0 doesn't build on Expo 57 / RN 0.86, issue #391; move up once fixed). Needs the Expo dev build (`expo-dev-client`), not Expo Go | Apple Watch runs and smart-scale weight |
-| Food data | USDA FoodData Central + Open Food Facts (barcode); cached into `foods` on first log | Free; accurate whole foods; barcode coverage |
+| Food data | USDA FoodData Central + Open Food Facts (barcode) behind the `food` Edge Function; cached into `foods` on first log. Barcodes are scanned with `expo-camera` | Free; accurate whole foods; barcode coverage |
 | Charts | Victory Native 42 on `@shopify/react-native-skia` 2.6.2 (the Expo SDK 57 pin; newer Skia needs newer worklets) | smooth, themeable |
 | Media | Supabase Storage for custom-exercise photos/videos; `expo-av`/`expo-video` for silent loops | |
 | Notifications | `expo-notifications` local only (rest timer end, morning weigh-in) | no push server needed |
@@ -42,7 +42,8 @@ src/
   local/                  # expo-sqlite schema, workout repo, sync + sync service
   workout/                # pure workout model, suggestions, template update, start/resume
   health/                 # HealthKit import + matching
-  food/                   # USDA + OFF clients, normalizer
+  food/                   # USDA + OFF normalizer (shared with Edge Functions)
+  nutrition/              # check-in fallback provider, Today fuel/body cards, formatting
   store/                  # zustand stores (live workout)
   theme/                  # tokens (export from Claude Design; see docs/design-tokens.md)
   components/             # design-system components
@@ -58,6 +59,13 @@ docs/                     # this folder
 - `plugins/withoutPushEntitlement.js` removes the push entitlement that `expo-notifications` adds, since a free team can't sign it (only local notifications are used). Remove it with the paid account.
 - HealthKit background delivery: `configureBackgroundTypes` saves the types; at every launch the library registers observer queries (as Apple requires), so HealthKit can relaunch the app in the background when a workout or weight is saved. `HealthProvider` subscribes first and imports within the ~25 s the library keeps the app awake. It isn't available in the simulator; whether a free team is granted it shows under Settings → Apple Health ("while Splits is closed"). The app also imports on launch, foreground, reconnect and pull to refresh.
 
+## Edge Functions
+
+- `supabase/functions/food` (JWT required): USDA search, Open Food Facts barcode lookup and the shared food cache. `USDA_API_KEY` is a function secret only, never in the app. Open Food Facts needs no key, only the `User-Agent: Splits/1.0 (github.com/klavenjones/splits)` header.
+- `supabase/functions/weekly-checkin`: called by `pg_cron` every 15 minutes (so :30 and :45 time zones are covered); proposes each due user's weekly targets. Idempotent.
+- Shared engine code: `npm run functions:sync` copies `src/engine` and `src/food/normalize.ts` into `supabase/functions/_shared` with the `.ts` import suffixes Deno needs. Don't edit the copies; a Jest test fails when they're stale. `npm run typecheck` also type-checks the functions.
+- Deploy: `npx supabase functions deploy <name> --project-ref <ref> --use-api` (no Docker). Secrets: `npx supabase secrets set --project-ref <ref> --env-file <file>`, piped so values are never printed. The service role key is injected by Supabase and never handled.
+
 ## Conventions
 
 - **Units:** store metric (kg, m, cm, s, s/km). Convert in `src/units.ts` for display only.
@@ -68,7 +76,8 @@ docs/                     # this folder
 - **RLS everywhere:** every table with `user_id` has policies; built-in `exercises`/`foods` (owner null) are read-only to users.
 - **Dependencies:** ask before adding one; prefer Expo SDK modules.
 - **Testing:** Jest (`jest-expo`), `npm test`; unit tests for engine and metrics; a small integration test for offline sync; manual device test for HealthKit.
-- **Secrets:** `.env` only (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `USDA_API_KEY`, `SENTRY_DSN`); never in prompts or commits.
+- **Secrets:** `.env` only (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `USDA_API_KEY`, `SENTRY_DSN`); never in prompts or commits. `USDA_API_KEY` is set as an Edge Function secret, not bundled into the app.
+- **Time zones:** the weekly check-in runs in the user's local time from `users.timezone` (IANA); the app updates it when the phone's zone changes.
 
 ## Build order
 

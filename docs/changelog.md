@@ -84,3 +84,14 @@ One entry per build step.
 - Speed: one query per view, cached on the phone (persisted), charts draw once. First chart in the simulator dev build: strength 436 ms (346 ms cached), running 685 ms, body 215 ms.
 - New dependencies: `victory-native` 42.0.1, `@shopify/react-native-skia` 2.6.2 (dev client rebuilt).
 
+
+## Step 8: food logging, weigh-ins and the weekly check-in (2026-10-06)
+- Nutrition tab (food diary): date switcher, calories left as the hero with `CalorieBar` and `MacroBars`, breakfast / lunch / dinner / snacks meal cards (tap a food to change servings or delete it), a check-in reminder and a link to nutrition settings.
+- Food search sheet: USDA search and your foods behind one field, all / my meals / my foods, recent (most logged first), multi-select with an "after this" footer, and one-tap batch logging. Food detail with a servings stepper, quick add (macros checked against calories), custom foods, saved meals (create, edit, log in one tap), and a barcode scanner (Open Food Facts, with a "create it" path when not found).
+- Weigh-in sheet: number pad, yesterday and the 7-day average, optional waist / neck / hip with a Navy body-fat estimate and a phase-change note. One `body_checkins` row per day; Apple Health weight fills it, and a manual weigh-in replaces it.
+- Weekly check-in: on the check-in day (from 04:00 local) the week's averages are computed and targets proposed; the screen shows the body card, the week, maintenance and why it moved, a details table in the sheet's columns, and keep / accept. Proposed by the `weekly-checkin` Edge Function (pg_cron every 15 minutes, user time zones) with an on-device fallback at launch and foreground.
+- Engine: the weekly update now matches `Weight_LOSS_2024.xlsx` (within-week carry-forward, empty weeks, the protein chain with its 5 g step, fixed weeks 1–4), minus the sheet's week-4+ Monday bug; checked by a 500-case property test against a cell-by-cell model of the sheet. Check-in timing in `src/engine/checkin.ts`.
+- Today: fuel card (kcal left, macro bars), morning weigh-in card, and a "check-in ready" prompt. + sheet: log food, log weight and quick add now work. Settings → goal and targets: goal, phase, experience, a manual weekly rate, target history and "recalculate targets now".
+- Edge Functions `food` and `weekly-checkin`, sharing the engine through `npm run functions:sync`. Secrets: `USDA_API_KEY` (function secret); Vault `project_url` and `anon_key` for the cron call.
+- Migrations `20261006120000_nutrition_logging.sql` (`log_foods`, `log_saved_meal`, `save_weigh_in`, `propose_weekly_targets`, `decide_weekly_targets`, `update_nutrition_settings`, `daily_intake`; no new tables or columns), `…120100_checkin_schedule.sql`, `…120200_pg_net_schema.sql`. `supabase/tests/nutrition_smoke.sql`.
+- New dependency: `expo-camera` (dev client rebuilt; reinstall on the phone with `npx expo run:ios --device`).
