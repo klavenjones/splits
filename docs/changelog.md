@@ -45,3 +45,12 @@ One entry per build step.
 - Migration `20261001120000_template_rpcs.sql`: `save_template` (atomic, validates groups and targets) and `duplicate_template`; no new tables or columns. `supabase/tests/templates_smoke.sql`.
 - Pure, tested: `src/templates/runSegments.ts` (rows ↔ blocks, expansion that skips the last round's trailing recovery, totals, shape), `liftTemplate.ts`, `validate.ts`; pace, duration and distance formatting in `src/units.ts`.
 - Small fixes: the small `Tag` size rendered no text on native (`text-micro` isn't a font size there).
+
+## Step 4: week planner, planned sessions and Today v1 (2026-10-02)
+- Plan → week: week switcher, RUN / LIFT / FOCUS tiles, day rows with session cards, "add a session" on empty days (and + on busy ones), press-and-hold to drag a session to another day (in-house `WeekBoard`, auto-scrolls near the edges; past days refuse the drop). The Plan tab now opens on the week.
+- Fill week from focus: a preview of the focus split (Balanced = Mon/Wed/Fri lift, Tue/Thu/Sat run) pre-filled by rotating your templates; change any day, then add. Only empty days that haven't passed are filled.
+- Planned session detail (targets from the template, start placeholder until step 5, reschedule, skip, restore, remove), a reschedule sheet with coach notes (heavy legs before a hard or long run; two upper days in a row), and a skip dialog with "just skip" (optional reason) or "shift the week".
+- Today v1: Monday-first plate rack from real sessions (tap a day to see it), the "up next" card with the first exercise's target, other sessions as cards, "next up" on rest days, and weekly done / planned totals. The daily-targets card is off Today until step 8.
+- Migration `20261002120000_week_planner.sql`: `plan_sessions` and `shift_sessions`; no new tables or columns. `supabase/tests/sessions_smoke.sql`.
+- Pure, tested: `src/plan/week.ts`, `fill.ts`, `coach.ts`, `describe.ts`.
+- Fix: bare `text-label` / `text-micro` / `text-caption` classes gave huge line heights on native, stretching the plate rack and hiding the tab bar labels; they now use explicit sizes.

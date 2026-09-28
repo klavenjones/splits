@@ -22,7 +22,8 @@ export default function FocusSetting() {
       <Text className="text-center type-subhead text-text-muted">{splitSummary(focus)}</Text>
       <WeekPreview days={defaultSplit(focus)} />
       <Text className="type-caption text-text-muted">
-        Sets the default split for new weeks. Weeks you’ve already planned stay as they are.
+        Sets the split used by “fill week from focus” on the Plan tab. Weeks you’ve already planned
+        stay as they are.
       </Text>
       {update.error ? (
         <Text className="type-caption text-danger-text">{update.error.message}</Text>

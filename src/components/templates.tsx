@@ -163,7 +163,7 @@ const PILL: Record<SegmentType, string> = {
   recovery: 'border-2 border-run-fill bg-run-soft',
 };
 
-/** A run segment row: handle, color pill, name, summary, chevron. */
+/** A run segment row: handle, color pill, name, summary, chevron. Read-only without onPress. */
 export function SegmentRow({
   segment,
   units,
@@ -173,7 +173,7 @@ export function SegmentRow({
 }: {
   segment: Segment;
   units: UnitSystem;
-  onPress: () => void;
+  onPress?: () => void;
   nested?: boolean;
   invalid?: boolean;
 }) {
@@ -187,12 +187,13 @@ export function SegmentRow({
         invalid && 'border-2 border-danger-text',
       )}
     >
-      <DragHandle label={`Reorder ${segment.segment_type}`} />
+      {onPress ? <DragHandle label={`Reorder ${segment.segment_type}`} /> : null}
       <Pressable
         onPress={onPress}
-        accessibilityRole="button"
-        accessibilityLabel={`${segment.segment_type}, ${summary}. Edit`}
-        className="flex-1 flex-row items-center gap-3 active:opacity-70"
+        disabled={!onPress}
+        accessibilityRole={onPress ? 'button' : undefined}
+        accessibilityLabel={`${segment.segment_type}, ${summary}${onPress ? '. Edit' : ''}`}
+        className={cn('flex-1 flex-row items-center gap-3 active:opacity-70', !onPress && 'pl-2')}
       >
         <View className={cn('h-8 w-2 rounded-pill', PILL[segment.segment_type])} />
         <View className="flex-1">
@@ -204,7 +205,7 @@ export function SegmentRow({
             {invalid ? 'needs a measure or target' : summary}
           </Text>
         </View>
-        <Icon name="chevron-right" size={size.iconMd} color={c.textMuted} />
+        {onPress ? <Icon name="chevron-right" size={size.iconMd} color={c.textMuted} /> : null}
       </Pressable>
     </View>
   );
