@@ -4,6 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { useAuth } from '@/auth';
 import { Icon, MicroLabel, type IconName } from '@/components';
+import { MEAL_LABEL, mealForHour } from '@/db/queries/nutrition';
 import { useSessions } from '@/db/queries/sessions';
 import { toLocalDate } from '@/engine/calendar';
 import { showMenu } from '@/lib/menu';
@@ -11,13 +12,7 @@ import { useWorkout } from '@/store/workout';
 import { size, useTheme } from '@/theme';
 import { startEmptyWorkout, startPlannedSession } from '@/workout/start';
 
-const SOON: { icon: IconName; label: string }[] = [
-  { icon: 'fuel', label: 'log food' },
-  { icon: 'body', label: 'log weight' },
-  { icon: 'plus', label: 'quick add' },
-];
-
-/** The center + sheet. "start workout" works; the rest arrive with nutrition (step 8). */
+/** The center + sheet: start a workout, log food, log weight, quick add. */
 export default function AddSheet() {
   const { c } = useTheme();
   const { userId } = useAuth();
@@ -27,6 +22,12 @@ export default function AddSheet() {
     (s) => s.kind === 'lift' && s.status === 'planned',
   );
   const active = useWorkout((s) => s.active);
+
+  const meal = mealForHour(new Date().getHours());
+  const food = (pathname: '/sheets/food-search' | '/sheets/weigh-in' | '/food/quick-add') => {
+    router.back();
+    setTimeout(() => router.push({ pathname, params: { meal, date: today } }), 350);
+  };
 
   const start = () => {
     if (active) {
@@ -75,7 +76,9 @@ export default function AddSheet() {
         start,
         active ? active.name : planned.length ? `${planned.length} planned today` : undefined,
       )}
-      {SOON.map((a) => row(a.icon, a.label))}
+      {row('fuel', 'log food', () => food('/sheets/food-search'), MEAL_LABEL[meal])}
+      {row('body', 'log weight', () => food('/sheets/weigh-in'))}
+      {row('flame', 'quick add', () => food('/food/quick-add'), MEAL_LABEL[meal])}
     </View>
   );
 }

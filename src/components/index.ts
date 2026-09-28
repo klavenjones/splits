@@ -110,3 +110,12 @@ export {
   type BarDatum,
   type LinePoint,
 } from './charts';
+export {
+  CalorieBar,
+  FoodRow,
+  ImpactFooter,
+  MacroBars,
+  MealCard,
+  NumberPad,
+  type Macro,
+} from './fuel';

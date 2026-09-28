@@ -46,6 +46,14 @@
           "NSHealthUpdateUsageDescription": "Splits only writes sample runs in development builds.",
           "background": true
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Splits scans food barcodes.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
       ]
     ],
     "experiments": {

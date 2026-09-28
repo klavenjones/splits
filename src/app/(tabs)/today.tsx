@@ -41,6 +41,7 @@ import {
   usePromptDismissed,
 } from '@/health/connection';
 import { isAvailable as healthAvailable } from '@/health/healthkit';
+import { BodyCard, CheckinPrompt, FuelCard } from '@/nutrition/TodayCards';
 import {
   averagePace,
   clockTime,
@@ -143,6 +144,8 @@ export default function TodayScreen() {
             </Pressable>
           </View>
 
+          <CheckinPrompt userId={userId} />
+
           <PlateRack
             days={rackDays(monday, list)}
             today={todayIndex}
@@ -191,6 +194,13 @@ export default function TodayScreen() {
           {earlierUnmatched.map((s) => (
             <SessionTile key={s.id} session={s} units={units} />
           ))}
+
+          {isToday ? (
+            <>
+              <FuelCard userId={userId} today={today} />
+              <BodyCard userId={userId} today={today} units={units} />
+            </>
+          ) : null}
 
           <ConnectHealthCard userId={userId} />
 

@@ -18,6 +18,7 @@ export default function SettingsLayout() {
       <Stack.Screen name="focus" options={sheet} />
       <Stack.Screen name="credits" options={sheet} />
       <Stack.Screen name="health" />
+      <Stack.Screen name="nutrition" />
     </Stack>
   );
 }

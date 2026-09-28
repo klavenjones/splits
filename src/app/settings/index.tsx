@@ -62,6 +62,10 @@ export default function Settings() {
               onPress={() => router.push('/settings/focus')}
             />
             <SettingsRow
+              label="goal and targets"
+              onPress={() => router.push('/settings/nutrition')}
+            />
+            <SettingsRow
               label="units"
               value={profile ? UNITS_LABEL[profile.unit_system] : ''}
               onPress={() => router.push('/settings/units')}
