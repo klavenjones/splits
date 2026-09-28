@@ -188,6 +188,15 @@ export default function SessionDetail() {
           >
             resume workout
           </Button>
+        ) : s.kind === 'run' && s.run ? (
+          <Button
+            block
+            variant="run"
+            icon="chevron-right"
+            onPress={() => router.push({ pathname: '/runs/[id]', params: { id: s.id } })}
+          >
+            view run
+          </Button>
         ) : s.status === 'skipped' ? (
           <Button
             block

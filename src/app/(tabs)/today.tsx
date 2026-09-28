@@ -1,7 +1,15 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 
 import { useAuth } from '@/auth';
 import {
@@ -11,18 +19,38 @@ import {
   Card,
   displayNameOf,
   EmptyState,
+  MatchCard,
   MicroLabel,
   PlateRack,
+  RunResultCard,
   SafeAreaView,
   SessionCard,
   Tag,
 } from '@/components';
+import { useUnmatchedRuns } from '@/db/queries/runs';
 import { useSessions } from '@/db/queries/sessions';
 import { useTemplate } from '@/db/queries/templates';
 import { mondayOf, toLocalDate } from '@/engine/calendar';
 import { startRun } from '@/lib/nav';
 import { startPlannedSession } from '@/workout/start';
-import { averagePace, distanceNumber, liftCounts } from '@/plan/describe';
+import {
+  connectHealth,
+  dismissPrompt,
+  importNow,
+  useHealthConnected,
+  usePromptDismissed,
+} from '@/health/connection';
+import { isAvailable as healthAvailable } from '@/health/healthkit';
+import {
+  averagePace,
+  clockTime,
+  distanceNumber,
+  liftCounts,
+  MATCH_LABEL,
+  runState,
+  runStats,
+  runTitle,
+} from '@/plan/describe';
 import {
   addDays,
   byDay,
@@ -37,7 +65,12 @@ import { aboutMinutes, repsText } from '@/templates/liftTemplate';
 import { useTheme } from '@/theme';
 import { formatDistance, paceUnit, type UnitSystem } from '@/units';
 
-const open = (s: PlanSession) => router.push({ pathname: '/sessions/[id]', params: { id: s.id } });
+const open = (s: PlanSession) =>
+  s.kind === 'run' && s.run
+    ? router.push({ pathname: '/runs/[id]', params: { id: s.id } })
+    : router.push({ pathname: '/sessions/[id]', params: { id: s.id } });
+const openLink = (s: PlanSession) =>
+  router.push({ pathname: '/sheets/link-run', params: { id: s.id } });
 
 /** Today (v1): the week's plate rack, the day's sessions, and weekly totals. */
 export default function TodayScreen() {
@@ -64,11 +97,29 @@ export default function TodayScreen() {
     : undefined;
   const rest = onDay.filter((s) => s !== next);
   const upcoming = all.find((s) => s.status === 'planned' && s.scheduled_date > selected);
+  // Runs from the past week still waiting for a match (today's are in the day's list).
+  const unmatched = useUnmatchedRuns(userId, addDays(today, -6));
+  const earlierUnmatched = isToday
+    ? (unmatched.data ?? []).filter((s) => s.scheduled_date !== today)
+    : [];
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = async () => {
+    setRefreshing(true);
+    try {
+      if (userId) await importNow(userId, units).catch(() => null);
+      await Promise.all([week.refetch(), unmatched.refetch()]);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   return (
     <View className="flex-1 bg-bg">
       <SafeAreaView edges={['top']} className="flex-1">
-        <ScrollView contentContainerClassName="gap-4 px-4 pb-32 pt-4">
+        <ScrollView
+          contentContainerClassName="gap-4 px-4 pb-32 pt-4"
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
+        >
           <View className="flex-row items-end justify-between px-1">
             <View>
               <MicroLabel>
@@ -137,6 +188,12 @@ export default function TodayScreen() {
             </>
           )}
 
+          {earlierUnmatched.map((s) => (
+            <SessionTile key={s.id} session={s} units={units} />
+          ))}
+
+          <ConnectHealthCard userId={userId} />
+
           {week.data ? <WeekTotalsCard sessions={list} units={units} /> : null}
         </ScrollView>
       </SafeAreaView>
@@ -196,6 +253,26 @@ function UpNext({ session: s, units }: { session: PlanSession; units: UnitSystem
 }
 
 function SessionTile({ session: s, units }: { session: PlanSession; units: UnitSystem }) {
+  if (s.kind === 'run' && s.run?.match === 'needs_match')
+    return (
+      <MatchCard
+        title={runTitle(s.run, units)}
+        source={`from Apple Health · ${longDay(s.scheduled_date)}`}
+        onLink={() => openLink(s)}
+        onPress={() => open(s)}
+      />
+    );
+  if (s.kind === 'run' && s.run)
+    return (
+      <RunResultCard
+        title={s.template_id ? s.name : runTitle(s.run, units)}
+        matchLabel={MATCH_LABEL[s.run.match]}
+        stats={runStats(s.run, units)}
+        source={`Imported from Apple Health · ${clockTime(s.run.started_at)}`}
+        state={runState(s)}
+        onPress={() => open(s)}
+      />
+    );
   const t = s.template;
   const minutes = t?.est_duration_s ? String(aboutMinutes(t.est_duration_s)) : '–';
   const status =
@@ -259,6 +336,48 @@ function WeekTotalsCard({ sessions, units }: { sessions: PlanSession[]; units: U
           </View>
         ))}
       </View>
+    </Card>
+  );
+}
+
+/** Once, until connected or dismissed: import runs from the watch. iPhone only. */
+function ConnectHealthCard({ userId }: { userId: string | undefined }) {
+  const connected = useHealthConnected(userId);
+  const dismissed = usePromptDismissed(userId);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  if (!userId || connected || dismissed || Platform.OS !== 'ios' || !healthAvailable()) return null;
+  const connect = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      await connectHealth(userId);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Card className="gap-3">
+      <View className="flex-row items-center justify-between">
+        <Tag kind="run" size="sm" />
+        <Text className="type-caption text-text-muted">Apple Health</Text>
+      </View>
+      <Text className="type-headline text-text">bring in your watch runs</Text>
+      <Text className="type-body text-text-muted">
+        Runs you record on your Apple Watch show up here with splits and match your plan. Your
+        weight comes in too.
+      </Text>
+      <View className="flex-row gap-3">
+        <Button variant="run" size="md" className="flex-1" loading={busy} onPress={connect}>
+          connect
+        </Button>
+        <Button variant="secondary" size="md" onPress={() => dismissPrompt(userId)}>
+          not now
+        </Button>
+      </View>
+      {error ? <Text className="type-caption text-danger-text">{error}</Text> : null}
     </Card>
   );
 }

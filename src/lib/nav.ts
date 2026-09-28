@@ -5,11 +5,11 @@ import { Alert } from 'react-native';
 export const closeOr = (fallback: Href) =>
   router.canGoBack() ? router.back() : router.replace(fallback);
 
-/** Runs are logged from your watch; importing them arrives in build step 6. */
+/** Runs are recorded on the watch and imported from Apple Health. */
 export function startRun(name: string) {
   Alert.alert(
     `start ${name}`,
-    'Run it with your watch. Importing runs arrives in the next build step.',
+    'Record it on your Apple Watch as an outdoor run. It shows up here when you open Splits.',
   );
 }
 

@@ -2,19 +2,25 @@ import { useMutation, useQuery, useQueryClient, type QueryKey } from '@tanstack/
 
 import { supabase } from '../client';
 
-import type { PlanSession, SkipReason } from '@/plan/week';
+import { runTarget } from '@/engine/runs';
+import type { PlanSession, RunSummary, SkipReason } from '@/plan/week';
 import { overlayLocal, shiftDates } from '@/plan/week';
 import { useWorkout } from '@/store/workout';
-import type { SegmentType, TargetType } from '@/templates/runSegments';
+import type { SegmentRow } from '@/templates/runSegments';
 
 const SELECT = `id, kind, name, scheduled_date, status, skip_reason, template_id,
   templates(id, name, kind, est_duration_s, est_distance_m,
     template_exercises(target_sets, exercises(primary_muscle)),
-    template_run_segments(segment_type, target_type, target_effort, target_hr_zone))`;
+    template_run_segments(position, repeat_group, repeats, segment_type, distance_m, duration_s,
+      target_type, target_pace_s_per_km, target_pace_tolerance_s, target_effort, target_hr_zone,
+      voice_cues)),
+  run_logs(started_at, distance_m, duration_s, avg_pace_s_per_km, avg_hr, match)`;
 
 export const sessionsRoot = (userId: string | undefined) => ['sessions', userId] as const;
 export const sessionsKey = (userId: string | undefined, from: string, to: string) =>
   [...sessionsRoot(userId), from, to] as const;
+export { SELECT as SESSION_SELECT };
+export type SessionRow = Row;
 export const sessionKey = (id: string | undefined) => ['session', id] as const;
 
 type Row = {
@@ -35,18 +41,16 @@ type Row = {
       target_sets: number;
       exercises: { primary_muscle: string | null } | null;
     }[];
-    template_run_segments: {
-      segment_type: SegmentType;
-      target_type: TargetType;
-      target_effort: string | null;
-      target_hr_zone: number | null;
-    }[];
+    template_run_segments: SegmentRow[];
   } | null;
+  run_logs: RunSummary | null;
 };
 
-function toSession({ templates: t, ...s }: Row): PlanSession {
+export function toSession({ templates: t, run_logs, ...s }: Row): PlanSession {
   return {
     ...s,
+    run: run_logs,
+    target: t?.kind === 'run' ? runTarget(t.template_run_segments, t.est_distance_m) : null,
     template: t
       ? {
           id: t.id,
@@ -58,7 +62,12 @@ function toSession({ templates: t, ...s }: Row): PlanSession {
             target_sets: e.target_sets,
             primary_muscle: e.exercises?.primary_muscle ?? null,
           })),
-          segments: t.template_run_segments,
+          segments: t.template_run_segments.map((g) => ({
+            segment_type: g.segment_type,
+            target_type: g.target_type,
+            target_effort: g.target_effort,
+            target_hr_zone: g.target_hr_zone,
+          })),
         }
       : null,
   };

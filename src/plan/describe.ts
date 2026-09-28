@@ -1,8 +1,22 @@
 /** Display text for planned sessions. Pure. */
+import { paceOf, targetState, type TargetState } from '@/engine/runs';
 import { aboutMinutes } from '@/templates/liftTemplate';
-import { formatDistance, formatPace, M_PER_MI, type UnitSystem } from '@/units';
+import {
+  formatDistance,
+  formatDuration,
+  formatPace,
+  M_PER_MI,
+  paceUnit,
+  type UnitSystem,
+} from '@/units';
 
-import { setCount, type PlanSession, type PlanTemplate } from './week';
+import {
+  setCount,
+  type PlanSession,
+  type PlanTemplate,
+  type RunMatch,
+  type RunSummary,
+} from './week';
 
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
@@ -58,4 +72,42 @@ export function averagePace(
 export function distanceNumber(m: number, units: UnitSystem): string {
   const v = units === 'imperial' ? m / M_PER_MI : m / 1000;
   return v.toFixed(1);
+}
+
+/* ---------------- imported runs ---------------- */
+
+/** "6:10 AM" in the phone's time zone. */
+export function clockTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+/** Distance, time and pace tiles for an imported run. */
+export function runStats(r: RunSummary, units: UnitSystem): { value: string; label: string }[] {
+  const pace = r.avg_pace_s_per_km ?? paceOf(r.distance_m, r.duration_s);
+  return [
+    { value: distanceNumber(r.distance_m, units), label: units === 'imperial' ? 'mi' : 'km' },
+    { value: formatDuration(r.duration_s), label: 'time' },
+    { value: pace ? formatPace(pace, units, false) : '–', label: `pace ${paceUnit(units)}` },
+  ];
+}
+
+/** "3.2 mi run at 5:45 PM". */
+export function runTitle(r: RunSummary, units: UnitSystem): string {
+  return `${formatDistance(r.distance_m, units)} run at ${clockTime(r.started_at)}`;
+}
+
+export const MATCH_LABEL: Record<RunMatch, string | null> = {
+  auto: 'matched automatically',
+  linked: 'linked to your plan',
+  extra: 'extra run',
+  needs_match: null,
+};
+
+/** Whether an imported run was on target (for the badge), from the session's derived target. */
+export function runState(s: Pick<PlanSession, 'run' | 'target'>): TargetState {
+  if (!s.run) return 'none';
+  return targetState(
+    s.run.avg_pace_s_per_km ?? paceOf(s.run.distance_m, s.run.duration_s),
+    s.target ?? null,
+  );
 }
