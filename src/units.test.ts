@@ -1,4 +1,7 @@
 import {
+  formatSet,
+  formatWeight,
+  parseWeight,
   formatDistance,
   formatDuration,
   formatPace,
@@ -93,5 +96,20 @@ describe('running formats', () => {
     expect(formatDistance(10018, 'imperial')).toBe('6.2 mi');
     expect(formatDistance(5000, 'metric')).toBe('5 km');
     expect(formatDistance(400, 'metric')).toBe('400 m');
+  });
+});
+
+describe('lifting weights', () => {
+  it('formats and parses in the user units, to the nearest 0.5', () => {
+    expect(formatWeight(lbToKg(185), 'imperial')).toBe('185');
+    expect(formatWeight(83.9, 'metric')).toBe('84');
+    expect(formatWeight(82.4, 'metric')).toBe('82.5');
+    expect(parseWeight('185', 'imperial')).toBeCloseTo(83.915, 3);
+    expect(parseWeight('82,5', 'metric')).toBe(82.5);
+    expect(parseWeight('', 'metric')).toBeNull();
+    expect(parseWeight('-5', 'metric')).toBeNull();
+    expect(formatSet(lbToKg(185), 8, 'imperial')).toBe('185 × 8');
+    expect(formatSet(null, 20, 'imperial')).toBe('bw × 20');
+    expect(formatSet(80, null, 'metric')).toBe('–');
   });
 });

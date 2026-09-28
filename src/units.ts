@@ -82,3 +82,26 @@ export function formatDistance(m: number, s: UnitSystem): string {
   if (m < (s === 'imperial' ? M_PER_MI - 1 : 1000)) return `${Math.round(m)} m`;
   return s === 'imperial' ? `${trim(mToMi(m), 1)} mi` : `${trim(m / 1000, 1)} km`;
 }
+
+/* ---------------- lifting weights ---------------- */
+
+/** Rounds to the nearest 0.5 of the display unit. */
+const half = (v: number) => Math.round(v * 2) / 2;
+
+/** kg → "185" or "82.5" in the user's units (no unit), rounded to 0.5. */
+export function formatWeight(kg: number, s: UnitSystem): string {
+  return String(half(toDisplayWeight(kg, s)));
+}
+
+/** "185" (lb or kg, the user's units) → kg; null when empty or not a number ≥ 0. */
+export function parseWeight(text: string, s: UnitSystem): number | null {
+  const v = Number(text.replace(',', '.').trim());
+  if (!text.trim() || !Number.isFinite(v) || v < 0) return null;
+  return fromDisplayWeight(half(v), s);
+}
+
+/** "185 × 8", "bw × 20" (no weight), or "–". */
+export function formatSet(kg: number | null, reps: number | null, s: UnitSystem): string {
+  if (reps == null) return '–';
+  return `${kg != null && kg > 0 ? formatWeight(kg, s) : 'bw'} × ${reps}`;
+}
