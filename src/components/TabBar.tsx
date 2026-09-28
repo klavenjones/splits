@@ -50,7 +50,7 @@ export function TabBar({
         </View>
         <Text
           className={cn(
-            'text-micro',
+            'text-[11px] leading-[14px] tracking-[0.9px]',
             on ? 'font-body-bold text-text' : 'font-body-semibold text-text-muted',
           )}
         >

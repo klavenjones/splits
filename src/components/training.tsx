@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { cn } from './cn';
 import { Icon } from './Icon';
+import { DashedBar } from './week';
 import { Card, MicroLabel, Tag, KIND_ICON, KIND_LABEL, type Kind } from './primitives';
 import { useTheme } from '../theme/useTheme';
 import { blur } from '../theme/tokens';
@@ -133,15 +134,16 @@ export function SessionCard({
       accessibilityRole={onPress ? 'button' : undefined}
     >
       <Card padding="pl-4 pr-5 pt-4 pb-5" className="flex-row gap-4">
-        <View
-          className={cn(
-            'w-2 self-stretch rounded-pill',
-            status === 'done' && KIND_FILL[kind],
-            (status === 'planned' || status === 'current') &&
-              cn('border-2 border-dashed', KIND_BORDER[kind]),
-            status === 'missed' && 'border-2 border-border-control bg-track',
-          )}
-        />
+        {status === 'planned' || status === 'current' ? (
+          <DashedBar className={KIND_FILL[kind]} />
+        ) : (
+          <View
+            className={cn(
+              'w-2 self-stretch rounded-pill',
+              status === 'done' ? KIND_FILL[kind] : 'border-2 border-border-control bg-track',
+            )}
+          />
+        )}
         <View className="flex-1 pt-1">
           <View className="flex-row items-center justify-between">
             <Tag kind={kind} size="sm" />
@@ -196,9 +198,9 @@ export function SessionCard({
 
 /* ---------------- PlateRack ---------------- */
 export type RackDay = { label: string; date?: number; sessions: { kind: Kind; done: boolean }[] };
-const LETTERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const LETTERS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-/** The week strip: each day stacks one small plate per session. Solid = done, dashed = planned, grey bar = rest. */
+/** The week strip, Monday first: each day stacks one small plate per session. Solid = done, dashed = planned, grey bar = rest. */
 export function PlateRack({
   days,
   today,
@@ -281,7 +283,7 @@ export function PlateRack({
               </View>
               <Text
                 className={cn(
-                  'text-label',
+                  'text-[15px] leading-[20px]',
                   i > today ? 'font-body-medium text-text-muted' : 'font-body-bold text-text',
                 )}
               >
@@ -291,7 +293,7 @@ export function PlateRack({
                 <View className={cn('rounded-pill px-1.5 py-0.5', isToday && 'bg-primary-fill')}>
                   <Text
                     className={cn(
-                      'font-body-bold text-micro tabular-nums',
+                      'font-body-bold text-[11px] leading-[14px] tracking-[0.9px] tabular-nums',
                       isToday ? 'text-on-primary' : 'text-text-muted',
                     )}
                   >
@@ -362,7 +364,7 @@ export function SetRow({
           <Text
             className={cn(
               'font-body-bold tabular-nums',
-              warmup ? 'text-caption' : 'text-label',
+              warmup ? 'text-[13px] leading-[18px]' : 'text-[15px] leading-[20px]',
               warmup
                 ? 'text-warning-text'
                 : s === 'completed'
@@ -379,7 +381,7 @@ export function SetRow({
       <View className="flex-1 flex-row items-center gap-1.5">
         <Text
           numberOfLines={1}
-          className="font-body-medium text-label text-text-subtle tabular-nums"
+          className="font-body-medium text-[15px] leading-[20px] text-text-subtle tabular-nums"
         >
           {previous ?? '–'}
         </Text>

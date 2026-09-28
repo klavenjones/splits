@@ -17,7 +17,6 @@ import {
 } from '@/components';
 
 const WEEK: RackDay[] = [
-  { label: 'Sunday', date: 20, sessions: [{ kind: 'run', done: true }] },
   {
     label: 'Monday',
     date: 21,
@@ -60,6 +59,7 @@ const WEEK: RackDay[] = [
       { kind: 'run', done: false },
     ],
   },
+  { label: 'Sunday', date: 27, sessions: [{ kind: 'run', done: false }] },
 ];
 
 /** The Today screen from the design system, built from the Splits components. */
@@ -78,7 +78,7 @@ export default function TodayScreen() {
             <IconButton icon="gear" label="Settings" />
           </View>
 
-          <PlateRack days={WEEK} today={4} streak={11} />
+          <PlateRack days={WEEK} today={3} streak={11} />
 
           <AnchorCard title="up next" icon="lift">
             <View className="mt-3 mb-5">
