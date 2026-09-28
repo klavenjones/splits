@@ -32,6 +32,9 @@ export function HealthProvider() {
             qc.invalidateQueries({ queryKey: ['session'] });
             qc.invalidateQueries({ queryKey: ['run'] });
           }
+          if (r.runs || r.removed || r.weights) {
+            qc.invalidateQueries({ queryKey: ['progress', userId] });
+          }
         })
         .catch(() => {
           // Offline or signed out: the next trigger tries again from the same anchor.

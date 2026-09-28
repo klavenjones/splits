@@ -75,3 +75,12 @@ One entry per build step.
 - Pure, tested: `src/health/splits.ts`, `src/health/importer.ts` (with a fake HealthKit), `src/engine/runs.ts`.
 - New dependencies: `@kingstinct/react-native-healthkit@15.1.0`, `react-native-nitro-modules`, `expo-dev-client`, plus CocoaPods on the Mac. The app now runs as a dev build (`npm run ios`) instead of Expo Go.
 
+## Step 7: Progress tab and exercise history (2026-10-05)
+- Progress → Strength: weekly volume for 8 weeks (bar chart, current week bold; leads with last week until this week has sets), change vs the first week, recent PRs, and est. 1RM for key lifts (the 3 most-logged weighted exercises in 12 weeks) with the 4-week change.
+- Progress → Running: this month, weekly average (8 full weeks), easy pace, weekly distance bars, easy-run pace trend (inverted: up is faster; planned easy runs only), recent runs opening run detail.
+- Progress → Body: 7-day average, change since the starting weight, body fat, weight chart with daily dots and the 7-day line (1M / 3M / 6M / all), measurements vs start.
+- Exercise detail: History (latest sessions with set chips, PR set with a trophy, warm-ups marked W; opens here when there's history) and Charts (current est. 1RM with best set and best volume, 12-week est. 1RM chart; reps for bodyweight exercises).
+- Migration `20261005120000_progress.sql`: `exercise_session_bests`, `exercise_history` (derived; about 10 ms on the hosted database). `supabase/tests/progress_smoke.sql`. Pure, tested: `src/engine/progress.ts`, `isEasyRun`.
+- Speed: one query per view, cached on the phone (persisted), charts draw once. First chart in the simulator dev build: strength 436 ms (346 ms cached), running 685 ms, body 215 ms.
+- New dependencies: `victory-native` 42.0.1, `@shopify/react-native-skia` 2.6.2 (dev client rebuilt).
+

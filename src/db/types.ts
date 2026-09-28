@@ -1031,6 +1031,31 @@ export type Database = {
           weight_kg: number
         }[]
       }
+      exercise_history: {
+        Args: { p_exercise_id: string; p_limit?: number }
+        Returns: {
+          performed_on: string
+          session_id: string
+          session_name: string
+          sets: Json
+        }[]
+      }
+      exercise_session_bests: {
+        Args: { p_exercise_id?: string; p_since: string }
+        Returns: {
+          best_e1rm_kg: number
+          best_reps: number
+          best_weight_kg: number
+          exercise_id: string
+          performed_on: string
+          prev_best_e1rm_kg: number
+          session_id: string
+          session_name: string
+          total_reps: number
+          volume_kg: number
+          working_sets: number
+        }[]
+      }
       import_body_mass: { Args: { p: Json }; Returns: number }
       import_run: { Args: { p: Json }; Returns: Json }
       link_run: { Args: { p_run: string; p_target: string }; Returns: string }

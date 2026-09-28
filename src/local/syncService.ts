@@ -130,6 +130,7 @@ async function run() {
     if (r.synced.length || r.removed.length) {
       queryClient?.invalidateQueries({ queryKey: sessionsRoot(userId) });
       queryClient?.invalidateQueries({ queryKey: ['session'] });
+      queryClient?.invalidateQueries({ queryKey: ['progress'] });
     }
     if (!r.failed.length) await refreshCaches().catch(() => undefined);
   } catch {

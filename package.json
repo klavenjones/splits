@@ -5,6 +5,7 @@
   "dependencies": {
     "@expo/ui": "~57.0.20",
     "@kingstinct/react-native-healthkit": "15.1.0",
+    "@shopify/react-native-skia": "2.6.2",
     "@supabase/supabase-js": "^2.117.2",
     "@tanstack/react-query": "^5.104.0",
     "expo": "~57.0.25",
@@ -42,6 +43,7 @@
     "react-native-svg": "15.15.4",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.10.1",
+    "victory-native": "42.0.1",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
