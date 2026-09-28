@@ -7,22 +7,29 @@ import {
   Icon,
   SettingsGroup,
   SettingsRow,
+  SyncBadge,
   TopNav,
 } from '@/components';
 
 import { signOut, useAuth } from '@/auth';
 import { useHealthConnected } from '@/health/connection';
+import { useImportStatus } from '@/health/importStatus';
+import { requestSync } from '@/local/syncService';
+import { syncSummary } from '@/local/syncSummary';
+import { useSyncOverview } from '@/workout/useSyncStatus';
 import { FOCUS_LABEL } from '@/engine/focus';
 import { size, useTheme } from '@/theme';
 
 const UNITS_LABEL = { imperial: 'lb, mi', metric: 'kg, km' } as const;
 
-/** Profile, training focus, units, log out. More rows arrive with later steps. */
+/** Profile, sync status, training focus, units, connected apps, about, log out. */
 export default function Settings() {
   const { c } = useTheme();
   const { session, profile } = useAuth();
   const name = displayNameOf(profile?.display_name, session?.user.email);
   const health = useHealthConnected(session?.user.id);
+  const importFailed = useImportStatus().failed;
+  const sync = syncSummary(useSyncOverview());
   const since = profile
     ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     : '';
@@ -55,6 +62,17 @@ export default function Settings() {
             <Icon name="chevron-right" size={size.iconMd} color={c.textMuted} />
           </Pressable>
 
+          {sync ? (
+            <SettingsGroup title="sync">
+              <SettingsRow
+                label={sync.label}
+                onPress={() => requestSync(0)}
+                right={<SyncBadge status={sync.status} detail={sync.detail} />}
+                last
+              />
+            </SettingsGroup>
+          ) : null}
+
           <SettingsGroup title="training">
             <SettingsRow
               label="training focus"
@@ -77,7 +95,7 @@ export default function Settings() {
             <SettingsGroup title="connected apps">
               <SettingsRow
                 label="Apple Health"
-                value={health ? 'connected' : 'off'}
+                value={!health ? 'off' : importFailed ? 'import failed' : 'connected'}
                 onPress={() => router.push('/settings/health')}
                 last
               />
@@ -85,7 +103,12 @@ export default function Settings() {
           ) : null}
 
           <SettingsGroup title="about">
-            <SettingsRow label="credits" onPress={() => router.push('/settings/credits')} last />
+            <SettingsRow label="credits" onPress={() => router.push('/settings/credits')} />
+            <SettingsRow
+              label="diagnostics"
+              onPress={() => router.push('/settings/diagnostics')}
+              last
+            />
           </SettingsGroup>
 
           <SettingsGroup title="account">

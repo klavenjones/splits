@@ -12,6 +12,8 @@ import { isOnline } from '@/db/persist';
 import { sessionsRoot } from '@/db/queries/sessions';
 import { fetchTemplate, saveTemplate, templateKey, templatesKey } from '@/db/queries/templates';
 import type { Json } from '@/db/types';
+import { errorCode, isOfflineError, reportOnce } from '@/lib/errors';
+import { report, setSpanAttributes, trace } from '@/lib/sentry';
 import { estimateDuration, toBlocks } from '@/templates/liftTemplate';
 import { updatedTemplateRows } from '@/workout/templateUpdate';
 
@@ -28,9 +30,15 @@ let timer: ReturnType<typeof setTimeout> | null = null;
 let running = false;
 let again = false;
 let failures = 0;
+/** The last failure's code, cleared by a clean pass (shown in Settings; no values). */
+let lastError: string | null = null;
+const reported = reportOnce();
 const listeners = new Set<Listener>();
 
-export const syncState = () => ({ online, running, failures });
+export const syncState = () => ({ online, running, failures, lastError });
+
+/** Workouts on this phone that haven't reached the server yet (reads SQLite). */
+export const pendingWorkouts = () => (userId ? loadPending(localDb(), userId).length : 0);
 export function onSyncChange(l: Listener) {
   listeners.add(l);
   return () => void listeners.delete(l);
@@ -125,16 +133,37 @@ async function run() {
   running = true;
   emit();
   try {
-    const r = await syncPending(localDb(), userId, api);
+    const uid = userId;
+    const r = await trace('sync.pass', { pending: pendingWorkouts() }, async () => {
+      const res = await syncPending(localDb(), uid, api);
+      setSpanAttributes({
+        synced: res.synced.length,
+        removed: res.removed.length,
+        failed: res.failed.length,
+      });
+      return res;
+    });
+    reported.clear('pass');
     failures = r.failed.length ? failures + 1 : 0;
+    for (const id of [...r.synced, ...r.removed]) reported.clear(id);
+    for (const f of r.failed) {
+      // Offline is expected and retried; anything else is reported once per workout and code.
+      if (isOfflineError(f.error)) continue;
+      if (reported.should(f.id, errorCode(f.error)))
+        report(f.error, 'sync', { name: 'sync', data: f.context }, { step: f.context.step });
+    }
+    const real = r.failed.find((f) => !isOfflineError(f.error));
+    lastError = real ? errorCode(real.error) : r.failed.length ? 'offline' : null;
     if (r.synced.length || r.removed.length) {
       queryClient?.invalidateQueries({ queryKey: sessionsRoot(userId) });
       queryClient?.invalidateQueries({ queryKey: ['session'] });
       queryClient?.invalidateQueries({ queryKey: ['progress'] });
     }
     if (!r.failed.length) await refreshCaches().catch(() => undefined);
-  } catch {
+  } catch (e) {
     failures += 1;
+    lastError = errorCode(e);
+    if (!isOfflineError(e) && reported.should('pass', errorCode(e))) report(e, 'sync');
   } finally {
     running = false;
     emit();

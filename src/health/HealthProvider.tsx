@@ -6,8 +6,9 @@ import { AppState, Platform } from 'react-native';
 import { useAuth } from '@/auth';
 import { sessionsRoot } from '@/db/queries/sessions';
 
-import { importNow, useHealthConnected } from './connection';
+import { useHealthConnected } from './connection';
 import { onHealthChanged } from './healthkit';
+import { runImport } from './runImport';
 
 /**
  * Signed in, native, connected: imports from Apple Health at launch (including a background
@@ -23,7 +24,7 @@ export function HealthProvider() {
   useEffect(() => {
     if (!userId || !connected || Platform.OS !== 'ios') return;
     const run = () =>
-      void importNow(userId, units)
+      void runImport(userId, units)
         .then((r) => {
           if (!r) return;
           qc.invalidateQueries({ queryKey: ['integration', userId] });
@@ -37,7 +38,8 @@ export function HealthProvider() {
           }
         })
         .catch(() => {
-          // Offline or signed out: the next trigger tries again from the same anchor.
+          // Reported and shown in Settings by runImport (not when offline); the next trigger
+          // tries again from the same anchor.
         });
     // Subscribe first, so an event queued by a background launch is delivered.
     const offHealth = onHealthChanged(run);

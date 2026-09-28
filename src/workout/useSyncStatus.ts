@@ -2,7 +2,8 @@ import { useSyncExternalStore } from 'react';
 
 import type { SyncStatus } from '@/components';
 import { localDb } from '@/local/db';
-import { onSyncChange, syncState } from '@/local/syncService';
+import { onSyncChange, pendingWorkouts, syncState } from '@/local/syncService';
+import type { SyncOverview } from '@/local/syncSummary';
 import { loadWorkout } from '@/local/workoutRepo';
 import { useWorkout } from '@/store/workout';
 
@@ -32,4 +33,10 @@ export function useSyncStatus(id: string | undefined): { status: SyncStatus; onl
   if (!w || (w.synced_rev >= w.rev && w.update_template !== 'pending'))
     return { status: 'synced', online };
   return { status: running ? 'saving' : 'local', online };
+}
+
+/** Everything unsent on this phone, for Settings and diagnostics. */
+export function useSyncOverview(): SyncOverview {
+  useSyncExternalStore(subscribe, () => version);
+  return { ...syncState(), pending: pendingWorkouts() };
 }

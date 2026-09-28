@@ -9,6 +9,7 @@ import { create } from 'zustand';
 import type { TemplateDetail } from '@/db/queries/templates';
 import { findPRs, volume, type Best, type PR } from '@/engine/metrics';
 import { cancelRestEnd, scheduleRestEnd } from '@/lib/restNotifications';
+import { trace } from '@/lib/sentry';
 import { localDb } from '@/local/db';
 import { requestSync } from '@/local/syncService';
 import {
@@ -183,9 +184,11 @@ export const useWorkout = create<State & Actions>()((set, get) => {
       const s = w?.exercises.find((e) => e.id === exId)?.sets.find((x) => x.id === setId);
       if (!w || !s) return;
       if (s.completed_at) return commit(M.uncompleteSet(w, exId, setId));
-      const r = M.completeSet(w, exId, setId, now());
-      if (r.workout === w) return;
-      commit(startRest(r.workout, r.rest));
+      // Traced: the SQLite write and store update behind the check must stay instant.
+      trace('logger.set', { set_number: s.set_number }, () => {
+        const r = M.completeSet(w, exId, setId, now());
+        if (r.workout !== w) commit(startRest(r.workout, r.rest));
+      });
     },
 
     addSet: (exId) => edit((w) => M.addSet(w, exId, randomUUID)),
