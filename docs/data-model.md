@@ -187,6 +187,10 @@ Saving goes through `save_template(...)`: one transaction that upserts the templ
 
 Lifecycle: `planned` → `in_progress` (Start) → `completed` (Finish) or `skipped`. Imported runs with no match create a session directly as `completed` with `template_id` null.
 
+Planning (step 4): a planned session is a `sessions` row with `status = planned`, a `scheduled_date` and a `template_id`; `name` and `kind` are copied from the template by `plan_sessions(items jsonb)` (one insert for `[{template_id, scheduled_date}]`, all or nothing). No `session_exercises` exist until Start, so a planned session reads its template live; a skipped session can go back to `planned`. Moving a session updates `scheduled_date` (planned only); "just skip" sets `skipped` and an optional `skip_reason`. `shift_sessions(id)` ("shift the week") moves that planned session and every planned session after it through that week's Sunday one day later, so Sunday spills into next Monday; other statuses stay put. Both functions run as the caller, so RLS applies.
+
+Coaching notes (`src/plan/coach.ts`, rule-based): a lift template is *heavy lower* when ≥ 50% of its target sets are on legs-group exercises and *upper* when ≥ 50% are chest, back, shoulders or arms; a run is *hard* with an interval segment, a hard effort or a zone 4–5 target, and *long* from 12 km or 75 minutes estimated. The reschedule sheet warns when heavy lower lands the day before a hard or long run (either way round) and on two upper-body days in a row. "Fill week from focus" lays `users.focus`'s split (Monday first) over the week and rotates through lift and run templates by name, filling only empty days that haven't passed.
+
 ### session_exercises
 | Column | Type | Notes |
 |---|---|---|
