@@ -193,3 +193,49 @@ export function shiftDates<T extends Pick<PlanSession, 'id' | 'scheduled_date' |
 /** Total target sets in a lift template. */
 export const setCount = (t: Pick<PlanTemplate, 'exercises'>) =>
   t.exercises.reduce((n, e) => n + e.target_sets, 0);
+
+/** A workout still on this phone (not yet synced, or in progress). */
+export type LocalSession = {
+  id: string;
+  name: string;
+  template_id: string | null;
+  origin: 'planned' | 'empty';
+  status: 'in_progress' | 'completed';
+  scheduled_date: string;
+  discarded: boolean;
+};
+
+/**
+ * The server's sessions with what's on this phone laid over them: a workout in progress or
+ * finished offline shows its local status; a discarded one is back to planned (or gone); an
+ * empty workout that hasn't synced yet is added. Only days in [from, to].
+ */
+export function overlayLocal(
+  server: readonly PlanSession[],
+  local: readonly LocalSession[],
+  from: string,
+  to: string,
+): PlanSession[] {
+  const byId = new Map(local.map((l) => [l.id, l]));
+  const out: PlanSession[] = [];
+  for (const s of server) {
+    const l = byId.get(s.id);
+    if (!l) out.push(s);
+    else if (!l.discarded) out.push({ ...s, status: l.status, skip_reason: null });
+    else if (l.origin === 'planned') out.push({ ...s, status: 'planned' });
+  }
+  const known = new Set(server.map((s) => s.id));
+  for (const l of local)
+    if (!known.has(l.id) && !l.discarded && l.scheduled_date >= from && l.scheduled_date <= to)
+      out.push({
+        id: l.id,
+        kind: 'lift',
+        name: l.name,
+        scheduled_date: l.scheduled_date,
+        status: l.status,
+        skip_reason: null,
+        template_id: l.template_id,
+        template: null,
+      });
+  return out;
+}

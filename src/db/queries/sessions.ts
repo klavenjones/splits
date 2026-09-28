@@ -3,7 +3,8 @@ import { useMutation, useQuery, useQueryClient, type QueryKey } from '@tanstack/
 import { supabase } from '../client';
 
 import type { PlanSession, SkipReason } from '@/plan/week';
-import { shiftDates } from '@/plan/week';
+import { overlayLocal, shiftDates } from '@/plan/week';
+import { useWorkout } from '@/store/workout';
 import type { SegmentType, TargetType } from '@/templates/runSegments';
 
 const SELECT = `id, kind, name, scheduled_date, status, skip_reason, template_id,
@@ -63,8 +64,17 @@ function toSession({ templates: t, ...s }: Row): PlanSession {
   };
 }
 
-/** Sessions scheduled from `from` through `to` (inclusive), with their template summaries. */
+/**
+ * Sessions scheduled from `from` through `to` (inclusive), with their template summaries, and
+ * with workouts still on this phone laid over them (in progress, or finished but not synced).
+ */
 export function useSessions(userId: string | undefined, from: string, to: string) {
+  const local = useWorkout((s) => s.local);
+  const q = useServerSessions(userId, from, to);
+  return { ...q, data: q.data ? overlayLocal(q.data, local, from, to) : q.data };
+}
+
+function useServerSessions(userId: string | undefined, from: string, to: string) {
   return useQuery({
     queryKey: sessionsKey(userId, from, to),
     enabled: !!userId,
@@ -82,6 +92,17 @@ export function useSessions(userId: string | undefined, from: string, to: string
 }
 
 export function useSession(id: string | undefined) {
+  const local = useWorkout((s) => s.local);
+  const q = useServerSession(id);
+  return {
+    ...q,
+    data: q.data
+      ? (overlayLocal([q.data], local, '0000-01-01', '9999-12-31')[0] ?? q.data)
+      : q.data,
+  };
+}
+
+function useServerSession(id: string | undefined) {
   return useQuery({
     queryKey: sessionKey(id),
     enabled: !!id,
