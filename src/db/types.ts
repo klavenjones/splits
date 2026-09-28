@@ -1006,6 +1006,7 @@ export type Database = {
     }
     Functions: {
       duplicate_template: { Args: { p_id: string }; Returns: string }
+      plan_sessions: { Args: { p_items: Json }; Returns: string[] }
       save_starting_targets: {
         Args: {
           p_carbs_g: number
@@ -1045,6 +1046,7 @@ export type Database = {
         }
         Returns: string
       }
+      shift_sessions: { Args: { p_session_id: string }; Returns: number }
     }
     Enums: {
       demo_type: "animation" | "video" | "none"
