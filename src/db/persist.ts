@@ -24,6 +24,7 @@ const KEEP = new Set([
   'sessions',
   'session',
   'targets',
+  'progress',
 ]);
 const MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
 

@@ -2,7 +2,7 @@
  * Week planner helpers. Pure: callers pass today's date in. Days are local `YYYY-MM-DD` strings;
  * weeks start on Monday.
  */
-import { fromLocalDate, mondayOf, toLocalDate } from '@/engine/calendar';
+import { addDays, fromLocalDate, mondayOf } from '@/engine/calendar';
 import type { RunTarget } from '@/engine/runs';
 import type { SegmentType, TargetType } from '@/templates/runSegments';
 
@@ -59,11 +59,7 @@ export const isUnplannedRun = (s: Pick<PlanSession, 'kind' | 'template_id' | 'ru
 export const SKIP_REASONS = ['tired', 'sore', 'busy', 'sick', 'injury'] as const;
 export type SkipReason = (typeof SKIP_REASONS)[number];
 
-export function addDays(day: string, n: number): string {
-  const d = fromLocalDate(day);
-  d.setDate(d.getDate() + n);
-  return toLocalDate(d);
-}
+export { addDays };
 
 /** The 7 days, Monday first. */
 export function weekDays(monday: string): string[] {

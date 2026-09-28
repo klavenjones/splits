@@ -93,6 +93,7 @@ export function useLinkRun(userId: string | undefined) {
       qc.invalidateQueries({ queryKey: sessionsRoot(userId) });
       qc.invalidateQueries({ queryKey: ['session'] });
       qc.invalidateQueries({ queryKey: ['run'] });
+      qc.invalidateQueries({ queryKey: ['progress', userId] });
     },
   });
 }

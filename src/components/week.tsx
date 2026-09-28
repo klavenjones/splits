@@ -52,11 +52,11 @@ export function SummaryTile({
   caption,
   onPress,
 }: {
-  kind: 'run' | 'lift' | 'plain';
+  kind: 'run' | 'lift' | 'body' | 'plain';
   label: string;
   value: string;
   unit?: string;
-  caption: string;
+  caption?: string;
   onPress?: () => void;
 }) {
   return (
@@ -64,19 +64,27 @@ export function SummaryTile({
       onPress={onPress}
       disabled={!onPress}
       accessibilityRole={onPress ? 'button' : undefined}
-      accessibilityLabel={`${label}: ${value}${unit ? ` ${unit}` : ''}, ${caption}`}
+      accessibilityLabel={`${label}: ${value}${unit ? ` ${unit}` : ''}${caption ? `, ${caption}` : ''}`}
       className={cn(
         'flex-1 gap-2 rounded-card px-3.5 py-4 active:opacity-80',
         kind === 'run'
           ? 'bg-run-soft'
           : kind === 'lift'
             ? 'bg-lift-soft'
-            : 'bg-surface-card shadow-card',
+            : kind === 'body'
+              ? 'bg-body-soft'
+              : 'bg-surface-card shadow-card',
       )}
     >
       <MicroLabel
         className={
-          kind === 'run' ? 'text-run-text' : kind === 'lift' ? 'text-lift-text' : undefined
+          kind === 'run'
+            ? 'text-run-text'
+            : kind === 'lift'
+              ? 'text-lift-text'
+              : kind === 'body'
+                ? 'text-body-text'
+                : undefined
         }
       >
         {label}
@@ -89,9 +97,11 @@ export function SummaryTile({
         {value}
         {unit ? <Text className="type-subhead text-text-muted"> {unit}</Text> : null}
       </Text>
-      <Text className="type-caption text-text-muted" numberOfLines={1} adjustsFontSizeToFit>
-        {caption}
-      </Text>
+      {caption ? (
+        <Text className="type-caption text-text-muted" numberOfLines={1} adjustsFontSizeToFit>
+          {caption}
+        </Text>
+      ) : null}
     </Pressable>
   );
 }

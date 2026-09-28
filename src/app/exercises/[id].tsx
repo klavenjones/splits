@@ -29,7 +29,9 @@ import {
   useExercise,
   type Exercise,
 } from '@/db/queries/exercises';
+import { useExerciseBests, useExerciseHistory } from '@/db/queries/progress';
 import { useSignedMediaUrl } from '@/db/storage/exerciseMedia';
+import { toLocalDate } from '@/engine/calendar';
 import {
   detailSubtitle,
   readCredit,
@@ -37,19 +39,24 @@ import {
   type MediaCredit,
 } from '@/exercises/describe';
 import { TRACKING_LABEL } from '@/exercises/vocab';
+import { ExerciseCharts, ExerciseHistory } from '@/progress/ExerciseProgress';
 import { useTheme } from '@/theme';
 
 type Tab = 'history' | 'charts' | 'how';
 
-/** Exercise detail (mockup 09/03). History and charts fill in once sets are logged (steps 5, 7). */
+/** Exercise detail (mockup 09/03): history, charts (est. 1RM over 12 weeks) and how to. */
 export default function ExerciseDetail() {
   const { c } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { userId } = useAuth();
+  const { userId, profile } = useAuth();
+  const units = profile?.unit_system ?? 'imperial';
   const q = useExercise(id);
   const archive = useArchiveExercise(userId);
-  // No sets exist yet, so open on how to. Once logging lands this becomes "history if any".
-  const [tab, setTab] = useState<Tab>('how');
+  const history = useExerciseHistory(userId, id);
+  const bests = useExerciseBests(userId, id);
+  // Opens on history when there is some, otherwise on how to.
+  const [chosen, setTab] = useState<Tab | null>(null);
+  const tab: Tab = chosen ?? (history.data?.length ? 'history' : 'how');
 
   const e = q.data;
   const mine = !!e && e.owner_id === userId;
@@ -120,16 +127,19 @@ export default function ExerciseDetail() {
             />
 
             {tab === 'history' ? (
-              <EmptyState
-                icon="plan"
-                title="no sets yet"
-                body={`Log ${e.name} in a workout and every session shows up here.`}
+              <ExerciseHistory
+                sessions={history.data}
+                bests={bests.data}
+                pending={history.isPending}
+                units={units}
+                name={e.name}
               />
             ) : tab === 'charts' ? (
-              <EmptyState
-                icon="progress"
-                title="no chart yet"
-                body="Your estimated 1RM, best set and best volume appear after your first session."
+              <ExerciseCharts
+                bests={bests.data}
+                pending={bests.isPending}
+                units={units}
+                today={toLocalDate(new Date())}
               />
             ) : (
               <HowTo exercise={e} />

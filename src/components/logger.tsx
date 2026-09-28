@@ -218,16 +218,19 @@ export function SummaryHero({
   );
 }
 
-/** A personal record: the new best set, what it beat, and the estimated 1RM. */
+/** A personal record: the new best set, what it beat (or when), and the estimated 1RM. */
 export function PRCard({
   name,
   best,
   was,
+  when,
   e1rm,
 }: {
   name: string;
   best: string;
-  was: string;
+  was?: string;
+  /** "today", "Mon"… shown instead of what it beat (Progress). */
+  when?: string;
   e1rm: string;
 }) {
   const { c } = useTheme();
@@ -240,7 +243,7 @@ export function PRCard({
             pr
           </Text>
         </View>
-        <Text className="type-caption text-text-muted">was {was}</Text>
+        <Text className="type-caption text-text-muted">{when ?? (was ? `was ${was}` : '')}</Text>
       </View>
       <Text className="type-headline text-text">{name}</Text>
       <View className="flex-row items-baseline justify-between">
