@@ -102,5 +102,5 @@ One entry per build step.
 - Sync failures are reported once per workout and error code, with replay context (session id, step, revisions, pending exercise and set counts); offline isn't reported. Settings shows "N workouts to sync" while anything is unsent.
 - Error boundaries with fallbacks: root, check-in screen, Settings → Apple Health, Today's plan / check-in / fuel / body cards. Failed Apple Health imports and check-in preparation are reported and shown with "try again".
 - Settings → diagnostics: version, environment, reporting status, sync status, test error, JavaScript and native test crashes.
-- EAS: `eas.json` (development, preview, production → TestFlight), remote build numbers, `usesNonExemptEncryption: false`; Metro uses `getSentryExpoConfig`; the Xcode build phase uploads source maps and dSYMs. Scripts `ios:release` and `build:ios`.
+- EAS: `eas.json` (development, preview, production → TestFlight), remote build numbers, `usesNonExemptEncryption: false`; Metro uses `getSentryExpoConfig`; the Xcode build phase uploads source maps and dSYMs for Release builds (Debug builds skip it). Scripts `ios:release` and `build:ios`.
 - New dependency: `@sentry/react-native` (dev client rebuilt).

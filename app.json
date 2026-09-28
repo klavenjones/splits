@@ -58,7 +58,8 @@
           "recordAudioAndroid": false
         }
       ],
-      "@sentry/react-native"
+      "@sentry/react-native",
+      "./plugins/withSentryDebugSkip"
     ],
     "experiments": {
       "typedRoutes": true,
