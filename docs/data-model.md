@@ -238,7 +238,9 @@ Logging (step 5): the active workout lives on the phone first (expo-sqlite, `src
 | max_hr | int, nullable | |
 | elevation_gain_m | int, nullable | |
 | route_polyline | text, nullable | |
+| match | text | `auto` (matched to a same-day planned run), `linked` (linked by hand), `needs_match` (unplanned, waiting on the user), `extra` (kept as an extra run: counts toward weekly distance, not the plan). Default `auto` |
 | **unique** | | (source, external_id) — prevents double import |
+| **check** | | `source = 'manual'` or `external_id` not null |
 
 ### run_splits
 | Column | Type | Notes |
@@ -250,6 +252,8 @@ Logging (step 5): the active workout lives on the phone first (expo-sqlite, `src
 | duration_s | int | |
 | avg_hr | int, nullable | |
 | **unique** | | (run_log_id, split_index) |
+
+Import (step 6): runs are read from HealthKit on the phone (`src/health/`) and sent one at a time with `import_run(p jsonb)`, which is idempotent on `(source, external_id)`. It matches a run to the planned run session on the same local date that has no run log yet (closest estimated distance wins): that session becomes `completed` with `match = auto`. With no match it creates a `completed` run session with `template_id` null and name `run`, `match = needs_match` when the run is from the last 7 days, otherwise `extra`. `link_run(run_session, target)` moves a run log (and its splits) onto a planned run (`linked`), or keeps it as an extra run when `target` is null; a planned session a run leaves goes back to `planned`. `remove_imported_run(external_id)` undoes an import when the workout is deleted from Apple Health. Splits are computed on the phone from the workout's distance samples in the user's unit at import time (the last split is the remainder); changing units later doesn't recompute them. Moving time excludes pauses. Target vs actual is derived from the matched session's template segments, not stored.
 
 ## 4. Nutrition
 
@@ -311,6 +315,8 @@ Logging (step 5): the active workout lives on the phone first (expo-sqlite, `src
 | body_fat_pct | numeric, nullable | Navy formula when measurements present |
 | source | text | `manual`, `apple_health` |
 | **unique** | | (user_id, checkin_date) |
+
+Apple Health weight (step 6): `import_body_mass(p jsonb)` upserts one row per day (`[{date, kg}]`, the day's earliest reading) with `source = apple_health`; it never overwrites a `manual` row.
 
 ### weekly_targets
 | Column | Type | Notes |
