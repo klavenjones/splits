@@ -269,7 +269,9 @@ describe('importRuns', () => {
     const b = importRuns(deps);
     const c = importRuns(deps);
     expect(a).toBe(b);
-    await Promise.all([a, b, c]);
+    const [r] = await Promise.all([a, b, c]);
     expect(calls).toHaveLength(2);
+    // The repeat pass finds nothing new; the caller still hears about the first pass's run.
+    expect(r.runs).toBe(1);
   });
 });

@@ -115,7 +115,10 @@ const STATUS_ORDER: Record<SessionStatus, number> = {
   skipped: 3,
 };
 
-/** Sessions grouped by day, in a stable order within the day (lifts before runs, then name). */
+/**
+ * Sessions grouped by day, in a stable order within the day (lifts before runs, planned runs
+ * before imported extras, then name).
+ */
 export function byDay(sessions: readonly PlanSession[]): Map<string, PlanSession[]> {
   const map = new Map<string, PlanSession[]>();
   for (const s of sessions) {
@@ -128,6 +131,7 @@ export function byDay(sessions: readonly PlanSession[]): Map<string, PlanSession
       (a, b) =>
         STATUS_ORDER[a.status] - STATUS_ORDER[b.status] ||
         a.kind.localeCompare(b.kind) ||
+        Number(isUnplannedRun(a)) - Number(isUnplannedRun(b)) ||
         a.name.localeCompare(b.name) ||
         a.id.localeCompare(b.id),
     );

@@ -180,7 +180,7 @@ let again = false;
 
 /**
  * One import at a time. A call during an import runs once more right after it (a new run may
- * have landed mid-import); callers get the result of the import that covers their call.
+ * have landed mid-import); callers get the totals of the import that covers their call.
  */
 export function importRuns<W extends HealthWorkout>(
   deps: Omit<Parameters<typeof importOnce<W>>[0], 'now'> & { now?: () => number },
@@ -191,12 +191,17 @@ export function importRuns<W extends HealthWorkout>(
   }
   const clock = deps.now ?? Date.now;
   const loop = async (): Promise<ImportResult> => {
-    let last: ImportResult;
+    // Totals across passes, so a caller sees the runs a repeat pass didn't find again.
+    const total: ImportResult = { runs: 0, removed: 0, weights: 0, skipped: 0 };
     do {
       again = false;
-      last = await importOnce({ ...deps, now: clock() });
+      const r = await importOnce({ ...deps, now: clock() });
+      total.runs += r.runs;
+      total.removed += r.removed;
+      total.weights += r.weights;
+      total.skipped += r.skipped;
     } while (again);
-    return last;
+    return total;
   };
   running = loop().finally(() => {
     running = null;
