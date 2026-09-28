@@ -107,8 +107,8 @@ export default function NutritionScreen() {
           </View>
 
           <Card className="gap-5">
-            <View className="flex-row flex-wrap items-baseline gap-x-2">
-              <Text className="type-hero text-text" numberOfLines={1} adjustsFontSizeToFit>
+            <View className="flex-row items-baseline gap-x-2">
+              <Text className="shrink type-hero text-text" numberOfLines={1} adjustsFontSizeToFit>
                 {kcalText(Math.abs(left))}
               </Text>
               <Text className="type-headline text-text">kcal {left >= 0 ? 'left' : 'over'}</Text>

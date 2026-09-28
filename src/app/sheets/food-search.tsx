@@ -39,6 +39,16 @@ import { kcalText, servingText } from '@/nutrition/describe';
 import { size, useTheme } from '@/theme';
 
 type Item = Food | FoodCandidate;
+/**
+ * Servings of the cached food that match the amount shown in search: a food cached earlier keeps
+ * its own serving, so convert by grams when both are known.
+ */
+function sameAmount(shown: Item, cached: Food): number {
+  const a = Number(shown.serving_grams);
+  const b = Number(cached.serving_grams);
+  return a > 0 && b > 0 && Math.abs(a - b) > 0.05 ? Math.round((a / b) * 1000) / 1000 : 1;
+}
+
 const keyOf = (f: Item) => ('id' in f ? f.id : `${f.source}:${f.external_id}`);
 
 function useDebounced(value: string, ms: number) {
@@ -112,7 +122,10 @@ export default function FoodSearchSheet() {
       await log.mutateAsync({
         date,
         meal,
-        items: foods.map((f): LogItem => ({ food_id: f.id, servings: 1 })),
+        items: foods.map((f, i): LogItem => ({
+          food_id: f.id,
+          servings: sameAmount(chosen[i], f),
+        })),
       });
       router.back();
     } catch (e) {

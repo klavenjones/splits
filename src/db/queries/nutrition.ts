@@ -297,7 +297,7 @@ export async function cacheFood(c: FoodCandidate | Food): Promise<Food> {
   if ('id' in c) return c;
   const { data, error } = await supabase.functions.invoke<{ food: Food }>('food', {
     method: 'POST',
-    body: { source: c.source, external_id: c.external_id },
+    body: { source: c.source, external_id: c.external_id, serving_grams: c.serving_grams },
   });
   if (error || !data?.food) throw error ?? new Error('Couldn’t save that food.');
   return data.food;

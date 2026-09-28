@@ -77,6 +77,27 @@ describe('normalizeUsda', () => {
     });
   });
 
+  it('keeps the serving picked in search when the source has it', () => {
+    const food = {
+      fdcId: 5,
+      description: 'Yogurt, Greek, plain, lowfat',
+      foodNutrients: [{ nutrientId: 1008, value: 73 }],
+      foodPortions: [
+        { gramWeight: 245, modifier: 'cup' },
+        { gramWeight: 170, modifier: 'container' },
+      ],
+    };
+    expect(normalizeUsda(food)).toMatchObject({ serving_grams: 245, kcal: 178.9 });
+    expect(normalizeUsda(food, 100)).toMatchObject({
+      serving_qty: 100,
+      serving_unit: 'g',
+      kcal: 73,
+    });
+    expect(normalizeUsda(food, 170)).toMatchObject({ serving_unit: 'container', kcal: 124.1 });
+    // A serving the source doesn't have falls back to the source's first portion.
+    expect(normalizeUsda(food, 999)).toMatchObject({ serving_grams: 245 });
+  });
+
   it('skips foods without energy', () => {
     expect(normalizeUsda({ fdcId: 3, description: 'Water', foodNutrients: [] })).toBeNull();
   });

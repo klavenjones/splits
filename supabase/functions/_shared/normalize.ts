@@ -78,7 +78,13 @@ function tidyName(s: string): string {
   return t === t.toUpperCase() ? t.charAt(0) + t.slice(1).toLowerCase() : t;
 }
 
-function usdaServing(food: UsdaFood): { qty: number; unit: string; grams: number } {
+function usdaServing(
+  food: UsdaFood,
+  preferGrams?: number,
+): { qty: number; unit: string; grams: number } {
+  // Keep the serving the user saw in search (the detail record may list more portions), as long
+  // as the source has it: its label serving, one of its portions, or 100 g.
+  if (preferGrams === 100) return { qty: 100, unit: 'g', grams: 100 };
   if (
     food.servingSize &&
     food.servingSize > 0 &&
@@ -90,9 +96,13 @@ function usdaServing(food: UsdaFood): { qty: number; unit: string; grams: number
       ? { qty: 1, unit: text, grams: food.servingSize }
       : { qty: r1(food.servingSize), unit, grams: food.servingSize };
   }
-  const p = [...(food.foodPortions ?? []), ...(food.foodMeasures ?? [])].find(
+  const portions = [...(food.foodPortions ?? []), ...(food.foodMeasures ?? [])].filter(
     (x) => (x.gramWeight ?? 0) > 0,
   );
+  const p =
+    (preferGrams !== undefined
+      ? portions.find((x) => Math.abs(x.gramWeight! - preferGrams) < 0.05)
+      : undefined) ?? portions[0];
   if (p) {
     const unit =
       p.disseminationText?.trim() ||
@@ -111,11 +121,11 @@ function usdaServing(food: UsdaFood): { qty: number; unit: string; grams: number
   return { qty: 100, unit: 'g', grams: 100 };
 }
 
-export function normalizeUsda(food: UsdaFood): FoodCandidate | null {
+export function normalizeUsda(food: UsdaFood, preferGrams?: number): FoodCandidate | null {
   const n = per100(food);
   const kcal100 = usdaKcal(n);
   if (kcal100 === null || !food.description) return null;
-  const s = usdaServing(food);
+  const s = usdaServing(food, preferGrams);
   const f = s.grams / 100;
   const label = food.labelNutrients;
   const fromLabel = (k: string) =>

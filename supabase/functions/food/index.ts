@@ -46,13 +46,13 @@ async function usdaSearch(query: string, dataType: string[], pageSize = 25): Pro
   return ((await r.json()) as { foods?: UsdaFood[] }).foods ?? [];
 }
 
-async function usdaFood(fdcId: string): Promise<FoodCandidate | null> {
+async function usdaFood(fdcId: string, preferGrams?: number): Promise<FoodCandidate | null> {
   const u = new URL(`${USDA}/food/${encodeURIComponent(fdcId)}`);
   u.searchParams.set('api_key', usdaKey());
   const r = await fetch(u);
   if (r.status === 404) return null;
   if (!r.ok) throw new Error(`USDA food ${r.status}`);
-  return normalizeUsda((await r.json()) as UsdaFood);
+  return normalizeUsda((await r.json()) as UsdaFood, preferGrams);
 }
 
 async function offProduct(code: string): Promise<FoodCandidate | null> {
@@ -97,10 +97,10 @@ async function barcode(code: string): Promise<FoodCandidate | null> {
   return null;
 }
 
-async function cache(source: string, externalId: string) {
+async function cache(source: string, externalId: string, servingGrams?: number) {
   const food =
     source === 'usda'
-      ? await usdaFood(externalId)
+      ? await usdaFood(externalId, servingGrams)
       : source === 'open_food_facts'
         ? await offProduct(externalId)
         : null;
@@ -110,19 +110,21 @@ async function cache(source: string, externalId: string) {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     { auth: { persistSession: false } },
   );
-  const row = { ...food, owner_id: null };
+  // The first cached copy stays as it is: saved meals and recents refer to its serving.
   const existing = await admin
     .from('foods')
-    .select('id')
+    .select('*')
     .eq('source', food.source)
     .eq('external_id', food.external_id)
     .is('owner_id', null)
     .maybeSingle();
   if (existing.error) throw existing.error;
-  const write = existing.data
-    ? admin.from('foods').update(row).eq('id', existing.data.id).select().single()
-    : admin.from('foods').insert(row).select().single();
-  const { data, error } = await write;
+  if (existing.data) return existing.data;
+  const { data, error } = await admin
+    .from('foods')
+    .insert({ ...food, owner_id: null })
+    .select()
+    .single();
   if (error) throw error;
   return data;
 }
@@ -138,10 +140,15 @@ Deno.serve(async (req) => {
       return json({ error: 'q or barcode required' }, 400);
     }
     if (req.method === 'POST') {
-      const body = (await req.json()) as { source?: string; external_id?: string };
+      const body = (await req.json()) as {
+        source?: string;
+        external_id?: string;
+        serving_grams?: number;
+      };
       if (!body.source || !body.external_id)
         return json({ error: 'source and external_id required' }, 400);
-      const food = await cache(body.source, body.external_id);
+      const grams = Number(body.serving_grams);
+      const food = await cache(body.source, body.external_id, grams > 0 ? grams : undefined);
       return food ? json({ food }) : json({ error: 'not found' }, 404);
     }
     return json({ error: 'method not allowed' }, 405);
