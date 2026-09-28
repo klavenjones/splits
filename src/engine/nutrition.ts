@@ -212,100 +212,148 @@ export function computeTargets(input: TargetInputs): Targets {
 /* ---------------- Weekly adaptive update ---------------- */
 
 /** One day of logs. `null` = nothing logged that day. */
-export type DayLog = { weightKg: number | null; kcal: number | null };
-/** Seven days, Monday first. */
+export type DayLog = {
+  weightKg: number | null;
+  kcal: number | null;
+  /** Body fat from that day's measurements (Navy), if any. */
+  bodyFatPct?: number | null;
+};
+/** Seven days, Monday first. Week 1 is the week of the start date. */
 export type WeekLog = DayLog[];
 
 export type WeekSummary = {
+  /** Average of the weigh-ins actually logged this week, or null if none (L). */
+  loggedAvgWeightKg: number | null;
   /** Average weight with missed days carried forward (AW, weight row). */
   avgWeightKg: number;
-  /** Average of the weigh-ins actually logged this week, or null if none (L column). */
-  loggedAvgWeightKg: number | null;
-  /** Average intake with missed days carried forward, or null if nothing to carry (AW, calorie row). */
+  /** Average intake with missed days carried forward; null until something is logged (AW). */
   avgKcal: number | null;
   /** Days with an intake value after carry-forward (AL, calorie row). */
   daysLogged: number;
+  /** Days with a weight after carry-forward (AL, weight row). */
+  weightDays: number;
   /** Change in average weight vs the previous week, or vs the start weight in week 1 (AZ). */
   weightChangeKg: number;
   /** This week's maintenance estimate (BE). */
   estimateKcal: number;
   /** Running maintenance: mean of the weekly estimates from week 2 on (BD). */
   runningKcal: number;
+  /** Body fat carried into this week (BT; the start value for weeks 1–4). */
+  bodyFatPct: number;
+  /** Protein target carried into this week, before rounding (BW). */
+  proteinG: number;
 };
-
-/** Fills each null with the most recent earlier value, across week boundaries. */
-function carryForward(values: (number | null)[], seed: number | null): (number | null)[] {
-  let last = seed;
-  return values.map((v) => {
-    if (v !== null) last = v;
-    return last;
-  });
-}
 
 const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
 
+/**
+ * The sheet's fill for one week row (AP–AV): nothing when the row is empty; otherwise each missed
+ * day takes the previous day's value, from the week's first entry through Sunday. A missed
+ * Monday stays empty (`monday` is only used for week 1's weight, which takes the start weight).
+ * The sheet's Monday cell reads an unrelated cell from week 4 on; that bug is not reproduced.
+ */
+function fillWeek(values: (number | null)[], monday: number | null): number[] {
+  if (values.every((v) => v === null)) return [];
+  const out: number[] = [];
+  let last: number | null = values[0] ?? monday;
+  if (last !== null) out.push(last);
+  for (const v of values.slice(1)) {
+    if (v !== null) last = v;
+    if (last !== null) out.push(last);
+  }
+  return out;
+}
+
 /** Weeks of weigh-ins needed before maintenance adapts (Q23: count(U) > 3). */
 export const ADAPT_AFTER_WEEKS = 4;
+/** Weeks that use the start weight and body fat for protein and body fat (BP36:BP39, BT36:BT39). */
+export const FIXED_WEEKS = 4;
+/** Protein only changes when it moves at least this much (BW40). */
+export const PROTEIN_STEP_G = 5;
 
 /**
- * Adaptive maintenance from weekly logs, as in the sheet:
- * - each week's estimate = avg kcal + (−Δ avg weight × 3,500 kcal/lb) ÷ days logged (BD36, BE38);
- *   a week without weight or intake data repeats the previous estimate;
- * - the running value is the mean of the estimates from week 2 on (BD40…);
+ * Adaptive maintenance and the protein and body-fat chains from weekly logs, as the sheet does:
+ * - weight and intake are filled within each week (fillWeek) and averaged (AW); a week with no
+ *   weigh-ins or no food logs repeats the previous week's estimate and running value;
+ * - each week's estimate = avg kcal + (−Δ avg weight × 3,500 kcal/lb) ÷ days with intake (BE);
+ * - the running value is the mean of the estimates from week 2 on (BD);
  * - once 4 weeks have weigh-ins, maintenance = the running value of the second-to-last of those
- *   weeks (Q23); before that the starting maintenance stands.
+ *   weeks (Q23); before that the starting maintenance stands;
+ * - body fat is the start value for weeks 1–4, then the week's measurement or the last one (BT);
+ * - protein uses the start weight for weeks 1–4, then the latest week of weigh-ins, and only
+ *   changes by 5 g or more (BP/BW).
  */
 export function adaptiveMaintenance(input: {
+  sex: Sex;
   startWeightKg: number;
+  startBodyFatPct: number;
+  /** AN22: starting maintenance at the start weight and start body fat. */
   startingMaintenanceKcal: number;
   weeks: WeekLog[];
 }): { weeks: WeekSummary[]; maintenanceKcal: number; adaptive: boolean } {
-  const { startWeightKg, startingMaintenanceKcal, weeks } = input;
-  const weights = carryForward(
-    weeks.flatMap((w) => w.map((d) => d.weightKg)),
-    startWeightKg,
-  );
-  const kcals = carryForward(
-    weeks.flatMap((w) => w.map((d) => d.kcal)),
-    null,
-  );
-
+  const { sex, startWeightKg, startBodyFatPct, startingMaintenanceKcal, weeks } = input;
   const summaries: WeekSummary[] = [];
   const estimates: number[] = [];
   const history: number[] = []; // running value for each week with a weigh-in (U column)
+  let lastLoggedKg = startWeightKg; // BP
+  let bodyFat = startBodyFatPct; // BT
 
   weeks.forEach((week, i) => {
-    const filledW = weights.slice(i * 7, i * 7 + 7).filter((v): v is number => v !== null);
-    const filledK = kcals.slice(i * 7, i * 7 + 7).filter((v): v is number => v !== null);
+    const prev = summaries[i - 1];
+    const w = fillWeek(
+      week.map((d) => d.weightKg),
+      i === 0 ? startWeightKg : null,
+    );
+    const k = fillWeek(
+      week.map((d) => d.kcal),
+      null,
+    );
     const logged = week.map((d) => d.weightKg).filter((v): v is number => v !== null);
+    const loggedAvgWeightKg = logged.length ? mean(logged) : null;
 
-    const prevAvgKg = i === 0 ? startWeightKg : summaries[i - 1].avgWeightKg;
-    const avgWeightKg = filledW.length ? mean(filledW) : prevAvgKg;
-    const avgKcal = filledK.length ? mean(filledK) : null;
+    const prevAvgKg = i === 0 ? startWeightKg : prev.avgWeightKg;
+    const avgWeightKg = w.length ? mean(w) : prevAvgKg;
+    const avgKcal = k.length ? mean(k) : i === 0 ? null : prev.avgKcal;
     const weightChangeKg = avgWeightKg - prevAvgKg;
 
-    const hasData = filledW.length > 0 && avgKcal !== null;
-    const previousEstimate = i === 0 ? startingMaintenanceKcal : estimates[i - 1];
+    const hasData = w.length > 0 && k.length > 0;
     const estimateKcal = hasData
-      ? avgKcal + (-kgToLb(weightChangeKg) * KCAL_PER_LB) / filledK.length
-      : previousEstimate;
+      ? mean(k) + (-kgToLb(weightChangeKg) * KCAL_PER_LB) / k.length
+      : i === 0
+        ? startingMaintenanceKcal
+        : estimates[i - 1];
     estimates.push(estimateKcal);
 
     let runningKcal: number;
-    if (!hasData) runningKcal = i === 0 ? startingMaintenanceKcal : summaries[i - 1].runningKcal;
+    if (!hasData) runningKcal = i === 0 ? startingMaintenanceKcal : prev.runningKcal;
     else if (i < 2) runningKcal = estimateKcal;
     else runningKcal = mean(estimates.slice(1, i + 1));
+    if (loggedAvgWeightKg !== null) history.push(runningKcal);
+
+    // Body fat (BT) and protein (BP/BV/BW) chains.
+    let proteinG: number;
+    if (i < FIXED_WEEKS) {
+      proteinG = proteinPerLb(sex, startBodyFatPct) * kgToLb(startWeightKg);
+    } else {
+      const measured = week.map((d) => d.bodyFatPct ?? null).filter((v): v is number => v !== null);
+      if (measured.length) bodyFat = measured[measured.length - 1];
+      if (loggedAvgWeightKg !== null) lastLoggedKg = loggedAvgWeightKg;
+      const next = proteinPerLb(sex, bodyFat) * kgToLb(lastLoggedKg);
+      proteinG = Math.abs(next - prev.proteinG) >= PROTEIN_STEP_G ? next : prev.proteinG;
+    }
 
     summaries.push({
+      loggedAvgWeightKg,
       avgWeightKg,
-      loggedAvgWeightKg: logged.length ? mean(logged) : null,
       avgKcal,
-      daysLogged: filledK.length,
+      daysLogged: k.length,
+      weightDays: w.length,
       weightChangeKg,
       estimateKcal,
       runningKcal,
+      bodyFatPct: i < FIXED_WEEKS ? startBodyFatPct : bodyFat,
+      proteinG,
     });
-    if (logged.length) history.push(runningKcal);
   });
 
   const adaptive = history.length >= ADAPT_AFTER_WEEKS;
@@ -317,33 +365,73 @@ export function adaptiveMaintenance(input: {
 }
 
 /**
- * The weekly check-in: adaptive maintenance, then every target recalculated from the latest
- * logged weight (the most recent week's average of actual weigh-ins) and the latest body fat.
- * Before week 4, maintenance is the starting value for the start weight and latest body fat (Q23).
+ * The weekly check-in: every target recalculated as the sheet does after the latest week.
+ * - Weight for the rate: the latest week's average of actual weigh-ins (BY14), or the start
+ *   weight; a manual rate is a fixed amount per week, so it's based on the start weight (P16).
+ * - Body fat: the carried value (BY15), which only moves from week 5.
+ * - Maintenance: adaptive from week 4; before that the starting formula at the start weight
+ *   and the current body fat (Q23).
+ * - Protein: the carried protein (BY17); fat and carbs from the calories (Q30, Q31).
  */
-export function weeklyUpdate(
-  input: Omit<TargetInputs, 'weightKg' | 'maintenanceKcal'> & {
-    startWeightKg: number;
-    weeks: WeekLog[];
-    /** Defaults to `startingMaintenance(startWeightKg, bodyFatPct)`. */
-    startingMaintenanceKcal?: number;
-  },
-): Targets & { adaptive: boolean; week: WeekSummary } {
-  const { startWeightKg, weeks, ...rest } = input;
+export function weeklyUpdate(input: {
+  sex: Sex;
+  experience: Experience;
+  goal: Goal;
+  /** Chosen phase; defaults to the recommendation for the current body fat. */
+  phase?: Phase;
+  /** Manual weekly rate, % of the start weight (rate_mode = manual). */
+  rateOverridePct?: number;
+  startWeightKg: number;
+  startBodyFatPct: number;
+  weeks: WeekLog[];
+}): Targets & { adaptive: boolean; week: WeekSummary; weeks: WeekSummary[] } {
+  const { sex, experience, goal, startWeightKg, startBodyFatPct, weeks } = input;
   if (weeks.length === 0) throw new Error('weeklyUpdate: needs at least one week of logs');
-  const startingMaintenanceKcal =
-    input.startingMaintenanceKcal ??
-    startingMaintenance({ sex: rest.sex, weightKg: startWeightKg, bodyFatPct: rest.bodyFatPct });
-
-  const a = adaptiveMaintenance({ startWeightKg, startingMaintenanceKcal, weeks });
+  const a = adaptiveMaintenance({
+    sex,
+    startWeightKg,
+    startBodyFatPct,
+    startingMaintenanceKcal: startingMaintenance({
+      sex,
+      weightKg: startWeightKg,
+      bodyFatPct: startBodyFatPct,
+    }),
+    weeks,
+  });
+  const last = a.weeks[a.weeks.length - 1];
+  const bodyFatPct = last.bodyFatPct;
   const latestKg =
     [...a.weeks].reverse().find((w) => w.loggedAvgWeightKg !== null)?.loggedAvgWeightKg ??
     startWeightKg;
-
-  const targets = computeTargets({
-    ...rest,
-    weightKg: latestKg,
-    maintenanceKcal: a.maintenanceKcal,
+  const maintenanceKcal = a.adaptive
+    ? a.maintenanceKcal
+    : startingMaintenance({ sex, weightKg: startWeightKg, bodyFatPct });
+  const phase = input.phase ?? recommendPhase({ sex, bodyFatPct, goal });
+  const manual = input.rateOverridePct !== undefined;
+  const ratePct = input.rateOverridePct ?? weeklyRatePct({ sex, experience, bodyFatPct, phase });
+  const cal = dailyCalories({
+    sex,
+    maintenanceKcal,
+    weightKg: manual ? startWeightKg : latestKg,
+    weeklyRatePct: ratePct,
   });
-  return { ...targets, adaptive: a.adaptive, week: a.weeks[a.weeks.length - 1] };
+  const proteinG = last.proteinG;
+  const fatG = (fatShare(sex, bodyFatPct) * cal.kcal) / 9;
+  const carbsG = (cal.kcal - proteinG * 4 - fatG * 9) / 4;
+  return {
+    phase,
+    weeklyRatePct: ratePct,
+    maintenanceKcal: Math.round(maintenanceKcal),
+    kcalTarget: Math.round(cal.kcal),
+    kcalLow: cal.low,
+    kcalHigh: cal.high,
+    proteinG: Math.round(proteinG),
+    fatG: Math.round(fatG),
+    carbsG: Math.round(carbsG),
+    floored: cal.floored,
+    raw: { maintenanceKcal, kcalTarget: cal.kcal, proteinG, fatG, carbsG },
+    adaptive: a.adaptive,
+    week: last,
+    weeks: a.weeks,
+  };
 }
