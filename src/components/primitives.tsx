@@ -71,7 +71,7 @@ export function AnchorCard({
 }
 
 /* ---------------- Button ---------------- */
-type ButtonVariant = 'primary' | 'secondary' | 'destructive' | 'ghost' | 'inverse';
+type ButtonVariant = 'primary' | 'secondary' | 'destructive' | 'ghost' | 'inverse' | 'run';
 const BTN: Record<
   ButtonVariant,
   { box: string; pressed: string; label: string; icon: keyof ReturnType<typeof useTheme>['c'] }
@@ -94,6 +94,7 @@ const BTN: Record<
     label: 'text-on-danger',
     icon: 'onDanger',
   },
+  run: { box: 'bg-run-fill', pressed: 'bg-run-pressed', label: 'text-on-run', icon: 'onRun' },
   ghost: { box: 'bg-transparent', pressed: 'bg-surface-control', label: 'text-text', icon: 'text' },
   inverse: {
     box: 'bg-on-anchor',

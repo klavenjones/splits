@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { AuthProvider, useAuth } from '@/auth';
 import { persistQueryCache, restoreQueryCache, wireOnlineManager } from '@/db/persist';
+import { HealthProvider } from '@/health/HealthProvider';
 import { WorkoutProvider } from '@/workout/WorkoutProvider';
 import { radius, useSplitsFonts } from '@/theme';
 
@@ -78,10 +79,17 @@ function RootStack() {
             options={{ presentation: 'fullScreenModal', gestureEnabled: false }}
           />
           <Stack.Screen name="sheets/pick-exercises" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="runs" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="sheets/link-run" options={sheet} />
         </Stack.Protected>
         <Stack.Screen name="auth/callback" />
       </Stack>
-      {status === 'ready' ? <WorkoutProvider /> : null}
+      {status === 'ready' ? (
+        <>
+          <WorkoutProvider />
+          <HealthProvider />
+        </>
+      ) : null}
     </ThemeProvider>
   );
 }

@@ -376,6 +376,7 @@ export type Database = {
           duration_s: number
           elevation_gain_m: number | null
           external_id: string | null
+          match: string
           max_hr: number | null
           route_polyline: string | null
           session_id: string
@@ -391,6 +392,7 @@ export type Database = {
           duration_s: number
           elevation_gain_m?: number | null
           external_id?: string | null
+          match?: string
           max_hr?: number | null
           route_polyline?: string | null
           session_id: string
@@ -406,6 +408,7 @@ export type Database = {
           duration_s?: number
           elevation_gain_m?: number | null
           external_id?: string | null
+          match?: string
           max_hr?: number | null
           route_polyline?: string | null
           session_id?: string
@@ -1005,6 +1008,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _put_run_log: {
+        Args: {
+          p_log: Json
+          p_match: string
+          p_session: string
+          p_splits: Json
+        }
+        Returns: undefined
+      }
       discard_workout: {
         Args: { p_back_to_planned: boolean; p_id: string }
         Returns: undefined
@@ -1019,6 +1031,9 @@ export type Database = {
           weight_kg: number
         }[]
       }
+      import_body_mass: { Args: { p: Json }; Returns: number }
+      import_run: { Args: { p: Json }; Returns: Json }
+      link_run: { Args: { p_run: string; p_target: string }; Returns: string }
       plan_sessions: { Args: { p_items: Json }; Returns: string[] }
       previous_sets: {
         Args: { p_exercise_ids?: string[] }
@@ -1031,6 +1046,7 @@ export type Database = {
           weight_kg: number
         }[]
       }
+      remove_imported_run: { Args: { p_external_id: string }; Returns: boolean }
       save_starting_targets: {
         Args: {
           p_carbs_g: number

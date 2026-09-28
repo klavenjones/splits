@@ -11,6 +11,7 @@ import {
 } from '@/components';
 
 import { signOut, useAuth } from '@/auth';
+import { useHealthConnected } from '@/health/connection';
 import { FOCUS_LABEL } from '@/engine/focus';
 import { size, useTheme } from '@/theme';
 
@@ -21,6 +22,7 @@ export default function Settings() {
   const { c } = useTheme();
   const { session, profile } = useAuth();
   const name = displayNameOf(profile?.display_name, session?.user.email);
+  const health = useHealthConnected(session?.user.id);
   const since = profile
     ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     : '';
@@ -66,6 +68,17 @@ export default function Settings() {
               last
             />
           </SettingsGroup>
+
+          {Platform.OS === 'ios' ? (
+            <SettingsGroup title="connected apps">
+              <SettingsRow
+                label="Apple Health"
+                value={health ? 'connected' : 'off'}
+                onPress={() => router.push('/settings/health')}
+                last
+              />
+            </SettingsGroup>
+          ) : null}
 
           <SettingsGroup title="about">
             <SettingsRow label="credits" onPress={() => router.push('/settings/credits')} last />

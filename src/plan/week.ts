@@ -3,6 +3,7 @@
  * weeks start on Monday.
  */
 import { fromLocalDate, mondayOf, toLocalDate } from '@/engine/calendar';
+import type { RunTarget } from '@/engine/runs';
 import type { SegmentType, TargetType } from '@/templates/runSegments';
 
 export type SessionStatus = 'planned' | 'in_progress' | 'completed' | 'skipped';
@@ -33,7 +34,27 @@ export type PlanSession = {
   skip_reason: string | null;
   template_id: string | null;
   template: PlanTemplate | null;
+  /** The imported run, for a completed run session. */
+  run?: RunSummary | null;
+  /** The run's target from its template segments (derived; null without pace or effort). */
+  target?: RunTarget | null;
 };
+
+export type RunMatch = 'auto' | 'linked' | 'needs_match' | 'extra';
+
+/** What lists show of an imported run (docs/data-model.md → run_logs). */
+export type RunSummary = {
+  started_at: string;
+  distance_m: number;
+  duration_s: number;
+  avg_pace_s_per_km: number | null;
+  avg_hr: number | null;
+  match: RunMatch;
+};
+
+/** An imported run with no planned session behind it (needs a match, or kept as extra). */
+export const isUnplannedRun = (s: Pick<PlanSession, 'kind' | 'template_id' | 'run'>) =>
+  s.kind === 'run' && !!s.run && (s.run.match === 'needs_match' || s.run.match === 'extra');
 
 export const SKIP_REASONS = ['tired', 'sore', 'busy', 'sick', 'injury'] as const;
 export type SkipReason = (typeof SKIP_REASONS)[number];
@@ -94,7 +115,10 @@ const STATUS_ORDER: Record<SessionStatus, number> = {
   skipped: 3,
 };
 
-/** Sessions grouped by day, in a stable order within the day (lifts before runs, then name). */
+/**
+ * Sessions grouped by day, in a stable order within the day (lifts before runs, planned runs
+ * before imported extras, then name).
+ */
 export function byDay(sessions: readonly PlanSession[]): Map<string, PlanSession[]> {
   const map = new Map<string, PlanSession[]>();
   for (const s of sessions) {
@@ -107,6 +131,7 @@ export function byDay(sessions: readonly PlanSession[]): Map<string, PlanSession
       (a, b) =>
         STATUS_ORDER[a.status] - STATUS_ORDER[b.status] ||
         a.kind.localeCompare(b.kind) ||
+        Number(isUnplannedRun(a)) - Number(isUnplannedRun(b)) ||
         a.name.localeCompare(b.name) ||
         a.id.localeCompare(b.id),
     );
@@ -122,7 +147,10 @@ export type WeekTotals = {
   runMetersDone: number;
 };
 
-/** Planned vs done for the week. Skipped sessions don't count. */
+/**
+ * Planned vs done for the week. Skipped sessions don't count. Done distance is what was actually
+ * run (imported), including runs that aren't on the plan; those don't count as planned runs.
+ */
 export function weekTotals(sessions: readonly PlanSession[]): WeekTotals {
   const t: WeekTotals = {
     runs: 0,
@@ -138,13 +166,15 @@ export function weekTotals(sessions: readonly PlanSession[]): WeekTotals {
     if (s.kind === 'lift') {
       t.lifts++;
       if (done) t.liftsDone++;
+    } else if (isUnplannedRun(s)) {
+      t.runMetersDone += s.run!.distance_m;
     } else {
       const m = s.template?.est_distance_m ?? 0;
       t.runs++;
       t.runMeters += m;
       if (done) {
         t.runsDone++;
-        t.runMetersDone += m;
+        t.runMetersDone += s.run?.distance_m ?? m;
       }
     }
   }
