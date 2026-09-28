@@ -1017,6 +1017,20 @@ export type Database = {
         }
         Returns: undefined
       }
+      daily_intake: {
+        Args: { p_from: string; p_to: string }
+        Returns: {
+          carbs_g: number
+          fat_g: number
+          kcal: number
+          log_date: string
+          protein_g: number
+        }[]
+      }
+      decide_weekly_targets: {
+        Args: { p_accept: boolean; p_week_start: string }
+        Returns: undefined
+      }
       discard_workout: {
         Args: { p_back_to_planned: boolean; p_id: string }
         Returns: undefined
@@ -1059,6 +1073,15 @@ export type Database = {
       import_body_mass: { Args: { p: Json }; Returns: number }
       import_run: { Args: { p: Json }; Returns: Json }
       link_run: { Args: { p_run: string; p_target: string }; Returns: string }
+      log_foods: { Args: { p: Json }; Returns: string[] }
+      log_saved_meal: {
+        Args: {
+          p_log_date: string
+          p_meal: Database["public"]["Enums"]["meal"]
+          p_saved_meal_id: string
+        }
+        Returns: string[]
+      }
       plan_sessions: { Args: { p_items: Json }; Returns: string[] }
       previous_sets: {
         Args: { p_exercise_ids?: string[] }
@@ -1071,6 +1094,7 @@ export type Database = {
           weight_kg: number
         }[]
       }
+      propose_weekly_targets: { Args: { p: Json }; Returns: boolean }
       remove_imported_run: { Args: { p_external_id: string }; Returns: boolean }
       save_starting_targets: {
         Args: {
@@ -1111,8 +1135,13 @@ export type Database = {
         }
         Returns: string
       }
+      save_weigh_in: { Args: { p: Json }; Returns: undefined }
       shift_sessions: { Args: { p_session_id: string }; Returns: number }
       sync_workout: { Args: { p: Json }; Returns: string }
+      update_nutrition_settings: {
+        Args: { p_profile: Json; p_targets?: Json }
+        Returns: undefined
+      }
     }
     Enums: {
       demo_type: "animation" | "video" | "none"
