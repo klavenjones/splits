@@ -137,7 +137,7 @@ Equipment: barbell, dumbbell, kettlebell, cable, machine, bodyweight, band, land
 | template_id | uuid FK templates | on delete cascade |
 | exercise_id | uuid FK exercises | |
 | position | int | order in the template |
-| superset_group | int, nullable | exercises sharing a value alternate as a superset |
+| superset_group | int, nullable | exercises sharing a value alternate as a superset; members are contiguous, and only the last one holds `rest_sec` (the rest after each round); the others store 0 |
 | target_sets | int | |
 | rep_min | int | |
 | rep_max | int | |
@@ -162,7 +162,11 @@ Equipment: barbell, dumbbell, kettlebell, cable, machine, bodyweight, band, land
 | target_effort | text, nullable | `easy`, `moderate`, `hard` |
 | voice_cues | text[] | `halfway`, `every_200m`, `pace_alerts` |
 
-Expansion rule: to compute totals or send to a watch, expand each repeat block `repeats` times in `position` order.
+Expansion rule: to compute totals or send to a watch, expand each repeat block `repeats` times in `position` order. In the **last round**, recovery segments after the block's last non-recovery segment are dropped (the final interval flows into what follows), so 6 × (800 m + 400 m recovery) runs 6 intervals and 5 recoveries. A recoveries-only block plays in full. (`src/templates/runSegments.ts` → `expand`.)
+
+Estimates (`templates.est_distance_m`, `est_duration_s`, saved with the template): a distance segment's time comes from its pace target, or else a default pace for its effort or zone (easy / Z1–2 6:15 /km, moderate / Z3 5:30, hard / Z4–5 4:45, recovery 7:00); a time segment's distance is estimated the same way. Lift templates: 45 s of work per set plus its rest, a superset round is its members' work plus one rest, and 2 minutes of setup per exercise.
+
+Saving goes through `save_template(...)`: one transaction that upserts the template and replaces its children from JSON (positions from array order). It rejects a non-contiguous superset or repeat block, a block with mixed `repeats`, and a target without its value, and clears target columns that don't match `target_type`. `duplicate_template(id)` copies a template and its children as "{name} copy". Both run as the caller, so RLS applies.
 
 ## 3. Sessions and logs
 

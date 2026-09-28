@@ -1005,6 +1005,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      duplicate_template: { Args: { p_id: string }; Returns: string }
       save_starting_targets: {
         Args: {
           p_carbs_g: number
@@ -1030,6 +1031,19 @@ export type Database = {
           p_weekly_rate_pct: number
         }
         Returns: undefined
+      }
+      save_template: {
+        Args: {
+          p_est_distance_m: number
+          p_est_duration_s: number
+          p_exercises: Json
+          p_id: string
+          p_kind: Database["public"]["Enums"]["workout_kind"]
+          p_name: string
+          p_notes: string
+          p_segments: Json
+        }
+        Returns: string
       }
     }
     Enums: {

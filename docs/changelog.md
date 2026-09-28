@@ -37,3 +37,11 @@ One entry per build step.
 - New nullable column `exercises.media_credit`; built-in media lives in `exercise-media/builtin/`, readable by signed-in users and written only by the service role (`20260930120000_exercise_media_credit.sql`, plus `…120100_fix_wger_source_urls.sql` for the wger page links).
 - Pipeline in `scripts/wger-images.mjs` and `scripts/build-exercise-media-migration.mjs` (see `supabase/seed-data/README.md`). Only line art is used: wger's user-uploaded photos were excluded because several look copied from other sites.
 - WorkoutX was evaluated and not used: its data and GIFs appear to be ExerciseDB / Gym Visual content with no license shown.
+
+## Step 3: lift and run templates (2026-10-01)
+- Plan tab: week | templates; the template library has all / lift / run filters, a 2-column card grid, and edit / duplicate / delete from each card's menu. The exercise library link moved below it.
+- Lift template builder: add exercises with the step-2 picker; sets, rep range and rest per exercise in a targets sheet; drag to reorder (in-house `SortableList`, no new dependency); supersets via "superset with next" / "leave superset", with the rest held on the last member.
+- Run template builder: warmup, steady, cooldown and repeat blocks (interval + recovery × n); each segment by distance or time with a pace (± tolerance), heart-rate zone or effort target and voice cues, in an edit-segment sheet; a workout-shape strip and computed distance and duration.
+- Migration `20261001120000_template_rpcs.sql`: `save_template` (atomic, validates groups and targets) and `duplicate_template`; no new tables or columns. `supabase/tests/templates_smoke.sql`.
+- Pure, tested: `src/templates/runSegments.ts` (rows ↔ blocks, expansion that skips the last round's trailing recovery, totals, shape), `liftTemplate.ts`, `validate.ts`; pace, duration and distance formatting in `src/units.ts`.
+- Small fixes: the small `Tag` size rendered no text on native (`text-micro` isn't a font size there).

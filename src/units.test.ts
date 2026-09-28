@@ -1,4 +1,11 @@
 import {
+  formatDistance,
+  formatDuration,
+  formatPace,
+  parseDuration,
+  parsePace,
+  toleranceFromSecPerKm,
+  toleranceToSecPerKm,
   cmToIn,
   fromDisplayLength,
   fromDisplayWeight,
@@ -49,5 +56,42 @@ describe('display units', () => {
     expect(fromDisplayLength(70, 'imperial')).toBeCloseTo(177.8, 10);
     expect(toDisplayLength(fromDisplayLength(70, 'imperial'), 'imperial')).toBeCloseTo(70, 10);
     expect(fromDisplayWeight(90, 'metric')).toBe(90);
+  });
+});
+
+describe('running formats', () => {
+  it('formats and parses durations', () => {
+    expect(formatDuration(150)).toBe('2:30');
+    expect(formatDuration(3900)).toBe('1:05:00');
+    expect(formatDuration(59.6)).toBe('1:00');
+    expect(parseDuration('2:30')).toBe(150);
+    expect(parseDuration('1:05:00')).toBe(3900);
+    expect(parseDuration('90')).toBe(90);
+    expect(parseDuration('1:75')).toBeNull();
+    expect(parseDuration('abc')).toBeNull();
+  });
+
+  it('formats and parses paces in both unit systems', () => {
+    expect(parsePace('7:00', 'imperial')).toBe(261);
+    expect(formatPace(261, 'imperial')).toBe('7:00 /mi');
+    expect(parsePace('9:30', 'imperial')).toBe(354);
+    expect(formatPace(300, 'metric')).toBe('5:00 /km');
+    expect(parsePace('5:00', 'metric')).toBe(300);
+    expect(parsePace('7', 'imperial')).toBeNull();
+    expect(parsePace('0:00', 'metric')).toBeNull();
+  });
+
+  it('converts pace tolerance', () => {
+    expect(toleranceToSecPerKm(10, 'imperial')).toBe(6);
+    expect(toleranceFromSecPerKm(6, 'imperial')).toBe(10);
+    expect(toleranceToSecPerKm(5, 'metric')).toBe(5);
+  });
+
+  it('formats distances race-style', () => {
+    expect(formatDistance(800, 'imperial')).toBe('800 m');
+    expect(formatDistance(1609, 'imperial')).toBe('1 mi');
+    expect(formatDistance(10018, 'imperial')).toBe('6.2 mi');
+    expect(formatDistance(5000, 'metric')).toBe('5 km');
+    expect(formatDistance(400, 'metric')).toBe('400 m');
   });
 });
