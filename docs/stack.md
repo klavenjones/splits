@@ -15,7 +15,7 @@ Decided Sep 2026. iPhone first (Android later), solo developer, TypeScript.
 | App state | Zustand | live workout, timers, UI state |
 | Health data | HealthKit via `@kingstinct/react-native-healthkit`, pinned to 15.1.0 (16.0.0 doesn't build on Expo 57 / RN 0.86, issue #391; move up once fixed). Needs the Expo dev build (`expo-dev-client`), not Expo Go | Apple Watch runs and smart-scale weight |
 | Food data | USDA FoodData Central + Open Food Facts (barcode); cached into `foods` on first log | Free; accurate whole foods; barcode coverage |
-| Charts | Victory Native (Skia) | smooth, themeable |
+| Charts | Victory Native 42 on `@shopify/react-native-skia` 2.6.2 (the Expo SDK 57 pin; newer Skia needs newer worklets) | smooth, themeable |
 | Media | Supabase Storage for custom-exercise photos/videos; `expo-av`/`expo-video` for silent loops | |
 | Notifications | `expo-notifications` local only (rest timer end, morning weigh-in) | no push server needed |
 | Errors | Sentry (Expo integration) with PII scrubbing | |
