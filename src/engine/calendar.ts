@@ -24,3 +24,15 @@ export function mondayOf(day: string): string {
   date.setDate(date.getDate() - offset);
   return toLocalDate(date);
 }
+
+/** `day` moved by `n` calendar days (negative for earlier). */
+export function addDays(day: string, n: number): string {
+  const d = fromLocalDate(day);
+  d.setDate(d.getDate() + n);
+  return toLocalDate(d);
+}
+
+/** Whole calendar days from `a` to `b` (b − a). */
+export function daysBetween(a: string, b: string): number {
+  return Math.round((fromLocalDate(b).getTime() - fromLocalDate(a).getTime()) / 86_400_000);
+}

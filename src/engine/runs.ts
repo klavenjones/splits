@@ -3,6 +3,7 @@
  * segments (docs/data-model.md: derived, not stored). Pure.
  */
 import {
+  DEFAULT_PACE,
   expand,
   segmentDistance,
   segmentDuration,
@@ -116,4 +117,33 @@ export function splitVsTarget(
     delta: signedTime(paceDelta(splitSPerKm, target.pace_s_per_km, units)),
     word: state === 'faster' ? 'faster' : state === 'slower' ? 'slower' : 'on pace',
   };
+}
+
+/**
+ * An easy run: a planned run whose template has no interval, hard or moderate effort, zone 3+
+ * target, or pace target faster than the default moderate pace, and isn't long (12 km or 75 min).
+ * Unplanned runs aren't counted (no template says what they were meant to be).
+ */
+export function isEasyRun(
+  t: {
+    est_distance_m: number | null;
+    est_duration_s: number | null;
+    segments: readonly {
+      segment_type: string;
+      target_type: string;
+      target_effort: string | null;
+      target_hr_zone: number | null;
+      target_pace_s_per_km?: number | null;
+    }[];
+  } | null,
+): boolean {
+  if (!t || !t.segments.length) return false;
+  if ((t.est_distance_m ?? 0) >= 12_000 || (t.est_duration_s ?? 0) >= 75 * 60) return false;
+  return t.segments.every(
+    (s) =>
+      s.segment_type !== 'interval' &&
+      !(s.target_type === 'effort' && s.target_effort !== 'easy') &&
+      !(s.target_type === 'heart_rate_zone' && (s.target_hr_zone ?? 0) >= 3) &&
+      !(s.target_type === 'pace' && (s.target_pace_s_per_km ?? Infinity) <= DEFAULT_PACE.moderate),
+  );
 }
