@@ -65,3 +65,13 @@ One entry per build step.
 - Pure, tested: `src/engine/metrics.ts`, `src/workout/model.ts`, `suggest.ts`, `templateUpdate.ts`, and the SQLite repo and sync against an in-memory SQLite.
 - New dependencies: `zustand`, `expo-notifications`, `expo-network`, `expo-crypto`.
 
+## Step 6: Apple Watch runs from Apple Health (2026-10-04)
+- Connect Apple Health from Today's card or Settings → Apple Health (reads workouts, distance, heart rate, body mass). The first import covers the last 8 weeks; after that an anchored query picks up only new or deleted runs, on launch, on foreground, when the connection returns, on pull to refresh, and in the background when HealthKit wakes the app.
+- Each run is sent to `import_run`, idempotent on the HealthKit UUID (`run_logs.external_id`). A run on the same day as a planned run with no run yet completes it (closest planned distance wins, "matched automatically"); otherwise it becomes an unplanned run session: "needs a match" when it's from the last 7 days, an extra run when older. Today shows run cards (distance, time, pace, on target) and "needs a match" cards; the link sheet moves a run to a planned run of that week or keeps it as an extra run (`link_run`). Workouts deleted from Health are undone (`remove_imported_run`).
+- Splits per mile or km come from the workout's distance samples (interpolated at each boundary, paused time left out), with heart rate per split. Run detail: average pace against target ("4 sec faster than target"), distance, time, heart rate, the target with an on-target badge, and the splits table. The target is derived from the template's segments (pace targets, or estimated effort paces).
+- Weight: the earliest reading of each day is imported into `body_checkins` (`import_body_mass`), never over a manual weigh-in.
+- Weekly distance counts what was actually run, including extra runs.
+- Migration `20261004120000_run_import.sql`: `run_logs.match`, imported rows must have an `external_id`, and the RPCs above. `supabase/tests/run_import_smoke.sql`.
+- Pure, tested: `src/health/splits.ts`, `src/health/importer.ts` (with a fake HealthKit), `src/engine/runs.ts`.
+- New dependencies: `@kingstinct/react-native-healthkit@15.1.0`, `react-native-nitro-modules`, `expo-dev-client`, plus CocoaPods on the Mac. The app now runs as a dev build (`npm run ios`) instead of Expo Go.
+

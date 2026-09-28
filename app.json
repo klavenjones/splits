@@ -8,7 +8,8 @@
     "scheme": "splits",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.klavenjones.splits"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +26,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "./plugins/withoutPushEntitlement",
       "expo-router",
       [
         "expo-splash-screen",
@@ -35,7 +37,16 @@
         }
       ],
       "expo-sqlite",
-      "expo-video"
+      "expo-video",
+      "expo-dev-client",
+      [
+        "@kingstinct/react-native-healthkit",
+        {
+          "NSHealthShareUsageDescription": "Splits reads your runs, heart rate and weight from Apple Health to log your training and weigh-ins.",
+          "NSHealthUpdateUsageDescription": "Splits only writes sample runs in development builds.",
+          "background": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
