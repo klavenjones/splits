@@ -104,3 +104,4 @@ One entry per build step.
 - Settings → diagnostics: version, environment, reporting status, sync status, test error, JavaScript and native test crashes.
 - EAS: `eas.json` (development, preview, production → TestFlight), remote build numbers, `usesNonExemptEncryption: false`; Metro uses `getSentryExpoConfig`; the Xcode build phase uploads source maps and dSYMs for Release builds (Debug builds skip it). Scripts `ios:release` and `build:ios`.
 - New dependency: `@sentry/react-native` (dev client rebuilt).
+- TestFlight prep: EAS project `@klaven/splits` created and linked (`extra.eas.projectId`, `owner` in `app.json`); `expo-doctor` passes 21/21.

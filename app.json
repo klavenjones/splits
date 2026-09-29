@@ -64,6 +64,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "af761fa9-94e8-460b-a625-e0bfaee7f232"
+      }
+    },
+    "owner": "klaven"
   }
 }

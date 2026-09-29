@@ -77,6 +77,7 @@ docs/                     # this folder
 
 ## Release builds (EAS / TestFlight)
 
+- EAS project: `@klaven/splits` (https://expo.dev/accounts/klaven/projects/splits), linked by `extra.eas.projectId` and `owner` in `app.json`.
 - `eas.json` profiles: `development` (dev client, simulator), `preview` (internal), `production` (auto-incremented build number, submits to TestFlight). `appVersionSource: remote`: EAS owns the build number.
 - Source maps and dSYMs are uploaded by the Sentry Xcode build phase on every Release build (local or EAS). It needs `SENTRY_AUTH_TOKEN`, `SENTRY_ORG` and `SENTRY_PROJECT`; **a Release build fails without the token** unless `SENTRY_DISABLE_AUTO_UPLOAD=true`. Debug (dev client) builds skip the upload (`plugins/withSentryDebugSkip.js`), so `npm run ios` works without Sentry set up. Metro uses `getSentryExpoConfig` so bundles carry debug IDs.
 - EAS environment variables (expo.dev → project → Environment variables): `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT` (plain text) and `SENTRY_AUTH_TOKEN` (secret) for `preview` and `production`.
