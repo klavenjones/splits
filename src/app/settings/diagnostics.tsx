@@ -25,6 +25,8 @@ const confirm = (title: string, body: string, onOk: () => void) =>
  * checking that reports (with readable stack traces) reach Sentry from a release build.
  */
 export default function Diagnostics() {
+  // Release builds from the production profile don't offer ways to crash the app.
+  const canTest = __DEV__ || sentryEnvironment !== 'production';
   const overview = useSyncOverview();
   const sync = syncSummary(overview);
   const [note, setNote] = useState<string | null>(null);
@@ -64,44 +66,48 @@ export default function Diagnostics() {
             <SettingsRow label="last error" value={overview.lastError ?? 'none'} last />
           </SettingsGroup>
 
-          <View className="gap-2">
-            <Text className="px-5 type-micro text-text-muted">test reports</Text>
-            <Text className="px-1 type-caption text-text-muted">
-              Reports never include weights, reps, food, body or health data.
-            </Text>
-          </View>
-          <View className="gap-3">
-            <Button block variant="secondary" onPress={testError}>
-              send test error
-            </Button>
-            <Button
-              block
-              variant="destructive"
-              onPress={() =>
-                confirm(
-                  'Crash Splits?',
-                  'The app closes. Reopen it to send the report. Your workouts are saved on this phone.',
-                  throwTestCrash,
-                )
-              }
-            >
-              test crash (JavaScript)
-            </Button>
-            <Button
-              block
-              variant="destructive"
-              onPress={() =>
-                confirm(
-                  'Crash Splits natively?',
-                  'The app closes. Reopen it to send the report.',
-                  () => Sentry.nativeCrash(),
-                )
-              }
-            >
-              test crash (native)
-            </Button>
-          </View>
-          {note ? <Text className="px-1 type-caption text-text-muted">{note}</Text> : null}
+          {canTest ? (
+            <>
+              <View className="gap-2">
+                <Text className="px-5 type-micro text-text-muted">test reports</Text>
+                <Text className="px-1 type-caption text-text-muted">
+                  Reports never include weights, reps, food, body or health data.
+                </Text>
+              </View>
+              <View className="gap-3">
+                <Button block variant="secondary" onPress={testError}>
+                  send test error
+                </Button>
+                <Button
+                  block
+                  variant="destructive"
+                  onPress={() =>
+                    confirm(
+                      'Crash Splits?',
+                      'The app closes. Reopen it to send the report. Your workouts are saved on this phone.',
+                      throwTestCrash,
+                    )
+                  }
+                >
+                  test crash (JavaScript)
+                </Button>
+                <Button
+                  block
+                  variant="destructive"
+                  onPress={() =>
+                    confirm(
+                      'Crash Splits natively?',
+                      'The app closes. Reopen it to send the report.',
+                      () => Sentry.nativeCrash(),
+                    )
+                  }
+                >
+                  test crash (native)
+                </Button>
+              </View>
+              {note ? <Text className="px-1 type-caption text-text-muted">{note}</Text> : null}
+            </>
+          ) : null}
         </ScrollView>
       </SafeAreaView>
     </View>

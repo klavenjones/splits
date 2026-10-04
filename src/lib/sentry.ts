@@ -5,7 +5,7 @@
  */
 import * as Sentry from '@sentry/react-native';
 
-import { asError } from './errors';
+import { asError, isOfflineError, isProtectedDataError } from './errors';
 import { scrubBreadcrumb, scrubEvent, type Scrubbable } from './scrub';
 
 const dsn = process.env.EXPO_PUBLIC_SENTRY_DSN;
@@ -19,6 +19,14 @@ export const navigationIntegration = Sentry.reactNavigationIntegration({
   enableTimeToInitialDisplay: true,
 });
 
+/** Offline and locked-phone failures are expected and retried; drop any that slip through. */
+function isExpected(event: { exception?: { values?: { type?: string; value?: string }[] } }) {
+  const v = event.exception?.values?.[0];
+  if (!v) return false;
+  const e = { name: v.type, message: v.value };
+  return isOfflineError(e) || isProtectedDataError(e);
+}
+
 Sentry.init({
   dsn,
   enabled: sentryEnabled,
@@ -31,7 +39,8 @@ Sentry.init({
   // Request and response bodies stay off (the default); failed-request capture stays off too.
   enableCaptureFailedRequests: false,
   integrations: [navigationIntegration],
-  beforeSend: (event) => scrubEvent(event as Scrubbable) as typeof event,
+  beforeSend: (event) =>
+    isExpected(event) ? null : (scrubEvent(event as Scrubbable) as typeof event),
   beforeSendTransaction: (event) => scrubEvent(event as Scrubbable) as typeof event,
   beforeBreadcrumb: (crumb) => scrubBreadcrumb(crumb),
 });
@@ -51,8 +60,11 @@ export function report(
   context?: { name: string; data: Record<string, unknown> },
   tags?: Record<string, string>,
 ) {
-  Sentry.captureException(asError(error), {
+  const err = asError(error);
+  Sentry.captureException(err, {
     tags: { area, ...tags },
+    // Group by feature, error and failing step, not by the shared asError() frame.
+    fingerprint: [area, err.name, tags?.step ?? ''],
     ...(context ? { contexts: { [context.name]: context.data } } : {}),
   });
 }

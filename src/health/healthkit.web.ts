@@ -2,6 +2,7 @@
 import type { HealthSource, HealthWorkout } from './importer';
 
 export const isAvailable = () => false;
+export const isProtectedDataAvailable = () => true;
 export const requestAccess = async () => false;
 export const enableBackground = async () => false;
 export const disableBackground = async () => {};

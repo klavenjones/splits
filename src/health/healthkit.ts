@@ -24,6 +24,17 @@ function hk(): typeof HK | null {
 
 export const isAvailable = () => hk() !== null;
 
+/** False while the phone is locked: HealthKit data is encrypted then, so reads would fail. */
+export function isProtectedDataAvailable(): boolean {
+  const h = hk();
+  if (!h) return true;
+  try {
+    return h.isProtectedDataAvailable();
+  } catch {
+    return true;
+  }
+}
+
 const WORKOUTS = 'HKWorkoutTypeIdentifier';
 const DISTANCE = 'HKQuantityTypeIdentifierDistanceWalkingRunning';
 const HEART_RATE = 'HKQuantityTypeIdentifierHeartRate';
