@@ -3,6 +3,7 @@ import {
   dailyWeights,
   importOnce,
   importRuns,
+  resetRunCutoff,
   type HealthSource,
   type HealthWorkout,
   type ImportApi,
@@ -256,6 +257,34 @@ describe('importOnce', () => {
     expect(r).toMatchObject({ runs: 1, skipped: 1 });
     expect([...imported.keys()]).toEqual(['HK-2']);
     expect(kv.getItem('splits.health.u1.runs-anchor')).toBe('a1');
+  });
+});
+
+describe('resetRunCutoff', () => {
+  it('starts the window at the reset, so earlier runs never import again', async () => {
+    const kv = memoryKv();
+    const { hk, calls } = fakeHealth([run('HK-1')]);
+    const { api } = fakeApi();
+    const deps = { userId: 'u1', units: 'imperial' as const, hk, api, kv, now: NOW };
+    await importOnce(deps);
+    expect(kv.getItem('splits.health.u1.runs-anchor')).toBe('a1');
+
+    resetRunCutoff('u1', kv, NOW + 1000);
+    expect(kv.getItem('splits.health.u1.runs-anchor')).toBeNull();
+    expect(kv.getItem('splits.health.u1.since')).toBe(String(NOW + 1000));
+
+    await importOnce({ ...deps, now: NOW + 60_000 });
+    expect(calls[1].anchor).toBeNull();
+    expect(calls[1].since.getTime()).toBe(NOW + 1000);
+  });
+
+  it('keeps the weight window and other users alone', () => {
+    const kv = memoryKv();
+    kv.setItem('splits.health.u1.weights-through', '2026-10-05');
+    kv.setItem('splits.health.u2.since', '5');
+    resetRunCutoff('u1', kv, 10);
+    expect(kv.getItem('splits.health.u1.weights-through')).toBe('2026-10-05');
+    expect(kv.getItem('splits.health.u2.since')).toBe('5');
   });
 });
 

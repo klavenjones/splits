@@ -28,6 +28,7 @@ let queryClient: QueryClient | null = null;
 let online = true;
 let timer: ReturnType<typeof setTimeout> | null = null;
 let running = false;
+let paused = false;
 let again = false;
 let failures = 0;
 /** The last failure's code, cleared by a clean pass (shown in Settings; no values). */
@@ -122,6 +123,7 @@ async function run() {
     .then(isOnline)
     .catch(() => online);
   if (online !== wasOnline) emit();
+  if (paused) return;
   if (!online) {
     requestSync(OFFLINE_POLL_MS);
     return;
@@ -181,6 +183,31 @@ export function requestSync(delayMs = 3000) {
     clearTimeout(timer);
   }
   timer = setTimeout(run, delayMs);
+}
+
+const PAUSE_WAIT_MS = 15_000;
+
+/**
+ * Holds syncing (for a reset): waits for a pass in flight to finish, and runs no more until the
+ * returned function is called, which resumes with a sync. Throws, still running, if a pass won't end.
+ */
+export async function pauseSync(): Promise<() => void> {
+  paused = true;
+  if (timer) clearTimeout(timer);
+  timer = null;
+  const resume = () => {
+    paused = false;
+    requestSync(0);
+  };
+  const deadline = Date.now() + PAUSE_WAIT_MS;
+  while (running) {
+    if (Date.now() > deadline) {
+      resume();
+      throw new Error('Sync is busy. Try again in a moment.');
+    }
+    await new Promise((r) => setTimeout(r, 50));
+  }
+  return resume;
 }
 
 /** Starts syncing for the signed-in user. Returns a stop function. */
