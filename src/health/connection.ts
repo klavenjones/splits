@@ -6,6 +6,7 @@
 import { useSyncExternalStore } from 'react';
 
 import { supabase } from '@/db/client';
+import { withStep } from '@/lib/errors';
 
 import {
   disableBackground,
@@ -101,31 +102,39 @@ async function saveIntegration(
 
 export function importApi(userId: string): ImportApi {
   return {
-    async importRun(p) {
-      const { data, error } = await supabase.rpc('import_run', { p });
-      if (error) throw error;
-      return data as { session_id: string; match: string; created: boolean };
-    },
-    async removeRun(externalId) {
-      const { data, error } = await supabase.rpc('remove_imported_run', {
-        p_external_id: externalId,
-      });
-      if (error) throw error;
-      return data;
-    },
-    async importWeights(days) {
-      const { data, error } = await supabase.rpc('import_body_mass', { p: days });
-      if (error) throw error;
-      return data;
-    },
-    touch: () => saveIntegration(userId, 'connected', true),
+    importRun: (p) =>
+      withStep('import_run', async () => {
+        const { data, error } = await supabase.rpc('import_run', { p });
+        if (error) throw error;
+        return data as { session_id: string; match: string; created: boolean };
+      }),
+    removeRun: (externalId) =>
+      withStep('remove_imported_run', async () => {
+        const { data, error } = await supabase.rpc('remove_imported_run', {
+          p_external_id: externalId,
+        });
+        if (error) throw error;
+        return data;
+      }),
+    importWeights: (days) =>
+      withStep('import_body_mass', async () => {
+        const { data, error } = await supabase.rpc('import_body_mass', { p: days });
+        if (error) throw error;
+        return data;
+      }),
+    touch: () => withStep('save_integration', () => saveIntegration(userId, 'connected', true)),
   };
 }
 
-/** Imports now (one at a time; see importRuns). */
-export function importNow(userId: string, units: 'imperial' | 'metric') {
+/**
+ * Imports now (one at a time; see importRuns). Needs a live session for this user: a stale or
+ * expired one fails as 42501 (no execute on the RPCs) or 23503 (no users row for the id).
+ */
+export async function importNow(userId: string, units: 'imperial' | 'metric') {
   const store = kv();
-  if (!store || !isConnected(userId) || !isAvailable()) return Promise.resolve(null);
+  if (!store || !isConnected(userId) || !isAvailable()) return null;
+  const { data } = await supabase.auth.getSession();
+  if (data.session?.user.id !== userId) return null;
   return importRuns({ userId, units, hk: healthSource, api: importApi(userId), kv: store });
 }
 

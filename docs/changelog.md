@@ -104,3 +104,12 @@ One entry per build step.
 - Settings → diagnostics: version, environment, reporting status, sync status, test error, JavaScript and native test crashes.
 - EAS: `eas.json` (development, preview, production → TestFlight), remote build numbers, `usesNonExemptEncryption: false`; Metro uses `getSentryExpoConfig`; the Xcode build phase uploads source maps and dSYMs for Release builds (Debug builds skip it). Scripts `ios:release` and `build:ios`.
 - New dependency: `@sentry/react-native` (dev client rebuilt).
+- TestFlight prep: EAS project `@klaven/splits` created and linked (`extra.eas.projectId`, `owner` in `app.json`); `expo-doctor` passes 21/21.
+
+## Sentry error mitigation (2026-10-03)
+- Health import no longer reports expected failures: HealthKit "protected data inaccessible" (phone locked; `runImport` skips while `isProtectedDataAvailable()` is false and retries on foreground) and lost-connection fetches (`isOfflineError`), with a matching `beforeSend` filter.
+- Import needs a live session for the same user (`importNow`), avoiding 42501/23503 from stale or expired sessions.
+- Reports keep the original error as `cause`, carry a `step` tag (`import_run`, `import_body_mass`, `healthkit_read`, ...) and group by area, error and step; the import de-dupes per step.
+- Diagnostics test buttons are hidden in production-profile builds.
+- Hosted DB checked: `import_body_mass` and the other import functions already grant `execute` to `authenticated`; no migration needed.
+- Still to do by hand: set `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` as EAS secrets so release builds upload source maps.
