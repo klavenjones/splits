@@ -2,12 +2,17 @@ import { useRef, useState, type ReactNode } from 'react';
 import { Pressable, Text, View, type LayoutRectangle } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useSharedValue,
+  withTiming,
   type SharedValue,
 } from 'react-native-reanimated';
 
-import { size } from '../theme/tokens';
+import { confirmRemovePlanned } from '../lib/confirmRemove';
+import { showMenu } from '../lib/menu';
+import { DELETE_WIDTH, dragOffset, settleSwipe } from '../plan/swipe';
+import { duration, easing, size } from '../theme/tokens';
 import { useTheme } from '../theme/useTheme';
 import { cn } from './cn';
 import { Icon } from './Icon';
@@ -110,7 +115,11 @@ export function SummaryTile({
 
 type CardStatus = 'planned' | 'in_progress' | 'completed' | 'skipped';
 
-/** A session on the week: kind bar (dashed while planned), name, meta; check when done. */
+/**
+ * A session on the week: kind bar (dashed while planned), name, meta; check when done. With
+ * `onDelete` (planned sessions) it has a three-dot menu and swipes left to reveal "remove"; both
+ * ask first ("Remove X?" with `deleteNote` as the body) and only then call `onDelete`.
+ */
 export function PlannedSessionCard({
   kind,
   name,
@@ -119,6 +128,8 @@ export function PlannedSessionCard({
   draggable,
   onPress,
   onMoveDay,
+  onDelete,
+  deleteNote = '',
 }: {
   kind: 'lift' | 'run';
   name: string;
@@ -127,57 +138,141 @@ export function PlannedSessionCard({
   draggable?: boolean;
   onPress: () => void;
   onMoveDay?: (dir: -1 | 1) => void;
+  onDelete?: () => void;
+  deleteNote?: string;
 }) {
   const { c } = useTheme();
   const done = status === 'completed';
   const skipped = status === 'skipped';
   const fill = kind === 'lift' ? 'bg-lift-fill' : 'bg-run-fill';
+
+  const x = useSharedValue(0);
+  const open = useSharedValue(false);
+  const settle = (to: 'open' | 'closed') => {
+    open.set(to === 'open');
+    x.set(
+      withTiming(to === 'open' ? -DELETE_WIDTH : 0, {
+        duration: duration.fast,
+        easing: Easing.bezier(...easing.standard),
+      }),
+    );
+  };
+  const ask = () => {
+    if (onDelete) confirmRemovePlanned(name, deleteNote, onDelete, () => settle('closed'));
+  };
+  const swipe = Gesture.Pan()
+    .runOnJS(true)
+    .enabled(!!onDelete)
+    .activeOffsetX([-12, 12])
+    .failOffsetY([-10, 10])
+    .onUpdate((e) => x.set(dragOffset(open.get(), e.translationX)))
+    .onEnd((e) => settle(settleSwipe(open.get(), e.translationX, e.velocityX)));
+  const cardStyle = useAnimatedStyle(() => ({ transform: [{ translateX: x.get() }] }));
+  const actionStyle = useAnimatedStyle(() => ({ opacity: x.get() < 0 ? 1 : 0 }));
+
+  const actions = [
+    ...(onMoveDay
+      ? [
+          { name: 'previous', label: 'Move to previous day' },
+          { name: 'next', label: 'Move to next day' },
+        ]
+      : []),
+    ...(onDelete ? [{ name: 'delete', label: 'Remove from plan' }] : []),
+  ];
+
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={`${name}, ${kind}, ${meta}, ${status.replace('_', ' ')}`}
-      accessibilityHint={onMoveDay ? 'Actions move it to the previous or next day.' : undefined}
-      accessibilityActions={
-        onMoveDay
-          ? [
-              { name: 'previous', label: 'Move to previous day' },
-              { name: 'next', label: 'Move to next day' },
-            ]
-          : undefined
-      }
-      onAccessibilityAction={(e) => onMoveDay?.(e.nativeEvent.actionName === 'next' ? 1 : -1)}
-      className="flex-row items-center gap-3 rounded-card bg-surface-card py-3.5 pr-4 pl-4 shadow-card active:bg-surface-inset"
-    >
-      {done || status === 'in_progress' ? (
-        <View className={cn('w-1.5 self-stretch rounded-pill', fill)} />
-      ) : skipped ? (
-        <View className="w-1.5 self-stretch rounded-pill bg-track" />
-      ) : (
-        <DashedBar className={fill} />
-      )}
-      <View className="flex-1 gap-0.5">
-        <Text
-          className={cn('type-headline', skipped ? 'text-text-muted line-through' : 'text-text')}
-          numberOfLines={1}
+    <View>
+      {onDelete ? (
+        <Animated.View
+          style={[{ width: DELETE_WIDTH }, actionStyle]}
+          className="absolute inset-y-0 right-0"
         >
-          {name}
-        </Text>
-        <Text className="type-subhead text-text-muted" numberOfLines={1}>
-          {skipped ? 'skipped' : meta}
-        </Text>
-      </View>
-      {done ? (
-        <View
-          className={cn('h-9 w-9 items-center justify-center rounded-pill', fill)}
-          accessibilityElementsHidden
-        >
-          <Icon name="check" size={size.iconMd} color={kind === 'lift' ? c.onLift : c.onRun} />
-        </View>
-      ) : draggable ? (
-        <Icon name="grip" size={size.iconLg} color={c.textSubtle} strokeWidth={3} />
+          <Pressable
+            onPress={ask}
+            accessibilityRole="button"
+            accessibilityLabel={`Remove ${name}`}
+            className="flex-1 items-center justify-center gap-1 rounded-card bg-danger-fill active:bg-danger-pressed"
+          >
+            <Icon name="trash" size={size.iconMd} color={c.onDanger} />
+            <Text className="type-caption text-on-danger">remove</Text>
+          </Pressable>
+        </Animated.View>
       ) : null}
-    </Pressable>
+      <GestureDetector gesture={swipe}>
+        <Animated.View style={cardStyle}>
+          <Pressable
+            onPress={() => (open.get() ? settle('closed') : onPress())}
+            accessibilityRole="button"
+            accessibilityLabel={`${name}, ${kind}, ${meta}, ${status.replace('_', ' ')}`}
+            accessibilityHint={
+              onMoveDay ? 'Actions move it to the previous or next day.' : undefined
+            }
+            accessibilityActions={actions.length ? actions : undefined}
+            onAccessibilityAction={(e) => {
+              const action = e.nativeEvent.actionName;
+              if (action === 'delete') ask();
+              else onMoveDay?.(action === 'next' ? 1 : -1);
+            }}
+            className="flex-row items-center gap-3 rounded-card bg-surface-card py-3.5 pr-4 pl-4 shadow-card active:bg-surface-inset"
+          >
+            {done || status === 'in_progress' ? (
+              <View className={cn('w-1.5 self-stretch rounded-pill', fill)} />
+            ) : skipped ? (
+              <View className="w-1.5 self-stretch rounded-pill bg-track" />
+            ) : (
+              <DashedBar className={fill} />
+            )}
+            <View className="flex-1 gap-0.5">
+              <Text
+                className={cn(
+                  'type-headline',
+                  skipped ? 'text-text-muted line-through' : 'text-text',
+                )}
+                numberOfLines={1}
+              >
+                {name}
+              </Text>
+              <Text className="type-subhead text-text-muted" numberOfLines={1}>
+                {skipped ? 'skipped' : meta}
+              </Text>
+            </View>
+            {done ? (
+              <View
+                className={cn('h-9 w-9 items-center justify-center rounded-pill', fill)}
+                accessibilityElementsHidden
+              >
+                <Icon
+                  name="check"
+                  size={size.iconMd}
+                  color={kind === 'lift' ? c.onLift : c.onRun}
+                />
+              </View>
+            ) : (
+              <View className="flex-row items-center gap-1">
+                {onDelete ? (
+                  <Pressable
+                    onPress={() =>
+                      showMenu(name, [
+                        { label: 'remove from plan', destructive: true, onPress: ask },
+                      ])
+                    }
+                    accessibilityRole="button"
+                    accessibilityLabel={`${name} options`}
+                    hitSlop={8}
+                    className="h-9 w-9 items-center justify-center rounded-pill active:bg-surface-control"
+                  >
+                    <Icon name="more" size={size.iconMd} color={c.textMuted} strokeWidth={3} />
+                  </Pressable>
+                ) : null}
+                {draggable ? (
+                  <Icon name="grip" size={size.iconLg} color={c.textSubtle} strokeWidth={3} />
+                ) : null}
+              </View>
+            )}
+          </Pressable>
+        </Animated.View>
+      </GestureDetector>
+    </View>
   );
 }
 
