@@ -180,6 +180,17 @@ export function resetImport(userId: string, kv: KeyValue) {
   for (const key of Object.values(keys(userId))) kv.removeItem(key);
 }
 
+/**
+ * After a training reset: only runs from `now` on import. The window starts at the reset and the
+ * anchor goes, so the next pass asks HealthKit for workouts since then and nothing older returns.
+ * (The weight window is left alone: body check-ins are kept.)
+ */
+export function resetRunCutoff(userId: string, kv: KeyValue, now: number) {
+  const k = keys(userId);
+  kv.setItem(k.since, String(now));
+  kv.removeItem(k.anchor);
+}
+
 let running: Promise<ImportResult> | null = null;
 let again = false;
 

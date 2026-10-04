@@ -13,6 +13,7 @@ import { trace } from '@/lib/sentry';
 import { localDb } from '@/local/db';
 import { requestSync } from '@/local/syncService';
 import {
+  clearAll,
   loadActive,
   loadBests,
   loadLocalSummaries,
@@ -71,6 +72,8 @@ type Actions = {
   finish(nameOf: (exerciseId: string) => string | undefined): string | null;
   saveSummary(p: { feel: M.Workout['feel']; notes: string; updateTemplate: boolean }): void;
   discard(): void;
+  /** Wipes every workout on this phone and empties the store (a training reset). */
+  reset(): void;
 };
 
 const now = () => new Date().toISOString();
@@ -261,6 +264,19 @@ export const useWorkout = create<State & Actions>()((set, get) => {
       set({ active: null });
       get().refreshLocal();
       requestSync(0);
+    },
+
+    reset() {
+      void cancelRestEnd();
+      clearAll(localDb());
+      set({
+        active: null,
+        summary: null,
+        previous: new Map(),
+        lastDone: new Map(),
+        bests: new Map(),
+        local: [],
+      });
     },
   };
 });

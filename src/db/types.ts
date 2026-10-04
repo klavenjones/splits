@@ -1096,6 +1096,7 @@ export type Database = {
       }
       propose_weekly_targets: { Args: { p: Json }; Returns: boolean }
       remove_imported_run: { Args: { p_external_id: string }; Returns: boolean }
+      reset_training: { Args: never; Returns: number }
       save_starting_targets: {
         Args: {
           p_carbs_g: number

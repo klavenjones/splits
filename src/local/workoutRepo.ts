@@ -241,6 +241,17 @@ export function deleteWorkout(db: SqlDb, id: string) {
   });
 }
 
+/** Everything on this phone: every workout, its sets, and the previous / bests caches. */
+export function clearAll(db: SqlDb) {
+  db.transaction(() => {
+    db.run('delete from l_set_logs');
+    db.run('delete from l_session_exercises');
+    db.run('delete from l_sessions');
+    db.run('delete from l_previous');
+    db.run('delete from l_bests');
+  });
+}
+
 /* ---------------- previous and bests (caches of derived server data) ---------------- */
 
 export type PreviousRow = PreviousSet & { exercise_id: string; performed_on: string };

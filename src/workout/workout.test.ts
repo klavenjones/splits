@@ -2,9 +2,11 @@ import { memoryDb } from '@/local/testDb';
 import { migrate } from '@/local/sql';
 import { syncPending, toPayload, backoffMs, type SyncApi } from '@/local/sync';
 import {
+  clearAll,
   loadActive,
   loadBests,
   loadPending,
+  loadLocalSummaries,
   loadPrevious,
   loadWorkout,
   markDiscarded,
@@ -425,5 +427,28 @@ describe('local store and sync', () => {
     expect(p.get(bench.id)).toEqual([{ set_type: 'working', weight_kg: 84, reps: 8 }]);
     expect(lastDone.get(bench.id)).toBe('2026-10-05');
     expect(loadBests(db).get(bench.id)).toMatchObject({ weight_kg: 84, reps: 8 });
+  });
+
+  it('clearAll wipes workouts, sets and the previous / bests caches', () => {
+    const db = setup();
+    let w = start();
+    const b = w.exercises[0];
+    w = completeSet(w, b.id, b.sets[0].id, NOW).workout;
+    saveWorkout(db, w);
+    recordFinished(db, finish(w, NOW));
+    expect(loadPending(db, 'u1')).toHaveLength(1);
+    expect(loadBests(db).size).toBeGreaterThan(0);
+
+    clearAll(db);
+
+    expect(loadLocalSummaries(db, 'u1')).toEqual([]);
+    expect(loadPending(db, 'u1')).toEqual([]);
+    expect(loadActive(db, 'u1')).toBeNull();
+    expect(loadPrevious(db).previous.size).toBe(0);
+    expect(loadBests(db).size).toBe(0);
+    for (const t of ['l_sessions', 'l_session_exercises', 'l_set_logs']) {
+      expect(db.all<{ n: number }>(`select count(*) as n from ${t}`)[0].n).toBe(0);
+    }
+    clearAll(db); // nothing left: still fine
   });
 });

@@ -112,6 +112,11 @@ export default function Settings() {
           </SettingsGroup>
 
           <SettingsGroup title="account">
+            <SettingsRow
+              label="reset training data"
+              destructive
+              onPress={() => router.push('/settings/reset')}
+            />
             <SettingsRow label="log out" destructive onPress={logOut} last />
           </SettingsGroup>
 

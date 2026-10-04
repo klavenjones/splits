@@ -117,3 +117,10 @@ One entry per build step.
 ## Delete planned sessions from the Plan tab (2026-10-04)
 - Planned session cards on Plan → week have a three-dot menu ("remove from plan") and swipe left to reveal "remove". Both ask "Remove X?" first (the shared `confirmRemovePlanned`, also used by the session screen); a cancelled swipe closes the card. VoiceOver gets a "Remove from plan" action.
 - Swipe maths in `src/plan/swipe.ts` (tested). Completed, skipped and imported sessions are unchanged. No schema, dependency or `useDeleteSession` change.
+
+## Reset training data (2026-10-07)
+- Settings → account → "reset training data" opens a sheet that lists what is deleted and kept, and enables "reset" only after you type RESET. It deletes every session (completed, skipped, in progress, planned) with its sets, run logs and splits, so PRs, bests and progress clear too. Templates, custom exercises, nutrition and body data, targets, profile and settings stay.
+- `reset_training()` (migration `20261007120000_reset_training.sql`, no new tables or columns) runs as the caller. `supabase/tests/reset_training_smoke.sql` checks the cascade, what stays, user isolation, repeating and signed-out.
+- On the phone (`src/lib/resetTraining.ts`): sync is paused, the server is cleared first (so an offline failure loses nothing here), then SQLite workouts and the previous / bests caches, the live workout and rest timer, Apple Health's import window (`resetRunCutoff`: only runs from the reset on import; body weight is untouched) and the query cache, including the saved copy. Partial failure says so and is safe to retry.
+- Known limit: the Health cutoff is on the device, so a reinstall or another phone re-imports the last 56 days of runs.
+- Migration applied to the hosted project; `src/db/types.ts` regenerated with `npm run db:types`.

@@ -42,6 +42,15 @@ export function restoreQueryCache(qc: QueryClient) {
   }
 }
 
+/** Forgets the saved cache (after a reset, so a relaunch doesn't bring the old data back). */
+export function clearPersistedQueryCache() {
+  try {
+    storage()?.removeItem(KEY);
+  } catch {
+    // Storage unavailable: nothing was saved.
+  }
+}
+
 /** Saves the cache (throttled) whenever a kept query changes. Returns an unsubscribe. */
 export function persistQueryCache(qc: QueryClient): () => void {
   let timer: ReturnType<typeof setTimeout> | null = null;
