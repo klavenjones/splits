@@ -5,6 +5,7 @@
  * every call succeeded, and a re-send is harmless (unique on the HealthKit UUID).
  */
 import { toLocalDate } from '@/engine/calendar';
+import { withStep } from '@/lib/errors';
 import { M_PER_MI, type UnitSystem } from '@/units';
 
 import { computeSplits, type DistanceSample, type HeartRateSample, type Interval } from './splits';
@@ -81,7 +82,9 @@ export async function buildRun<W extends HealthWorkout>(
   units: UnitSystem,
   now: number,
 ): Promise<RunPayload> {
-  const [samples, hr] = await Promise.all([hk.distance(w), hk.heartRate(w)]);
+  const [samples, hr] = await withStep('healthkit_read', () =>
+    Promise.all([hk.distance(w), hk.heartRate(w)]),
+  );
   const summed = samples.reduce((m, s) => m + s.meters, 0);
   const distance = Math.round(w.distance_m ?? summed);
   const moving = hr.filter((h) => !w.pauses.some((p) => h.t >= p.start && h.t < p.end));
@@ -141,7 +144,9 @@ export async function importOnce<W extends HealthWorkout>(deps: {
     kv.setItem(k.since, String(since));
   }
 
-  const { workouts, deleted, anchor } = await hk.runs(kv.getItem(k.anchor), new Date(since));
+  const { workouts, deleted, anchor } = await withStep('healthkit_read', () =>
+    hk.runs(kv.getItem(k.anchor), new Date(since)),
+  );
   try {
     for (const w of workouts) {
       const p = await buildRun(w, hk, deps.units, now);
@@ -162,7 +167,7 @@ export async function importOnce<W extends HealthWorkout>(deps: {
   // Weight: re-send from the day before the last import, so a later reading that day is seen.
   const through = kv.getItem(k.weightsThrough);
   const wSince = through ? Date.parse(`${through}T00:00:00`) - DAY_MS : since;
-  const days = dailyWeights(await hk.weights(new Date(wSince)));
+  const days = dailyWeights(await withStep('healthkit_read', () => hk.weights(new Date(wSince))));
   if (days.length) result.weights = await api.importWeights(days);
   kv.setItem(k.weightsThrough, toLocalDate(new Date(now)));
 
