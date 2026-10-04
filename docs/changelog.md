@@ -124,3 +124,9 @@ One entry per build step.
 - On the phone (`src/lib/resetTraining.ts`): sync is paused, the server is cleared first (so an offline failure loses nothing here), then SQLite workouts and the previous / bests caches, the live workout and rest timer, Apple Health's import window (`resetRunCutoff`: only runs from the reset on import; body weight is untouched) and the query cache, including the saved copy. Partial failure says so and is safe to retry.
 - Known limit: the Health cutoff is on the device, so a reinstall or another phone re-imports the last 56 days of runs.
 - Migration applied to the hosted project; `src/db/types.ts` regenerated with `npm run db:types`.
+
+## CI/CD with EAS Workflows (2026-10-04)
+- `.eas/workflows/deploy-main.yml`: on every push to `main` (not docs-, `supabase/`- or markdown-only), run `typecheck`, `lint` and `test`; then fingerprint the project. A JavaScript-only change publishes an EAS Update to the `production` branch; a native change builds iOS (`production` profile) and submits to TestFlight. `[eas skip]` skips a run.
+- New dependency: `expo-updates` (native; dev client and production builds need a rebuild). `app.json` gets `runtimeVersion: { policy: "fingerprint" }` and `updates.url`; the `production` build profile gets `channel: "production"`.
+- The first push after this lands changes the fingerprint, so it makes a full build and submits it to TestFlight. Install that build; later JavaScript-only pushes arrive as updates (applied at the next cold start).
+- Setup done by hand: the repo is linked in expo.dev (GitHub), and `submit.production.ios.ascAppId` in `eas.json` is the App Store Connect app ID.
