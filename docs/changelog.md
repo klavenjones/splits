@@ -113,3 +113,7 @@ One entry per build step.
 - Diagnostics test buttons are hidden in production-profile builds.
 - Hosted DB checked: `import_body_mass` and the other import functions already grant `execute` to `authenticated`; no migration needed.
 - Still to do by hand: set `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` as EAS secrets so release builds upload source maps.
+
+## Delete planned sessions from the Plan tab (2026-10-04)
+- Planned session cards on Plan → week have a three-dot menu ("remove from plan") and swipe left to reveal "remove". Both ask "Remove X?" first (the shared `confirmRemovePlanned`, also used by the session screen); a cancelled swipe closes the card. VoiceOver gets a "Remove from plan" action.
+- Swipe maths in `src/plan/swipe.ts` (tested). Completed, skipped and imported sessions are unchanged. No schema, dependency or `useDeleteSession` change.

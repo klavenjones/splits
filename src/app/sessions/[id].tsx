@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { useAuth } from '@/auth';
 import {
@@ -17,6 +17,7 @@ import {
 } from '@/components';
 import { useDeleteSession, useRestoreSession, useSession } from '@/db/queries/sessions';
 import { useTemplate, type TemplateDetail } from '@/db/queries/templates';
+import { confirmRemovePlanned } from '@/lib/confirmRemove';
 import { showMenu } from '@/lib/menu';
 import { closeOr, startRun } from '@/lib/nav';
 import { startPlannedSession } from '@/workout/start';
@@ -85,14 +86,9 @@ export default function SessionDetail() {
               label: 'remove from plan',
               destructive: true,
               onPress: () =>
-                Alert.alert(`Remove ${s.name}?`, `It comes off ${longDay(s.scheduled_date)}.`, [
-                  { text: 'cancel', style: 'cancel' },
-                  {
-                    text: 'remove',
-                    style: 'destructive',
-                    onPress: () => remove.mutate(s.id, { onSuccess: close }),
-                  },
-                ]),
+                confirmRemovePlanned(s.name, `It comes off ${longDay(s.scheduled_date)}.`, () =>
+                  remove.mutate(s.id, { onSuccess: close }),
+                ),
             },
           ]
         : []),

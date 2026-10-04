@@ -28,7 +28,7 @@ import {
   WeekSwitcher,
   type BoardScroller,
 } from '@/components';
-import { useMoveSession, useSessions } from '@/db/queries/sessions';
+import { useDeleteSession, useMoveSession, useSessions } from '@/db/queries/sessions';
 import {
   useDeleteTemplate,
   useDuplicateTemplate,
@@ -42,6 +42,7 @@ import { sessionMeta, templateMeta } from '@/plan/describe';
 import {
   addDays,
   byDay,
+  longDay,
   relativeWeek,
   weekDays,
   weekdayCode,
@@ -140,6 +141,7 @@ function WeekView({ scroller }: { scroller: BoardScroller }) {
   const sunday = addDays(monday, 6);
   const sessions = useSessions(userId, monday, sunday);
   const moveSession = useMoveSession(userId);
+  const deleteSession = useDeleteSession(userId);
 
   const list = sessions.data ?? [];
   const days = byDay(list);
@@ -230,6 +232,8 @@ function WeekView({ scroller }: { scroller: BoardScroller }) {
                 status={s.status}
                 draggable={s.status === 'planned'}
                 onPress={() => open(s)}
+                onDelete={s.status === 'planned' ? () => deleteSession.mutate(s.id) : undefined}
+                deleteNote={`It comes off ${longDay(s.scheduled_date)}.`}
                 onMoveDay={
                   s.status === 'planned'
                     ? (dir) => {
@@ -241,9 +245,9 @@ function WeekView({ scroller }: { scroller: BoardScroller }) {
               />
             )}
           />
-          {moveSession.error ? (
+          {moveSession.error || deleteSession.error ? (
             <Text className="text-center type-caption text-danger-text">
-              {moveSession.error.message}
+              {(moveSession.error ?? deleteSession.error)?.message}
             </Text>
           ) : null}
           {list.length === 0 && sunday >= today ? (
