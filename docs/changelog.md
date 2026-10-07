@@ -136,3 +136,8 @@ One entry per build step.
 - Migrations: `20261008120000_exercise_movement_pattern.sql` (nullable `exercises.movement_pattern`, check constraint, index) and `20261008120100_exercise_movement_pattern_data.sql` (tags the 193 built-ins; generated from `exercises.json`). Apply with `npx supabase db push --linked` **before** shipping the app: the exercise list now selects the new column.
 - Tests: vocab, filter, validate, seed (every built-in has a valid slot and every slot is used), describe, swap ranking; `exercise_library_smoke.sql` checks the built-ins are tagged and the constraint rejects unknown slots.
 - No new dependencies.
+
+## Fix EAS submit and Sentry sourcemap steps (2026-10-07)
+- `eas.json`: `submit.production.ios.ascAppId` is the numeric Apple ID `6817152896` (the earlier `713594` is the app's SKU, so every TestFlight submit failed with `EAS_UPLOAD_TO_ASC_APP_NOT_FOUND`).
+- `app.json`: the `@sentry/react-native` plugin now carries `organization` and `project`. The workflow's "Upload Sentry sourcemaps" step reads them from the Expo config (not from `SENTRY_ORG` / `SENTRY_PROJECT`), so "Deploy main" failed after publishing the update. This changes the native fingerprint, so the next push to `main` makes a full build and submit.
+
