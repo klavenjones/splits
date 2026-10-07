@@ -8,6 +8,7 @@ const ex = (name: string, owner: string | null = null): ExerciseLike => ({
   primary_muscle: 'chest',
   secondary_muscles: [],
   equipment: 'barbell',
+  movement_pattern: null,
 });
 
 describe('sectionLetter', () => {

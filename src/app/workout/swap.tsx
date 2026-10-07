@@ -52,6 +52,7 @@ export default function SwapSheet() {
       name: target.name,
       primary_muscle: target.primary_muscle,
       equipment: target.equipment,
+      movement_pattern: full?.movement_pattern ?? null,
     },
     library,
     { ...opts, equipment: any || mine.size === 0 ? null : mine },

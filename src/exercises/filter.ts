@@ -1,5 +1,5 @@
 /** Search and filters for the exercise library and picker. Runs on the device over the cached list. Pure. */
-import { muscleGroup, type Equipment, type MuscleGroup } from './vocab';
+import { muscleGroup, type Equipment, type MovementPattern, type MuscleGroup } from './vocab';
 
 /** The fields filtering and sectioning need; database rows satisfy it. */
 export type ExerciseLike = {
@@ -9,6 +9,8 @@ export type ExerciseLike = {
   primary_muscle: string | null;
   secondary_muscles: string[];
   equipment: string | null;
+  /** The movement slot (vocab.ts), or null when untagged. */
+  movement_pattern: string | null;
 };
 
 export type ExerciseFilter = {
@@ -17,6 +19,8 @@ export type ExerciseFilter = {
   groups?: readonly MuscleGroup[];
   /** Match any of these. Empty = all. */
   equipment?: readonly Equipment[];
+  /** Match any of these movement slots. Empty = all; untagged exercises match none. */
+  patterns?: readonly MovementPattern[];
 };
 
 /** Gym shorthand typed into search. */
@@ -50,7 +54,9 @@ export function queryTerms(query: string): string[] {
 }
 
 function haystack(e: ExerciseLike): { spaced: string; compact: string } {
-  const spaced = normalize([e.name, e.equipment ?? '', e.primary_muscle ?? ''].join(' '));
+  const spaced = normalize(
+    [e.name, e.equipment ?? '', e.primary_muscle ?? '', e.movement_pattern ?? ''].join(' '),
+  );
   return { spaced, compact: spaced.replace(/ /g, '') };
 }
 
@@ -68,10 +74,12 @@ export function filterExercises<T extends ExerciseLike>(
   const terms = queryTerms(f.query ?? '');
   const groups = f.groups ?? [];
   const equipment = f.equipment ?? [];
+  const patterns = f.patterns ?? [];
   return list.filter(
     (e) =>
       (groups.length === 0 || groups.includes(muscleGroup(e.primary_muscle) as MuscleGroup)) &&
       (equipment.length === 0 || equipment.includes(e.equipment as Equipment)) &&
+      (patterns.length === 0 || patterns.includes(e.movement_pattern as MovementPattern)) &&
       matchesQuery(e, terms),
   );
 }

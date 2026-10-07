@@ -3,7 +3,7 @@ import { Pressable, SectionList, Text, View } from 'react-native';
 
 import { rowSubtitle } from '../exercises/describe';
 import { useExerciseBrowser } from '../exercises/useExerciseBrowser';
-import { EQUIPMENT, MUSCLE_GROUPS } from '../exercises/vocab';
+import { EQUIPMENT, MOVEMENT_PATTERNS, MUSCLE_GROUPS } from '../exercises/vocab';
 import { Chip, ChipGroup } from './controls';
 import { ActionRow, EmptyState, ExerciseRow, GroupedItem, SearchField } from './exercises';
 import { Button, MicroLabel } from './primitives';
@@ -44,7 +44,7 @@ export function ExercisePicker({
 }: ExercisePickerProps) {
   const b = useExerciseBrowser(userId);
   const [selected, setSelected] = useState<string[]>([]);
-  const [open, setOpen] = useState<'muscle' | 'equipment' | null>(null);
+  const [open, setOpen] = useState<'muscle' | 'equipment' | 'movement' | null>(null);
 
   const toggle = (id: string) => {
     if (single) return onConfirm([id]);
@@ -53,6 +53,12 @@ export function ExercisePicker({
 
   const muscleLabel =
     b.groups.length === 1 ? b.groups[0] : b.groups.length ? `${b.groups.length} muscles` : 'muscle';
+  const movementLabel =
+    b.patterns.length === 1
+      ? b.patterns[0]
+      : b.patterns.length
+        ? `${b.patterns.length} movements`
+        : 'movement';
   const equipLabel =
     b.equipment.length === 1
       ? b.equipment[0]
@@ -122,6 +128,13 @@ export function ExercisePicker({
                 selected={b.equipment.length > 0}
                 onPress={() => setOpen(open === 'equipment' ? null : 'equipment')}
               />
+              <Chip
+                role="button"
+                leadingIcon={open === 'movement' ? 'chevron-down' : 'chevron-right'}
+                label={movementLabel}
+                selected={b.patterns.length > 0}
+                onPress={() => setOpen(open === 'movement' ? null : 'movement')}
+              />
             </View>
             {open === 'muscle' ? (
               <ChipGroup label="muscle" multi>
@@ -145,6 +158,19 @@ export function ExercisePicker({
                     label={e}
                     selected={b.equipment.includes(e)}
                     onPress={() => b.toggleEquipment(e)}
+                  />
+                ))}
+              </ChipGroup>
+            ) : null}
+            {open === 'movement' ? (
+              <ChipGroup label="movement" multi>
+                {MOVEMENT_PATTERNS.map((p) => (
+                  <Chip
+                    key={p}
+                    multi
+                    label={p}
+                    selected={b.patterns.includes(p)}
+                    onPress={() => b.togglePattern(p)}
                   />
                 ))}
               </ChipGroup>

@@ -1,7 +1,8 @@
 /**
  * Picker and swap suggestions (docs/flows.md → hybrid coaching rules). Pure.
  * - Suggested for this workout: exercises for muscles not trained today.
- * - Swap: same primary muscle (then the same group), filtered by the user's equipment.
+ * - Swap: same movement slot first, then same primary muscle, then the same group, filtered by
+ *   the user's equipment.
  */
 import { muscleGroup } from '@/exercises/vocab';
 
@@ -10,6 +11,7 @@ export type LibraryExercise = {
   name: string;
   primary_muscle: string | null;
   equipment: string | null;
+  movement_pattern?: string | null;
 };
 
 export type Suggestions<T> = { muscles: string[]; exercises: T[] };
@@ -65,8 +67,8 @@ export function yourEquipment(
 }
 
 /**
- * Swap candidates for `target`: the same primary muscle first, then the same muscle group; within
- * each, ones you've done before first, then by name. `equipment` (when given) filters the list.
+ * Swap candidates for `target`: the same movement slot first (when it has one), then the same
+ * primary muscle, then the same muscle group; within each, ones you've done before first, then by name. `equipment` (when given) filters the list.
  */
 export function swapCandidates<T extends LibraryExercise>(
   target: LibraryExercise,
@@ -79,18 +81,22 @@ export function swapCandidates<T extends LibraryExercise>(
   },
 ): T[] {
   const group = muscleGroup(target.primary_muscle);
+  const sameSlot = (e: T) =>
+    !!target.movement_pattern && e.movement_pattern === target.movement_pattern;
   const rank = (e: T) =>
-    e.primary_muscle === target.primary_muscle
+    sameSlot(e)
       ? 0
-      : group && muscleGroup(e.primary_muscle) === group
+      : e.primary_muscle === target.primary_muscle
         ? 1
-        : 2;
+        : group && muscleGroup(e.primary_muscle) === group
+          ? 2
+          : 3;
   return library
     .filter(
       (e) =>
         e.id !== target.id &&
         !opts.exclude.has(e.id) &&
-        rank(e) < 2 &&
+        rank(e) < 3 &&
         (!opts.equipment || (e.equipment != null && opts.equipment.has(e.equipment))),
     )
     .sort(

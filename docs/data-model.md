@@ -87,6 +87,7 @@ Target database: Postgres (Supabase). 18 tables in five areas. Every user-owned 
 | primary_muscle | text | e.g. `chest` |
 | secondary_muscles | text[] | |
 | equipment | text | e.g. `barbell` |
+| movement_pattern | text, nullable | the movement slot the exercise fills (e.g. `horizontal press`, `hinge`); one per exercise; null = untagged (custom exercises until picked). Check constraint lists the 28 values below |
 | tracking_type | enum | |
 | thumbnail_url | text | small square image |
 | demo_url | text | short silent loop (mp4) or animation |
@@ -117,6 +118,18 @@ Custom-exercise media is uploaded to Supabase Storage bucket `exercise-media/{us
 | full body | full body (conditioning) |
 
 Equipment: barbell, dumbbell, kettlebell, cable, machine, bodyweight, band, landmine, ez bar, smith machine, sled, box, rower, bike, other.
+
+**Movement slots** (`movement_pattern`; `src/exercises/vocab.ts`). One per exercise, independent of the muscle it trains. Library search and the filter chips use it, the swap screen ranks the same slot first, and the picker and detail subtitles show it. A check constraint (not an enum) holds the list, so adding a slot is a one-line migration plus a vocab entry.
+
+| Group | Slots |
+|---|---|
+| upper push | horizontal press, incline press, vertical press, chest fly, triceps extension, lateral raise |
+| upper pull | horizontal pull, vertical pull, rear delt / upper back, biceps curl, shrug |
+| lower | squat, hinge, lunge / split squat, hip thrust / bridge, knee extension, knee flexion, calf raise, hip abduction / adduction |
+| core | anti-extension, flexion, rotation / anti-rotation, back extension |
+| full body / other | carry, olympic / power, plyometric / jump, conditioning / cardio, mobility / other |
+
+Built-ins are tagged by `20261008120100_exercise_movement_pattern_data.sql` (generated from `exercises.json`).
 
 ### templates
 | Column | Type | Notes |

@@ -1,6 +1,6 @@
 /** Create/edit form rules for custom exercises. Pure. */
 import { normalize, type ExerciseLike } from './filter';
-import { isEquipment, isMuscle, type TrackingType } from './vocab';
+import { isEquipment, isMovementPattern, isMuscle, type TrackingType } from './vocab';
 
 export const NAME_MAX = 60;
 export const NOTES_MAX = 500;
@@ -10,11 +10,14 @@ export type ExerciseDraft = {
   primaryMuscle: string | null;
   secondaryMuscles: string[];
   equipment: string | null;
+  movementPattern: string | null;
   trackingType: TrackingType;
   notes: string;
 };
 
-export type DraftErrors = Partial<Record<'name' | 'primaryMuscle' | 'equipment' | 'notes', string>>;
+export type DraftErrors = Partial<
+  Record<'name' | 'primaryMuscle' | 'equipment' | 'movementPattern' | 'notes', string>
+>;
 
 /**
  * The visible exercise with the same name, ignoring case, spacing and punctuation. The database
@@ -44,6 +47,8 @@ export function validateDraft(
     errors.name = 'That’s already in your library. Open it instead, or pick another name.';
   if (!isMuscle(d.primaryMuscle)) errors.primaryMuscle = 'Pick the main muscle it works.';
   if (d.equipment !== null && !isEquipment(d.equipment)) errors.equipment = 'Pick equipment.';
+  if (d.movementPattern !== null && !isMovementPattern(d.movementPattern))
+    errors.movementPattern = 'Pick a movement.';
   if (d.notes.length > NOTES_MAX) errors.notes = `Keep notes under ${NOTES_MAX} characters.`;
   return errors;
 }

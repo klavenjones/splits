@@ -23,6 +23,23 @@ begin
   end if;
 end $$;
 
+-- Movement slots: every built-in has one (the check constraint guarantees it is a known slot).
+do $$
+declare bad text;
+begin
+  select string_agg(name, ', ') into bad from public.exercises
+  where owner_id is null and movement_pattern is null;
+  if bad is not null then
+    raise exception 'built-ins without a movement slot: %', bad;
+  end if;
+  -- An unknown slot is rejected.
+  begin
+    update public.exercises set movement_pattern = 'upper push' where owner_id is null;
+    raise exception 'an unknown movement slot was allowed';
+  exception when check_violation then null;
+  end;
+end $$;
+
 -- Built-in media: every built-in with an image carries its license credit.
 do $$
 begin
@@ -47,10 +64,10 @@ select set_config('request.jwt.claims',
 insert into storage.objects (bucket_id, name)
 values ('exercise-media', '00000000-0000-0000-0000-0000000002a1/clip.mp4');
 insert into public.exercises (owner_id, name, primary_muscle, secondary_muscles, equipment,
-  tracking_type, demo_url, demo_type)
+  tracking_type, demo_url, demo_type, movement_pattern)
 values ('00000000-0000-0000-0000-0000000002a1', 'landmine press smoke', 'front delts',
   '{triceps,upper chest}', 'landmine', 'weight_reps',
-  '00000000-0000-0000-0000-0000000002a1/clip.mp4', 'video');
+  '00000000-0000-0000-0000-0000000002a1/clip.mp4', 'video', 'vertical press');
 
 do $$
 begin
@@ -59,6 +76,10 @@ begin
   end if;
   if (select count(*) from public.exercises where owner_id is null) < 150 then
     raise exception 'A cannot read the built-in library';
+  end if;
+  if (select movement_pattern from public.exercises where name = 'landmine press smoke')
+     is distinct from 'vertical press' then
+    raise exception 'A''s custom exercise lost its movement slot';
   end if;
   -- Same name twice for the same owner is rejected.
   begin

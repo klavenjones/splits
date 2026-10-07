@@ -5,6 +5,7 @@ const ex = (
   primary: string,
   equipment: string,
   owner: string | null = null,
+  pattern: string | null = null,
 ): ExerciseLike => ({
   id: name,
   name,
@@ -12,13 +13,14 @@ const ex = (
   primary_muscle: primary,
   secondary_muscles: [],
   equipment,
+  movement_pattern: pattern,
 });
 
 const LIST = [
-  ex('bench press', 'chest', 'barbell'),
-  ex('dumbbell bench press', 'chest', 'dumbbell'),
-  ex('pull-up', 'lats', 'bodyweight'),
-  ex('Romanian deadlift', 'hamstrings', 'barbell'),
+  ex('bench press', 'chest', 'barbell', null, 'horizontal press'),
+  ex('dumbbell bench press', 'chest', 'dumbbell', null, 'horizontal press'),
+  ex('pull-up', 'lats', 'bodyweight', null, 'vertical pull'),
+  ex('Romanian deadlift', 'hamstrings', 'barbell', null, 'hinge'),
   ex('sled push', 'full body', 'sled'),
   ex('leg press', 'quads', 'machine'),
   ex('Crème curl', 'biceps', 'dumbbell', 'u1'),
@@ -83,6 +85,29 @@ describe('filterExercises', () => {
       names(filterExercises(LIST, { groups: ['legs'], equipment: ['barbell'], query: 'dead' })),
     ).toEqual(['Romanian deadlift']);
     expect(filterExercises(LIST, { groups: ['legs'], equipment: ['sled'] })).toEqual([]);
+  });
+
+  it('also searches the movement slot', () => {
+    expect(names(filterExercises(LIST, { query: 'hinge' }))).toEqual(['Romanian deadlift']);
+    expect(names(filterExercises(LIST, { query: 'horizontal' }))).toEqual([
+      'bench press',
+      'dumbbell bench press',
+    ]);
+  });
+
+  it('filters by movement slot, any of several, and combines with the rest', () => {
+    expect(names(filterExercises(LIST, { patterns: ['hinge', 'vertical pull'] }))).toEqual([
+      'pull-up',
+      'Romanian deadlift',
+    ]);
+    expect(
+      names(filterExercises(LIST, { patterns: ['horizontal press'], equipment: ['dumbbell'] })),
+    ).toEqual(['dumbbell bench press']);
+    expect(filterExercises(LIST, { patterns: ['carry'] })).toEqual([]);
+  });
+
+  it('leaves untagged exercises out of a slot filter', () => {
+    expect(names(filterExercises(LIST, { patterns: ['squat'] }))).toEqual([]);
   });
 
   it('treats unknown muscles as matching no group', () => {
