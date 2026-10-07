@@ -130,3 +130,9 @@ One entry per build step.
 - New dependency: `expo-updates` (native; dev client and production builds need a rebuild). `app.json` gets `runtimeVersion: { policy: "fingerprint" }` and `updates.url`; the `production` build profile gets `channel: "production"`.
 - The first push after this lands changes the fingerprint, so it makes a full build and submits it to TestFlight. Install that build; later JavaScript-only pushes arrive as updates (applied at the next cold start).
 - Setup done by hand: the repo is linked in expo.dev (GitHub), and `submit.production.ios.ascAppId` in `eas.json` is the App Store Connect app ID.
+
+## Exercise movement slots (2026-10-08)
+- Every exercise has one movement slot (horizontal press, vertical press, hinge, squat, ... 28 in five groups; `src/exercises/vocab.ts`). Search finds it by name ("hinge"), the library and picker have a "movement" filter, the create/edit form has a slot picker (custom exercises), the row and detail subtitles show it, and the swap screen ranks the same slot first.
+- Migrations: `20261008120000_exercise_movement_pattern.sql` (nullable `exercises.movement_pattern`, check constraint, index) and `20261008120100_exercise_movement_pattern_data.sql` (tags the 193 built-ins; generated from `exercises.json`). Apply with `npx supabase db push --linked` **before** shipping the app: the exercise list now selects the new column.
+- Tests: vocab, filter, validate, seed (every built-in has a valid slot and every slot is used), describe, swap ranking; `exercise_library_smoke.sql` checks the built-ins are tagged and the constraint rejects unknown slots.
+- No new dependencies.

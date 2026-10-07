@@ -11,6 +11,18 @@ describe('describe', () => {
     );
   });
 
+  it('adds the movement slot when there is one', () => {
+    const e = {
+      primary_muscle: 'chest',
+      secondary_muscles: ['triceps'],
+      equipment: 'barbell',
+      movement_pattern: 'horizontal press',
+    };
+    expect(rowSubtitle(e)).toBe('chest · barbell · horizontal press');
+    expect(detailSubtitle(e)).toBe('barbell · chest, triceps · horizontal press');
+    expect(rowSubtitle({ ...e, movement_pattern: null })).toBe('chest · barbell');
+  });
+
   it('reads instructions defensively', () => {
     expect(readInstructions(null)).toEqual({ steps: [], cues: [], mistakes: [] });
     expect(readInstructions({ steps: ['a', 2, ' '], cues: 'x' })).toEqual({

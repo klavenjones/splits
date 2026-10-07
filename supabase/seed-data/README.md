@@ -6,7 +6,9 @@ Source files for generated migrations. Edit these, regenerate, commit both.
 
 - `exercises.json`: 193 built-ins. Names, muscles and equipment curated from
   [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (Unlicense); instructions are original.
-- Regenerate: `node scripts/build-exercise-seed.mjs` → `migrations/20260929120100_exercise_seed.sql`.
+- Each row has a `movement_pattern` (one of the slots in `src/exercises/vocab.ts`).
+- Regenerate: `node scripts/build-exercise-seed.mjs` → `migrations/20260929120100_exercise_seed.sql` (unchanged
+  since it was pushed) and `migrations/20261008120100_exercise_movement_pattern_data.sql` (tags the slots).
 
 ## Built-in illustrations (wger)
 

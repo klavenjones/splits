@@ -52,6 +52,61 @@ export const EQUIPMENT = [
 ] as const;
 export type Equipment = (typeof EQUIPMENT)[number];
 
+/**
+ * Movement slots: the job an exercise does in a session, whatever muscle it trains
+ * (`exercises.movement_pattern`). One per exercise. Each belongs to exactly one group.
+ */
+export const MOVEMENT_PATTERN_GROUPS = [
+  'upper push',
+  'upper pull',
+  'lower',
+  'core',
+  'full body / other',
+] as const;
+export type MovementPatternGroup = (typeof MOVEMENT_PATTERN_GROUPS)[number];
+
+export const MOVEMENT_PATTERNS_BY_GROUP = {
+  'upper push': [
+    'horizontal press',
+    'incline press',
+    'vertical press',
+    'chest fly',
+    'triceps extension',
+    'lateral raise',
+  ],
+  'upper pull': [
+    'horizontal pull',
+    'vertical pull',
+    'rear delt / upper back',
+    'biceps curl',
+    'shrug',
+  ],
+  lower: [
+    'squat',
+    'hinge',
+    'lunge / split squat',
+    'hip thrust / bridge',
+    'knee extension',
+    'knee flexion',
+    'calf raise',
+    'hip abduction / adduction',
+  ],
+  core: ['anti-extension', 'flexion', 'rotation / anti-rotation', 'back extension'],
+  'full body / other': [
+    'carry',
+    'olympic / power',
+    'plyometric / jump',
+    'conditioning / cardio',
+    'mobility / other',
+  ],
+} as const satisfies Record<MovementPatternGroup, readonly string[]>;
+
+export type MovementPattern = (typeof MOVEMENT_PATTERNS_BY_GROUP)[MovementPatternGroup][number];
+
+export const MOVEMENT_PATTERNS: readonly MovementPattern[] = MOVEMENT_PATTERN_GROUPS.flatMap(
+  (g) => MOVEMENT_PATTERNS_BY_GROUP[g],
+);
+
 /** The six the create form shows first (mockup 09/02); the rest sit behind "more". */
 export const COMMON_EQUIPMENT: readonly Equipment[] = [
   'barbell',
@@ -103,4 +158,18 @@ export const isEquipment = (v: string | null | undefined): v is Equipment =>
 /** The group a muscle belongs to, or null for unknown or missing values. */
 export function muscleGroup(muscle: string | null | undefined): MuscleGroup | null {
   return (muscle && GROUP_OF.get(muscle)) || null;
+}
+
+const PATTERN_GROUP_OF = new Map<string, MovementPatternGroup>(
+  MOVEMENT_PATTERN_GROUPS.flatMap((g) => MOVEMENT_PATTERNS_BY_GROUP[g].map((p) => [p, g] as const)),
+);
+
+export const isMovementPattern = (v: string | null | undefined): v is MovementPattern =>
+  !!v && PATTERN_GROUP_OF.has(v);
+
+/** The group a movement slot belongs to, or null for unknown or missing values. */
+export function movementPatternGroup(
+  pattern: string | null | undefined,
+): MovementPatternGroup | null {
+  return (pattern && PATTERN_GROUP_OF.get(pattern)) || null;
 }

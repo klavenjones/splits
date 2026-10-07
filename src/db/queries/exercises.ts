@@ -15,7 +15,7 @@ export type ExerciseListItem = Omit<
 >;
 
 const LIST_COLUMNS =
-  'id, owner_id, name, primary_muscle, secondary_muscles, equipment, tracking_type, thumbnail_url, demo_url, demo_type, notes, is_archived';
+  'id, owner_id, name, primary_muscle, secondary_muscles, equipment, movement_pattern, tracking_type, thumbnail_url, demo_url, demo_type, notes, is_archived';
 
 export const exercisesKey = (userId: string | undefined) => ['exercises', userId] as const;
 export const exerciseKey = (id: string | undefined) => ['exercise', id] as const;
@@ -84,6 +84,7 @@ function draftColumns(d: ExerciseDraft) {
     primary_muscle: d.primaryMuscle,
     secondary_muscles: cleanSecondary(d.primaryMuscle, d.secondaryMuscles),
     equipment: d.equipment,
+    movement_pattern: d.movementPattern,
     tracking_type: d.trackingType,
     notes: d.notes.trim() || null,
   };

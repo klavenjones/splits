@@ -263,6 +263,33 @@ describe('suggestions', () => {
       incline.id,
     ]);
   });
+
+  it('ranks the same movement slot first, then muscle, then group', () => {
+    const slot = (id: string, muscle: string, pattern: string | null) => ({
+      ...ex(id, muscle, 'barbell'),
+      movement_pattern: pattern,
+    });
+    const target = slot('bench', 'chest', 'horizontal press');
+    const lib = [
+      target,
+      slot('a-chest-fly', 'chest', 'chest fly'),
+      slot('b-row-tagged-press', 'triceps', 'horizontal press'),
+      slot('c-push-up', 'chest', 'horizontal press'),
+      slot('d-untagged-chest', 'chest', null),
+      slot('e-leg-press', 'quads', 'squat'),
+    ];
+    const opts = {
+      exclude: new Set<string>(),
+      history: new Map<string, string>(),
+      equipment: null,
+    };
+    expect(swapCandidates(target, lib, opts).map((e) => e.id)).toEqual([
+      'b-row-tagged-press',
+      'c-push-up',
+      'a-chest-fly',
+      'd-untagged-chest',
+    ]);
+  });
 });
 
 describe('local store and sync', () => {

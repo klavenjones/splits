@@ -74,6 +74,7 @@ export type Database = {
           instructions: Json | null
           is_archived: boolean
           media_credit: Json | null
+          movement_pattern: string | null
           name: string
           notes: string | null
           owner_id: string | null
@@ -92,6 +93,7 @@ export type Database = {
           instructions?: Json | null
           is_archived?: boolean
           media_credit?: Json | null
+          movement_pattern?: string | null
           name: string
           notes?: string | null
           owner_id?: string | null
@@ -110,6 +112,7 @@ export type Database = {
           instructions?: Json | null
           is_archived?: boolean
           media_credit?: Json | null
+          movement_pattern?: string | null
           name?: string
           notes?: string | null
           owner_id?: string | null

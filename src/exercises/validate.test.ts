@@ -8,6 +8,7 @@ const ex = (id: string, name: string, owner: string | null = null): ExerciseLike
   primary_muscle: 'shoulders',
   secondary_muscles: [],
   equipment: 'landmine',
+  movement_pattern: null,
 });
 const LIST = [ex('1', 'landmine press', 'me'), ex('2', 'bench press')];
 
@@ -16,6 +17,7 @@ const draft = (p: Partial<ExerciseDraft> = {}): ExerciseDraft => ({
   primaryMuscle: 'front delts',
   secondaryMuscles: [],
   equipment: 'barbell',
+  movementPattern: 'vertical press',
   trackingType: 'weight_reps',
   notes: '',
   ...p,
@@ -51,6 +53,14 @@ describe('validateDraft', () => {
     expect(validateDraft(draft({ primaryMuscle: null }), LIST).primaryMuscle).toBeDefined();
     expect(validateDraft(draft({ primaryMuscle: 'shoulders' }), LIST).primaryMuscle).toBeDefined();
     expect(validateDraft(draft({ equipment: 'trebuchet' }), LIST).equipment).toBeDefined();
+  });
+
+  it('accepts no slot, or a known one', () => {
+    expect(validateDraft(draft({ movementPattern: null }), LIST)).toEqual({});
+    expect(validateDraft(draft({ movementPattern: 'hinge' }), LIST)).toEqual({});
+    expect(
+      validateDraft(draft({ movementPattern: 'upper push' }), LIST).movementPattern,
+    ).toBeDefined();
   });
 
   it('limits notes', () => {

@@ -1,17 +1,21 @@
 /** Display strings for exercises. Pure. */
 import type { ExerciseLike } from './filter';
 
-/** Row subtitle: "rear delts · cable". */
-export function rowSubtitle(e: Pick<ExerciseLike, 'primary_muscle' | 'equipment'>): string {
-  return [e.primary_muscle, e.equipment].filter(Boolean).join(' · ');
+/** Row subtitle: "rear delts · cable · rear delt / upper back". */
+export function rowSubtitle(
+  e: Pick<ExerciseLike, 'primary_muscle' | 'equipment'> & { movement_pattern?: string | null },
+): string {
+  return [e.primary_muscle, e.equipment, e.movement_pattern].filter(Boolean).join(' · ');
 }
 
-/** Detail subtitle: "barbell · chest, triceps". */
+/** Detail subtitle: "barbell · chest, triceps · horizontal press". */
 export function detailSubtitle(
-  e: Pick<ExerciseLike, 'primary_muscle' | 'secondary_muscles' | 'equipment'>,
+  e: Pick<ExerciseLike, 'primary_muscle' | 'secondary_muscles' | 'equipment'> & {
+    movement_pattern?: string | null;
+  },
 ): string {
   const muscles = [e.primary_muscle, ...e.secondary_muscles].filter(Boolean).join(', ');
-  return [e.equipment, muscles].filter(Boolean).join(' · ');
+  return [e.equipment, muscles, e.movement_pattern].filter(Boolean).join(' · ');
 }
 
 /** The instructions jsonb, with anything missing or malformed read as empty. */

@@ -4,6 +4,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["lats", "obliques"],
     "equipment": "other",
+    "movement_pattern": "anti-extension",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -21,6 +22,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["quads", "glutes", "chest", "upper back"],
     "equipment": "bike",
+    "movement_pattern": "conditioning / cardio",
     "tracking_type": "distance",
     "instructions": {
       "steps": [
@@ -38,6 +40,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes"],
     "equipment": "bodyweight",
+    "movement_pattern": "squat",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -55,6 +58,7 @@
     "primary_muscle": "front delts",
     "secondary_muscles": ["side delts", "triceps"],
     "equipment": "dumbbell",
+    "movement_pattern": "vertical press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -72,6 +76,7 @@
     "primary_muscle": "lats",
     "secondary_muscles": ["biceps", "upper back"],
     "equipment": "machine",
+    "movement_pattern": "vertical pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -89,6 +94,7 @@
     "primary_muscle": "lower back",
     "secondary_muscles": ["glutes", "hamstrings"],
     "equipment": "machine",
+    "movement_pattern": "back extension",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -106,6 +112,7 @@
     "primary_muscle": "upper back",
     "secondary_muscles": ["rear delts", "traps"],
     "equipment": "band",
+    "movement_pattern": "rear delt / upper back",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -123,6 +130,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "barbell",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -140,6 +148,7 @@
     "primary_muscle": "upper back",
     "secondary_muscles": ["lats", "rear delts", "biceps", "lower back"],
     "equipment": "barbell",
+    "movement_pattern": "horizontal pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -157,6 +166,7 @@
     "primary_muscle": "traps",
     "secondary_muscles": ["forearms", "upper back"],
     "equipment": "barbell",
+    "movement_pattern": "shrug",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -174,6 +184,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["front delts", "abs", "forearms"],
     "equipment": "other",
+    "movement_pattern": "conditioning / cardio",
     "tracking_type": "duration",
     "instructions": {
       "steps": [
@@ -191,6 +202,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "cable",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -208,6 +220,7 @@
     "primary_muscle": "triceps",
     "secondary_muscles": ["chest", "front delts"],
     "equipment": "bodyweight",
+    "movement_pattern": "triceps extension",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -225,6 +238,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["triceps", "front delts"],
     "equipment": "barbell",
+    "movement_pattern": "horizontal press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -242,6 +256,7 @@
     "primary_muscle": "obliques",
     "secondary_muscles": ["abs"],
     "equipment": "bodyweight",
+    "movement_pattern": "flexion",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -259,6 +274,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["lower back", "glutes"],
     "equipment": "bodyweight",
+    "movement_pattern": "anti-extension",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -276,6 +292,7 @@
     "primary_muscle": "front delts",
     "secondary_muscles": ["forearms", "triceps", "abs"],
     "equipment": "kettlebell",
+    "movement_pattern": "vertical press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -293,6 +310,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "calves"],
     "equipment": "box",
+    "movement_pattern": "plyometric / jump",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -310,6 +328,7 @@
     "primary_muscle": "glutes",
     "secondary_muscles": ["quads", "hamstrings", "lower back"],
     "equipment": "barbell",
+    "movement_pattern": "squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -327,6 +346,7 @@
     "primary_muscle": "glutes",
     "secondary_muscles": ["quads", "hamstrings", "calves"],
     "equipment": "bodyweight",
+    "movement_pattern": "plyometric / jump",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -344,6 +364,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "adductors"],
     "equipment": "dumbbell",
+    "movement_pattern": "lunge / split squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -361,6 +382,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["chest", "quads", "triceps"],
     "equipment": "bodyweight",
+    "movement_pattern": "plyometric / jump",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -378,6 +400,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["obliques"],
     "equipment": "cable",
+    "movement_pattern": "flexion",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -395,6 +418,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "cable",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -412,6 +436,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["front delts"],
     "equipment": "cable",
+    "movement_pattern": "chest fly",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -429,6 +454,7 @@
     "primary_muscle": "glutes",
     "secondary_muscles": ["hamstrings"],
     "equipment": "cable",
+    "movement_pattern": "hip thrust / bridge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -446,6 +472,7 @@
     "primary_muscle": "side delts",
     "secondary_muscles": ["traps"],
     "equipment": "cable",
+    "movement_pattern": "lateral raise",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -463,6 +490,7 @@
     "primary_muscle": "glutes",
     "secondary_muscles": ["hamstrings"],
     "equipment": "cable",
+    "movement_pattern": "hinge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -480,6 +508,7 @@
     "primary_muscle": "rear delts",
     "secondary_muscles": ["upper back"],
     "equipment": "cable",
+    "movement_pattern": "rear delt / upper back",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -497,6 +526,7 @@
     "primary_muscle": "triceps",
     "secondary_muscles": [],
     "equipment": "cable",
+    "movement_pattern": "triceps extension",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -514,6 +544,7 @@
     "primary_muscle": "obliques",
     "secondary_muscles": ["abs", "front delts"],
     "equipment": "cable",
+    "movement_pattern": "rotation / anti-rotation",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -531,6 +562,7 @@
     "primary_muscle": "upper back",
     "secondary_muscles": ["lats", "rear delts", "biceps"],
     "equipment": "dumbbell",
+    "movement_pattern": "horizontal pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -548,6 +580,7 @@
     "primary_muscle": "lats",
     "secondary_muscles": ["biceps", "upper back"],
     "equipment": "bodyweight",
+    "movement_pattern": "vertical pull",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -565,6 +598,7 @@
     "primary_muscle": "abductors",
     "secondary_muscles": ["glutes"],
     "equipment": "band",
+    "movement_pattern": "hip abduction / adduction",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -582,6 +616,7 @@
     "primary_muscle": "triceps",
     "secondary_muscles": ["chest", "front delts"],
     "equipment": "barbell",
+    "movement_pattern": "horizontal press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -599,6 +634,7 @@
     "primary_muscle": "lats",
     "secondary_muscles": ["biceps", "upper back"],
     "equipment": "cable",
+    "movement_pattern": "vertical pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -616,6 +652,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "dumbbell",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -633,6 +670,7 @@
     "primary_muscle": "adductors",
     "secondary_muscles": ["obliques", "abs"],
     "equipment": "bodyweight",
+    "movement_pattern": "hip abduction / adduction",
     "tracking_type": "duration",
     "instructions": {
       "steps": [
@@ -650,6 +688,7 @@
     "primary_muscle": "adductors",
     "secondary_muscles": ["quads", "glutes"],
     "equipment": "bodyweight",
+    "movement_pattern": "lunge / split squat",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -667,6 +706,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": [],
     "equipment": "bodyweight",
+    "movement_pattern": "flexion",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -684,6 +724,7 @@
     "primary_muscle": "glutes",
     "secondary_muscles": ["quads", "adductors", "abductors"],
     "equipment": "dumbbell",
+    "movement_pattern": "lunge / split squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -701,6 +742,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["obliques"],
     "equipment": "bodyweight",
+    "movement_pattern": "anti-extension",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -718,6 +760,7 @@
     "primary_muscle": "forearms",
     "secondary_muscles": ["lats"],
     "equipment": "bodyweight",
+    "movement_pattern": "mobility / other",
     "tracking_type": "duration",
     "instructions": {
       "steps": [
@@ -735,6 +778,7 @@
     "primary_muscle": "lower back",
     "secondary_muscles": ["glutes", "hamstrings", "traps", "forearms"],
     "equipment": "barbell",
+    "movement_pattern": "hinge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -752,6 +796,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["triceps", "front delts"],
     "equipment": "barbell",
+    "movement_pattern": "horizontal press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -769,6 +814,7 @@
     "primary_muscle": "upper chest",
     "secondary_muscles": ["front delts", "triceps"],
     "equipment": "bodyweight",
+    "movement_pattern": "horizontal press",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -786,6 +832,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["triceps", "front delts"],
     "equipment": "bodyweight",
+    "movement_pattern": "horizontal press",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -803,6 +850,7 @@
     "primary_muscle": "triceps",
     "secondary_muscles": ["chest", "front delts"],
     "equipment": "bodyweight",
+    "movement_pattern": "horizontal press",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -820,6 +868,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["triceps", "front delts"],
     "equipment": "bodyweight",
+    "movement_pattern": "horizontal press",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -837,6 +886,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "barbell",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -854,6 +904,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["triceps", "front delts"],
     "equipment": "dumbbell",
+    "movement_pattern": "horizontal press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -871,6 +922,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "dumbbell",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -888,6 +940,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["triceps", "front delts"],
     "equipment": "dumbbell",
+    "movement_pattern": "horizontal press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -905,6 +958,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["front delts"],
     "equipment": "dumbbell",
+    "movement_pattern": "chest fly",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -922,6 +976,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["lats", "triceps"],
     "equipment": "dumbbell",
+    "movement_pattern": "chest fly",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -939,6 +994,7 @@
     "primary_muscle": "hamstrings",
     "secondary_muscles": ["glutes", "lower back"],
     "equipment": "dumbbell",
+    "movement_pattern": "hinge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -956,6 +1012,7 @@
     "primary_muscle": "lats",
     "secondary_muscles": ["upper back", "biceps", "rear delts"],
     "equipment": "dumbbell",
+    "movement_pattern": "horizontal pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -973,6 +1030,7 @@
     "primary_muscle": "front delts",
     "secondary_muscles": ["triceps", "side delts"],
     "equipment": "dumbbell",
+    "movement_pattern": "vertical press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -990,6 +1048,7 @@
     "primary_muscle": "traps",
     "secondary_muscles": ["forearms"],
     "equipment": "dumbbell",
+    "movement_pattern": "shrug",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1007,6 +1066,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "ez bar",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1024,6 +1084,7 @@
     "primary_muscle": "rear delts",
     "secondary_muscles": ["upper back", "traps"],
     "equipment": "cable",
+    "movement_pattern": "rear delt / upper back",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1041,6 +1102,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["forearms", "traps", "abs"],
     "equipment": "dumbbell",
+    "movement_pattern": "carry",
     "tracking_type": "distance",
     "instructions": {
       "steps": [
@@ -1058,6 +1120,7 @@
     "primary_muscle": "front delts",
     "secondary_muscles": ["upper chest"],
     "equipment": "dumbbell",
+    "movement_pattern": "lateral raise",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1075,6 +1138,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "upper back", "abs"],
     "equipment": "barbell",
+    "movement_pattern": "squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1092,6 +1156,7 @@
     "primary_muscle": "glutes",
     "secondary_muscles": ["hamstrings"],
     "equipment": "bodyweight",
+    "movement_pattern": "hip thrust / bridge",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1109,6 +1174,7 @@
     "primary_muscle": "hamstrings",
     "secondary_muscles": ["glutes", "calves"],
     "equipment": "machine",
+    "movement_pattern": "knee flexion",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1126,6 +1192,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "abs"],
     "equipment": "kettlebell",
+    "movement_pattern": "squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1143,6 +1210,7 @@
     "primary_muscle": "hamstrings",
     "secondary_muscles": ["lower back", "glutes"],
     "equipment": "barbell",
+    "movement_pattern": "hinge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1160,6 +1228,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes"],
     "equipment": "machine",
+    "movement_pattern": "squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1177,6 +1246,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "dumbbell",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1194,6 +1264,7 @@
     "primary_muscle": "front delts",
     "secondary_muscles": ["triceps", "traps"],
     "equipment": "bodyweight",
+    "movement_pattern": "vertical press",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1211,6 +1282,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["obliques", "forearms"],
     "equipment": "bodyweight",
+    "movement_pattern": "flexion",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1228,6 +1300,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["obliques", "forearms"],
     "equipment": "bodyweight",
+    "movement_pattern": "flexion",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1245,6 +1318,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["front delts"],
     "equipment": "cable",
+    "movement_pattern": "chest fly",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1262,6 +1336,7 @@
     "primary_muscle": "abductors",
     "secondary_muscles": ["glutes"],
     "equipment": "machine",
+    "movement_pattern": "hip abduction / adduction",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1279,6 +1354,7 @@
     "primary_muscle": "adductors",
     "secondary_muscles": [],
     "equipment": "machine",
+    "movement_pattern": "hip abduction / adduction",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1296,6 +1372,7 @@
     "primary_muscle": "glutes",
     "secondary_muscles": ["hamstrings", "quads"],
     "equipment": "barbell",
+    "movement_pattern": "hip thrust / bridge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1313,6 +1390,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": [],
     "equipment": "bodyweight",
+    "movement_pattern": "anti-extension",
     "tracking_type": "duration",
     "instructions": {
       "steps": [
@@ -1330,6 +1408,7 @@
     "primary_muscle": "upper chest",
     "secondary_muscles": ["front delts", "triceps"],
     "equipment": "barbell",
+    "movement_pattern": "incline press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1347,6 +1426,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "dumbbell",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1364,6 +1444,7 @@
     "primary_muscle": "upper chest",
     "secondary_muscles": ["front delts"],
     "equipment": "dumbbell",
+    "movement_pattern": "chest fly",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1381,6 +1462,7 @@
     "primary_muscle": "upper chest",
     "secondary_muscles": ["front delts", "triceps"],
     "equipment": "dumbbell",
+    "movement_pattern": "incline press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1398,6 +1480,7 @@
     "primary_muscle": "upper chest",
     "secondary_muscles": ["front delts", "triceps"],
     "equipment": "machine",
+    "movement_pattern": "incline press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1415,6 +1498,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["triceps", "front delts"],
     "equipment": "bodyweight",
+    "movement_pattern": "horizontal press",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1432,6 +1516,7 @@
     "primary_muscle": "upper back",
     "secondary_muscles": ["lats", "biceps", "rear delts"],
     "equipment": "bodyweight",
+    "movement_pattern": "horizontal pull",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1449,6 +1534,7 @@
     "primary_muscle": "lower back",
     "secondary_muscles": ["hamstrings"],
     "equipment": "barbell",
+    "movement_pattern": "hinge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1466,6 +1552,7 @@
     "primary_muscle": "triceps",
     "secondary_muscles": ["chest"],
     "equipment": "barbell",
+    "movement_pattern": "triceps extension",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1483,6 +1570,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["calves", "front delts"],
     "equipment": "other",
+    "movement_pattern": "plyometric / jump",
     "tracking_type": "duration",
     "instructions": {
       "steps": [
@@ -1500,6 +1588,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "calves"],
     "equipment": "bodyweight",
+    "movement_pattern": "plyometric / jump",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1517,6 +1606,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["glutes", "hamstrings", "lower back"],
     "equipment": "kettlebell",
+    "movement_pattern": "olympic / power",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1534,6 +1624,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["triceps", "quads"],
     "equipment": "bodyweight",
+    "movement_pattern": "anti-extension",
     "tracking_type": "duration",
     "instructions": {
       "steps": [
@@ -1551,6 +1642,7 @@
     "primary_muscle": "front delts",
     "secondary_muscles": ["upper chest", "triceps"],
     "equipment": "landmine",
+    "movement_pattern": "vertical press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1568,6 +1660,7 @@
     "primary_muscle": "obliques",
     "secondary_muscles": ["abs", "front delts"],
     "equipment": "landmine",
+    "movement_pattern": "rotation / anti-rotation",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1585,6 +1678,7 @@
     "primary_muscle": "lats",
     "secondary_muscles": ["biceps", "upper back"],
     "equipment": "cable",
+    "movement_pattern": "vertical pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1602,6 +1696,7 @@
     "primary_muscle": "abductors",
     "secondary_muscles": ["glutes"],
     "equipment": "band",
+    "movement_pattern": "hip abduction / adduction",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1619,6 +1714,7 @@
     "primary_muscle": "adductors",
     "secondary_muscles": ["quads", "glutes"],
     "equipment": "dumbbell",
+    "movement_pattern": "lunge / split squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1636,6 +1732,7 @@
     "primary_muscle": "side delts",
     "secondary_muscles": ["traps"],
     "equipment": "dumbbell",
+    "movement_pattern": "lateral raise",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1653,6 +1750,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": [],
     "equipment": "machine",
+    "movement_pattern": "knee extension",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1670,6 +1768,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "adductors"],
     "equipment": "machine",
+    "movement_pattern": "squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1687,6 +1786,7 @@
     "primary_muscle": "calves",
     "secondary_muscles": [],
     "equipment": "machine",
+    "movement_pattern": "calf raise",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1704,6 +1804,7 @@
     "primary_muscle": "upper chest",
     "secondary_muscles": ["front delts"],
     "equipment": "cable",
+    "movement_pattern": "chest fly",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1721,6 +1822,7 @@
     "primary_muscle": "hamstrings",
     "secondary_muscles": ["calves"],
     "equipment": "machine",
+    "movement_pattern": "knee flexion",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1738,6 +1840,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["triceps", "front delts"],
     "equipment": "machine",
+    "movement_pattern": "horizontal press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1755,6 +1858,7 @@
     "primary_muscle": "side delts",
     "secondary_muscles": ["traps"],
     "equipment": "machine",
+    "movement_pattern": "lateral raise",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1772,6 +1876,7 @@
     "primary_muscle": "upper back",
     "secondary_muscles": ["lats", "rear delts", "biceps"],
     "equipment": "machine",
+    "movement_pattern": "horizontal pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1789,6 +1894,7 @@
     "primary_muscle": "front delts",
     "secondary_muscles": ["triceps", "side delts"],
     "equipment": "machine",
+    "movement_pattern": "vertical press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1806,6 +1912,7 @@
     "primary_muscle": "lats",
     "secondary_muscles": ["upper back", "rear delts", "biceps"],
     "equipment": "landmine",
+    "movement_pattern": "horizontal pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1823,6 +1930,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["quads", "front delts"],
     "equipment": "bodyweight",
+    "movement_pattern": "anti-extension",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1840,6 +1948,7 @@
     "primary_muscle": "lats",
     "secondary_muscles": ["biceps", "upper back", "forearms"],
     "equipment": "bodyweight",
+    "movement_pattern": "vertical pull",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1857,6 +1966,7 @@
     "primary_muscle": "hamstrings",
     "secondary_muscles": ["glutes", "calves"],
     "equipment": "bodyweight",
+    "movement_pattern": "knee flexion",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1874,6 +1984,7 @@
     "primary_muscle": "triceps",
     "secondary_muscles": [],
     "equipment": "cable",
+    "movement_pattern": "triceps extension",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1891,6 +2002,7 @@
     "primary_muscle": "triceps",
     "secondary_muscles": [],
     "equipment": "dumbbell",
+    "movement_pattern": "triceps extension",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1908,6 +2020,7 @@
     "primary_muscle": "front delts",
     "secondary_muscles": ["triceps", "side delts", "upper chest"],
     "equipment": "barbell",
+    "movement_pattern": "vertical press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1925,6 +2038,7 @@
     "primary_muscle": "obliques",
     "secondary_muscles": ["abs"],
     "equipment": "cable",
+    "movement_pattern": "rotation / anti-rotation",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1942,6 +2056,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["front delts"],
     "equipment": "machine",
+    "movement_pattern": "chest fly",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1959,6 +2074,7 @@
     "primary_muscle": "upper back",
     "secondary_muscles": ["lats", "rear delts", "lower back"],
     "equipment": "barbell",
+    "movement_pattern": "horizontal pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -1976,6 +2092,7 @@
     "primary_muscle": "front delts",
     "secondary_muscles": ["triceps", "upper chest"],
     "equipment": "bodyweight",
+    "movement_pattern": "vertical press",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -1993,6 +2110,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "abs"],
     "equipment": "bodyweight",
+    "movement_pattern": "squat",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2010,6 +2128,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["obliques", "front delts"],
     "equipment": "bodyweight",
+    "movement_pattern": "anti-extension",
     "tracking_type": "duration",
     "instructions": {
       "steps": [
@@ -2027,6 +2146,7 @@
     "primary_muscle": "forearms",
     "secondary_muscles": [],
     "equipment": "other",
+    "movement_pattern": "mobility / other",
     "tracking_type": "duration",
     "instructions": {
       "steps": [
@@ -2044,6 +2164,7 @@
     "primary_muscle": "calves",
     "secondary_muscles": ["quads"],
     "equipment": "bodyweight",
+    "movement_pattern": "plyometric / jump",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2061,6 +2182,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["hamstrings", "glutes", "traps", "quads"],
     "equipment": "barbell",
+    "movement_pattern": "olympic / power",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2078,6 +2200,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "ez bar",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2095,6 +2218,7 @@
     "primary_muscle": "rear delts",
     "secondary_muscles": ["traps", "upper back"],
     "equipment": "dumbbell",
+    "movement_pattern": "rear delt / upper back",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2112,6 +2236,7 @@
     "primary_muscle": "lats",
     "secondary_muscles": ["biceps", "upper back", "forearms"],
     "equipment": "bodyweight",
+    "movement_pattern": "vertical pull",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2129,6 +2254,7 @@
     "primary_muscle": "front delts",
     "secondary_muscles": ["triceps", "quads", "glutes"],
     "equipment": "barbell",
+    "movement_pattern": "vertical press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2146,6 +2272,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["triceps", "front delts", "abs"],
     "equipment": "bodyweight",
+    "movement_pattern": "horizontal press",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2163,6 +2290,7 @@
     "primary_muscle": "lower back",
     "secondary_muscles": ["traps", "glutes", "hamstrings", "forearms"],
     "equipment": "barbell",
+    "movement_pattern": "hinge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2180,6 +2308,7 @@
     "primary_muscle": "rear delts",
     "secondary_muscles": ["upper back", "traps"],
     "equipment": "dumbbell",
+    "movement_pattern": "rear delt / upper back",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2197,6 +2326,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["obliques"],
     "equipment": "bodyweight",
+    "movement_pattern": "flexion",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2214,6 +2344,7 @@
     "primary_muscle": "forearms",
     "secondary_muscles": ["biceps"],
     "equipment": "ez bar",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2231,6 +2362,7 @@
     "primary_muscle": "lower back",
     "secondary_muscles": ["glutes", "hamstrings"],
     "equipment": "machine",
+    "movement_pattern": "back extension",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2248,6 +2380,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "hamstrings"],
     "equipment": "dumbbell",
+    "movement_pattern": "lunge / split squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2265,6 +2398,7 @@
     "primary_muscle": "rear delts",
     "secondary_muscles": ["upper back"],
     "equipment": "machine",
+    "movement_pattern": "rear delt / upper back",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2282,6 +2416,7 @@
     "primary_muscle": "forearms",
     "secondary_muscles": [],
     "equipment": "dumbbell",
+    "movement_pattern": "mobility / other",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2299,6 +2434,7 @@
     "primary_muscle": "hamstrings",
     "secondary_muscles": ["glutes", "lower back", "forearms"],
     "equipment": "barbell",
+    "movement_pattern": "hinge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2316,6 +2452,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "cable",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2333,6 +2470,7 @@
     "primary_muscle": "triceps",
     "secondary_muscles": [],
     "equipment": "cable",
+    "movement_pattern": "triceps extension",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2350,6 +2488,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["upper back", "lats", "quads", "hamstrings"],
     "equipment": "rower",
+    "movement_pattern": "conditioning / cardio",
     "tracking_type": "distance",
     "instructions": {
       "steps": [
@@ -2367,6 +2506,7 @@
     "primary_muscle": "obliques",
     "secondary_muscles": ["abs"],
     "equipment": "bodyweight",
+    "movement_pattern": "rotation / anti-rotation",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2384,6 +2524,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["upper back", "abs", "biceps"],
     "equipment": "other",
+    "movement_pattern": "carry",
     "tracking_type": "distance",
     "instructions": {
       "steps": [
@@ -2401,6 +2542,7 @@
     "primary_muscle": "upper back",
     "secondary_muscles": ["lats", "rear delts", "biceps"],
     "equipment": "barbell",
+    "movement_pattern": "horizontal pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2418,6 +2560,7 @@
     "primary_muscle": "upper back",
     "secondary_muscles": ["lats", "biceps", "rear delts"],
     "equipment": "cable",
+    "movement_pattern": "horizontal pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2435,6 +2578,7 @@
     "primary_muscle": "calves",
     "secondary_muscles": [],
     "equipment": "machine",
+    "movement_pattern": "calf raise",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2452,6 +2596,7 @@
     "primary_muscle": "hamstrings",
     "secondary_muscles": ["calves"],
     "equipment": "machine",
+    "movement_pattern": "knee flexion",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2469,6 +2614,7 @@
     "primary_muscle": "obliques",
     "secondary_muscles": ["abs", "abductors"],
     "equipment": "bodyweight",
+    "movement_pattern": "rotation / anti-rotation",
     "tracking_type": "duration",
     "instructions": {
       "steps": [
@@ -2486,6 +2632,7 @@
     "primary_muscle": "abductors",
     "secondary_muscles": ["glutes"],
     "equipment": "bodyweight",
+    "movement_pattern": "hip abduction / adduction",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2503,6 +2650,7 @@
     "primary_muscle": "lats",
     "secondary_muscles": ["biceps", "upper back"],
     "equipment": "cable",
+    "movement_pattern": "vertical pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2520,6 +2668,7 @@
     "primary_muscle": "calves",
     "secondary_muscles": [],
     "equipment": "dumbbell",
+    "movement_pattern": "calf raise",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2537,6 +2686,7 @@
     "primary_muscle": "glutes",
     "secondary_muscles": ["hamstrings"],
     "equipment": "bodyweight",
+    "movement_pattern": "hip thrust / bridge",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2554,6 +2704,7 @@
     "primary_muscle": "hamstrings",
     "secondary_muscles": ["glutes", "lower back"],
     "equipment": "dumbbell",
+    "movement_pattern": "hinge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2571,6 +2722,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": [],
     "equipment": "bodyweight",
+    "movement_pattern": "knee extension",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2588,6 +2740,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["obliques"],
     "equipment": "bodyweight",
+    "movement_pattern": "flexion",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2605,6 +2758,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["lats", "triceps", "abs"],
     "equipment": "other",
+    "movement_pattern": "conditioning / cardio",
     "tracking_type": "distance",
     "instructions": {
       "steps": [
@@ -2622,6 +2776,7 @@
     "primary_muscle": "triceps",
     "secondary_muscles": ["forearms"],
     "equipment": "ez bar",
+    "movement_pattern": "triceps extension",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2639,6 +2794,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["hamstrings", "glutes", "upper back"],
     "equipment": "sled",
+    "movement_pattern": "conditioning / cardio",
     "tracking_type": "distance",
     "instructions": {
       "steps": [
@@ -2656,6 +2812,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["quads", "glutes", "calves"],
     "equipment": "sled",
+    "movement_pattern": "conditioning / cardio",
     "tracking_type": "distance",
     "instructions": {
       "steps": [
@@ -2673,6 +2830,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["triceps", "front delts"],
     "equipment": "smith machine",
+    "movement_pattern": "horizontal press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2693,6 +2851,7 @@
     "primary_muscle": "upper chest",
     "secondary_muscles": ["front delts", "triceps"],
     "equipment": "smith machine",
+    "movement_pattern": "incline press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2710,6 +2869,7 @@
     "primary_muscle": "traps",
     "secondary_muscles": ["forearms"],
     "equipment": "smith machine",
+    "movement_pattern": "shrug",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2727,6 +2887,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes"],
     "equipment": "smith machine",
+    "movement_pattern": "squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2744,6 +2905,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes"],
     "equipment": "band",
+    "movement_pattern": "squat",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2761,6 +2923,7 @@
     "primary_muscle": "biceps",
     "secondary_muscles": ["forearms"],
     "equipment": "dumbbell",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2778,6 +2941,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes"],
     "equipment": "dumbbell",
+    "movement_pattern": "lunge / split squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2795,6 +2959,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "adductors", "lower back"],
     "equipment": "barbell",
+    "movement_pattern": "squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2812,6 +2977,7 @@
     "primary_muscle": "hamstrings",
     "secondary_muscles": ["glutes", "abs"],
     "equipment": "other",
+    "movement_pattern": "knee flexion",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -2829,6 +2995,7 @@
     "primary_muscle": "calves",
     "secondary_muscles": [],
     "equipment": "machine",
+    "movement_pattern": "calf raise",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2846,6 +3013,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["quads", "glutes", "hamstrings", "calves"],
     "equipment": "bike",
+    "movement_pattern": "conditioning / cardio",
     "tracking_type": "distance",
     "instructions": {
       "steps": [
@@ -2863,6 +3031,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "hamstrings"],
     "equipment": "dumbbell",
+    "movement_pattern": "lunge / split squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2880,6 +3049,7 @@
     "primary_muscle": "hamstrings",
     "secondary_muscles": ["glutes", "lower back"],
     "equipment": "barbell",
+    "movement_pattern": "hinge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2897,6 +3067,7 @@
     "primary_muscle": "lats",
     "secondary_muscles": ["triceps", "abs"],
     "equipment": "cable",
+    "movement_pattern": "vertical pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2914,6 +3085,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["obliques", "forearms", "traps"],
     "equipment": "kettlebell",
+    "movement_pattern": "carry",
     "tracking_type": "distance",
     "instructions": {
       "steps": [
@@ -2931,6 +3103,7 @@
     "primary_muscle": "glutes",
     "secondary_muscles": ["hamstrings", "quads", "adductors", "lower back"],
     "equipment": "barbell",
+    "movement_pattern": "hinge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2948,6 +3121,7 @@
     "primary_muscle": "lower back",
     "secondary_muscles": ["glutes", "upper back"],
     "equipment": "bodyweight",
+    "movement_pattern": "back extension",
     "tracking_type": "duration",
     "instructions": {
       "steps": [
@@ -2965,6 +3139,7 @@
     "primary_muscle": "chest",
     "secondary_muscles": ["front delts"],
     "equipment": "other",
+    "movement_pattern": "horizontal press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2982,6 +3157,7 @@
     "primary_muscle": "upper back",
     "secondary_muscles": ["lats", "rear delts", "biceps"],
     "equipment": "landmine",
+    "movement_pattern": "horizontal pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -2999,6 +3175,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["quads", "front delts", "triceps"],
     "equipment": "barbell",
+    "movement_pattern": "vertical press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3016,6 +3193,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": ["lats", "obliques", "forearms"],
     "equipment": "bodyweight",
+    "movement_pattern": "flexion",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -3033,6 +3211,7 @@
     "primary_muscle": "glutes",
     "secondary_muscles": ["quads", "hamstrings", "traps", "lower back"],
     "equipment": "other",
+    "movement_pattern": "hinge",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3050,6 +3229,7 @@
     "primary_muscle": "triceps",
     "secondary_muscles": ["rear delts"],
     "equipment": "dumbbell",
+    "movement_pattern": "triceps extension",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3067,6 +3247,7 @@
     "primary_muscle": "triceps",
     "secondary_muscles": [],
     "equipment": "cable",
+    "movement_pattern": "triceps extension",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3084,6 +3265,7 @@
     "primary_muscle": "side delts",
     "secondary_muscles": ["traps", "biceps"],
     "equipment": "barbell",
+    "movement_pattern": "lateral raise",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3101,6 +3283,7 @@
     "primary_muscle": "abs",
     "secondary_muscles": [],
     "equipment": "bodyweight",
+    "movement_pattern": "flexion",
     "tracking_type": "reps_only",
     "instructions": {
       "steps": [
@@ -3118,6 +3301,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "hamstrings"],
     "equipment": "dumbbell",
+    "movement_pattern": "lunge / split squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3135,6 +3319,7 @@
     "primary_muscle": "full body",
     "secondary_muscles": ["quads", "front delts", "glutes"],
     "equipment": "other",
+    "movement_pattern": "olympic / power",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3152,6 +3337,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes"],
     "equipment": "bodyweight",
+    "movement_pattern": "squat",
     "tracking_type": "duration",
     "instructions": {
       "steps": [
@@ -3169,6 +3355,7 @@
     "primary_muscle": "lats",
     "secondary_muscles": ["biceps", "upper back", "forearms"],
     "equipment": "other",
+    "movement_pattern": "vertical pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3186,6 +3373,7 @@
     "primary_muscle": "upper back",
     "secondary_muscles": ["rear delts", "lats"],
     "equipment": "cable",
+    "movement_pattern": "horizontal pull",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3203,6 +3391,7 @@
     "primary_muscle": "forearms",
     "secondary_muscles": [],
     "equipment": "dumbbell",
+    "movement_pattern": "mobility / other",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3220,6 +3409,7 @@
     "primary_muscle": "forearms",
     "secondary_muscles": [],
     "equipment": "other",
+    "movement_pattern": "mobility / other",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3237,6 +3427,7 @@
     "primary_muscle": "front delts",
     "secondary_muscles": ["triceps", "abs", "upper back"],
     "equipment": "barbell",
+    "movement_pattern": "vertical press",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3254,6 +3445,7 @@
     "primary_muscle": "quads",
     "secondary_muscles": ["glutes", "upper back", "abs"],
     "equipment": "barbell",
+    "movement_pattern": "squat",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [
@@ -3271,6 +3463,7 @@
     "primary_muscle": "forearms",
     "secondary_muscles": ["biceps"],
     "equipment": "dumbbell",
+    "movement_pattern": "biceps curl",
     "tracking_type": "weight_reps",
     "instructions": {
       "steps": [

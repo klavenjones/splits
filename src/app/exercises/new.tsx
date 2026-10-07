@@ -43,6 +43,8 @@ import {
 import {
   COMMON_EQUIPMENT,
   EQUIPMENT,
+  MOVEMENT_PATTERN_GROUPS,
+  MOVEMENT_PATTERNS_BY_GROUP,
   MUSCLE_GROUPS,
   MUSCLES,
   MUSCLES_BY_GROUP,
@@ -87,6 +89,7 @@ function draftFrom(e: Exercise | null, name: string): ExerciseDraft {
     primaryMuscle: e?.primary_muscle ?? null,
     secondaryMuscles: e?.secondary_muscles ?? [],
     equipment: e?.equipment ?? null,
+    movementPattern: e?.movement_pattern ?? null,
     trackingType: e?.tracking_type ?? 'weight_reps',
     notes: e?.notes ?? '',
   };
@@ -306,6 +309,26 @@ function Form({
                   />
                 ) : null}
               </ChipGroup>
+            </Section>
+
+            <Section title="movement" error={errors.movementPattern}>
+              {MOVEMENT_PATTERN_GROUPS.map((g) => (
+                <View key={g} className="gap-2">
+                  <Text className="px-1 type-caption text-text-subtle">{g}</Text>
+                  <ChipGroup label={`movement: ${g}`}>
+                    {MOVEMENT_PATTERNS_BY_GROUP[g].map((p) => (
+                      <Chip
+                        key={p}
+                        label={p}
+                        selected={draft.movementPattern === p}
+                        onPress={() =>
+                          set({ movementPattern: draft.movementPattern === p ? null : p })
+                        }
+                      />
+                    ))}
+                  </ChipGroup>
+                </View>
+              ))}
             </Section>
 
             <Section title="how you track it">

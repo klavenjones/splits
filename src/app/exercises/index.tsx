@@ -17,7 +17,7 @@ import {
 } from '@/components';
 import { rowSubtitle } from '@/exercises/describe';
 import { useExerciseBrowser } from '@/exercises/useExerciseBrowser';
-import { EQUIPMENT, MUSCLE_GROUPS } from '@/exercises/vocab';
+import { EQUIPMENT, MOVEMENT_PATTERNS, MUSCLE_GROUPS } from '@/exercises/vocab';
 import { space, useTheme } from '@/theme';
 
 /** Exercise library (mockup 09/01): search, muscle and equipment filters, customs first, A–Z. */
@@ -75,6 +75,24 @@ export default function ExerciseLibrary() {
                   label={e}
                   selected={b.equipment.includes(e)}
                   onPress={() => b.toggleEquipment(e)}
+                />
+              ))}
+            </ScrollView>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              className="-ml-4"
+              contentContainerClassName="gap-2.5 py-1 pr-2 pl-4"
+              accessibilityLabel="movement"
+            >
+              {MOVEMENT_PATTERNS.map((p) => (
+                <Chip
+                  key={p}
+                  multi
+                  label={p}
+                  selected={b.patterns.includes(p)}
+                  onPress={() => b.togglePattern(p)}
                 />
               ))}
             </ScrollView>
