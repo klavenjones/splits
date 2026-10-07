@@ -58,7 +58,7 @@
           "recordAudioAndroid": false
         }
       ],
-      "@sentry/react-native",
+      ["@sentry/react-native", { "organization": "klavenjones", "project": "splits" }],
       "./plugins/withSentryDebugSkip"
     ],
     "experiments": {
