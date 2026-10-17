@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { cn } from './cn';
@@ -7,6 +7,7 @@ import { DashedBar } from './week';
 import { Card, MicroLabel, Tag, KIND_ICON, KIND_LABEL, type Kind } from './primitives';
 import { useTheme } from '../theme/useTheme';
 import { blur } from '../theme/tokens';
+import { shouldCommit } from '../lib/commitEdit';
 
 const KIND_TEXT: Record<Kind, string> = {
   run: 'text-run-text',
@@ -350,11 +351,29 @@ function SetInput({
     setPrev(value);
     setText(value);
   }
+  // Latest props/state for the unmount flush, plus the text already reported so
+  // blur, return and unmount don't save the same edit twice.
+  const latest = useRef({ text, value, onCommit });
+  const lastCommitted = useRef<string | null>(null);
+  useEffect(() => {
+    latest.current = { text, value, onCommit };
+    if (value !== lastCommitted.current) lastCommitted.current = null;
+  });
+  const commit = () => {
+    const { text: t, value: v, onCommit: report } = latest.current;
+    if (!shouldCommit(t, v, lastCommitted.current)) return;
+    lastCommitted.current = t;
+    report?.(t);
+  };
+  // Saves an edit that is still pending when the field goes away (set completed,
+  // screen left) without a blur event.
+  useEffect(() => commit, []);
   return (
     <TextInput
       value={text}
       onChangeText={setText}
-      onEndEditing={() => text !== value && onCommit?.(text)}
+      onBlur={commit}
+      onEndEditing={commit}
       selectTextOnFocus
       keyboardType={decimal ? 'decimal-pad' : 'number-pad'}
       returnKeyType="done"
