@@ -64,6 +64,42 @@ export type Database = {
           },
         ]
       }
+      exercise_notes: {
+        Row: {
+          exercise_id: string
+          note: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          exercise_id: string
+          note: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          exercise_id?: string
+          note?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_notes_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_notes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exercises: {
         Row: {
           created_at: string
@@ -1100,6 +1136,10 @@ export type Database = {
       propose_weekly_targets: { Args: { p: Json }; Returns: boolean }
       remove_imported_run: { Args: { p_external_id: string }; Returns: boolean }
       reset_training: { Args: never; Returns: number }
+      save_exercise_note: {
+        Args: { p_exercise_id: string; p_note: string; p_updated_at?: string }
+        Returns: undefined
+      }
       save_starting_targets: {
         Args: {
           p_carbs_g: number

@@ -12,11 +12,10 @@ export type ExerciseDraft = {
   equipment: string | null;
   movementPattern: string | null;
   trackingType: TrackingType;
-  notes: string;
 };
 
 export type DraftErrors = Partial<
-  Record<'name' | 'primaryMuscle' | 'equipment' | 'movementPattern' | 'notes', string>
+  Record<'name' | 'primaryMuscle' | 'equipment' | 'movementPattern', string>
 >;
 
 /**
@@ -49,7 +48,6 @@ export function validateDraft(
   if (d.equipment !== null && !isEquipment(d.equipment)) errors.equipment = 'Pick equipment.';
   if (d.movementPattern !== null && !isMovementPattern(d.movementPattern))
     errors.movementPattern = 'Pick a movement.';
-  if (d.notes.length > NOTES_MAX) errors.notes = `Keep notes under ${NOTES_MAX} characters.`;
   return errors;
 }
 

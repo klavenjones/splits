@@ -10,6 +10,7 @@ import { fetchTemplate, templateKey } from '@/db/queries/templates';
 import { mondayOf, toLocalDate } from '@/engine/calendar';
 import { onSyncChange, startSyncService } from '@/local/syncService';
 import { addDays } from '@/plan/week';
+import { useNotes } from '@/store/notes';
 import { useWorkout } from '@/store/workout';
 
 /** The logger reopens by itself once per launch when a workout was in progress. */
@@ -29,10 +30,12 @@ export function WorkoutProvider() {
     if (!userId || !native) return;
     const store = useWorkout.getState();
     store.load(userId, units);
+    useNotes.getState().load(userId);
     const stop = startSyncService(userId, qc);
     const off = onSyncChange(() => {
       useWorkout.getState().reloadCaches();
       useWorkout.getState().refreshLocal();
+      useNotes.getState().reload();
     });
     const active = useWorkout.getState().active;
     if (active && !reopened) {

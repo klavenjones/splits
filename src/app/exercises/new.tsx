@@ -54,7 +54,7 @@ import {
   TRACKING_TYPES,
   type MuscleGroup,
 } from '@/exercises/vocab';
-import { space, useTheme } from '@/theme';
+import { useTheme } from '@/theme';
 
 type Params = { id?: string; name?: string; then?: 'back' };
 
@@ -91,7 +91,6 @@ function draftFrom(e: Exercise | null, name: string): ExerciseDraft {
     equipment: e?.equipment ?? null,
     movementPattern: e?.movement_pattern ?? null,
     trackingType: e?.tracking_type ?? 'weight_reps',
-    notes: e?.notes ?? '',
   };
 }
 
@@ -339,20 +338,6 @@ function Form({
                 onChange={(t) => set({ trackingType: t })}
               />
             </Section>
-
-            <TextField
-              label="notes"
-              value={draft.notes}
-              onChangeText={(t) => set({ notes: t })}
-              placeholder="Setup cues, grip, stance"
-              multiline
-              error={errors.notes}
-              style={{
-                minHeight: space[16] + space[6],
-                paddingVertical: space[3],
-                textAlignVertical: 'top',
-              }}
-            />
 
             <Section title="photo or video">
               <MediaUploadField

@@ -227,6 +227,7 @@ function Logger({ w }: { w: M.Workout }) {
     return (
       <LoggerExerciseCard
         key={e.id}
+        exerciseId={e.exercise_id}
         name={e.name}
         primaryMuscle={e.primary_muscle}
         subtitle={`${target} · ${done}/${working.length} sets`}

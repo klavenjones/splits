@@ -17,6 +17,7 @@ import {
   Card,
   DemoPlayer,
   EmptyState,
+  ExerciseNote,
   IconButton,
   MicroLabel,
   NumberedCueList,
@@ -222,17 +223,16 @@ function HowTo({ exercise: e }: { exercise: Exercise }) {
           <NumberedCueList items={mistakes} numbered={false} tone="warning" />
         </Card>
       ) : null}
-      {e.notes ? (
-        <Card className="gap-2">
-          <MicroLabel>your notes</MicroLabel>
-          <Text className="type-body text-text">{e.notes}</Text>
+      {Platform.OS !== 'web' ? (
+        <Card>
+          <ExerciseNote exerciseId={e.id} labelled className="gap-2" />
         </Card>
       ) : null}
-      {!steps.length && !e.notes && !media ? (
+      {!steps.length && !media ? (
         <EmptyState
           icon="info"
           title="no how-to yet"
-          body="Edit this exercise to add notes or a demo video."
+          body="Edit this exercise to add a demo video."
         />
       ) : null}
     </View>
