@@ -141,3 +141,7 @@ One entry per build step.
 - `eas.json`: `submit.production.ios.ascAppId` is the numeric Apple ID `6817152896` (the earlier `713594` is the app's SKU, so every TestFlight submit failed with `EAS_UPLOAD_TO_ASC_APP_NOT_FOUND`).
 - `app.json`: the `@sentry/react-native` plugin now carries `organization` and `project`. The workflow's "Upload Sentry sourcemaps" step reads them from the Expo config (not from `SENTRY_ORG` / `SENTRY_PROJECT`), so "Deploy main" failed after publishing the update. This changes the native fingerprint, so the next push to `main` makes a full build and submit.
 
+
+## Autosave set inputs on blur (2026-10-16)
+- `SetInput` (`src/components/training.tsx`) now saves a changed weight/reps value when the field loses focus (`onBlur`, plus keyboard return), and flushes a pending edit if the field unmounts while focused (set completed, screen left). `shouldCommit` (`src/lib/commitEdit.ts`) stops blur, return and unmount from saving the same edit twice. Unchanged fields write nothing.
+- No store, model or SQLite changes; no new dependencies.
