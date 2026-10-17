@@ -18,6 +18,7 @@ import { estimateDuration, toBlocks } from '@/templates/liftTemplate';
 import { updatedTemplateRows } from '@/workout/templateUpdate';
 
 import { localDb } from './db';
+import { loadDirtyNotes, markNoteSent, replaceNotes } from './notesRepo';
 import { backoffMs, syncPending, type SyncApi } from './sync';
 import { loadPending, replaceBests, replacePrevious, type StoredWorkout } from './workoutRepo';
 
@@ -80,6 +81,26 @@ const api: SyncApi = {
   },
   updateTemplate,
 };
+
+/** Sends notes edited on this phone, then takes the server's copy of the rest. */
+async function syncNotes(uid: string) {
+  const db = localDb();
+  for (const n of loadDirtyNotes(db, uid)) {
+    const { error } = await supabase.rpc('save_exercise_note', {
+      p_exercise_id: n.exercise_id,
+      p_note: n.note,
+      p_updated_at: n.updated_at,
+    });
+    if (error) throw error;
+    markNoteSent(db, uid, n);
+  }
+  const { data, error } = await supabase
+    .from('exercise_notes')
+    .select('exercise_id, note, updated_at')
+    .eq('user_id', uid);
+  if (error) throw error;
+  replaceNotes(db, uid, data);
+}
 
 /** Refreshes "last time" and bests from the server, unless local workouts are still unsent. */
 async function refreshCaches() {
@@ -161,6 +182,7 @@ async function run() {
       queryClient?.invalidateQueries({ queryKey: ['session'] });
       queryClient?.invalidateQueries({ queryKey: ['progress'] });
     }
+    await syncNotes(uid);
     if (!r.failed.length) await refreshCaches().catch(() => undefined);
   } catch (e) {
     failures += 1;

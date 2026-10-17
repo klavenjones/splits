@@ -86,7 +86,6 @@ function draftColumns(d: ExerciseDraft) {
     equipment: d.equipment,
     movement_pattern: d.movementPattern,
     tracking_type: d.trackingType,
-    notes: d.notes.trim() || null,
   };
 }
 

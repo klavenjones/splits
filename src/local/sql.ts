@@ -81,6 +81,16 @@ const MIGRATIONS: string[] = [
     reps integer not null
   );
   `,
+  `
+  create table l_exercise_notes (
+    user_id text not null,
+    exercise_id text not null,
+    note text not null,
+    updated_at text not null,
+    dirty integer not null default 0,
+    primary key (user_id, exercise_id)
+  );
+  `,
 ];
 
 export function migrate(db: SqlDb) {

@@ -18,6 +18,7 @@ import {
 import { rowSubtitle } from '@/exercises/describe';
 import { useExerciseBrowser } from '@/exercises/useExerciseBrowser';
 import { EQUIPMENT, MOVEMENT_PATTERNS, MUSCLE_GROUPS } from '@/exercises/vocab';
+import { useNotes } from '@/store/notes';
 import { space, useTheme } from '@/theme';
 
 /** Exercise library (mockup 09/01): search, muscle and equipment filters, customs first, A–Z. */
@@ -25,6 +26,7 @@ export default function ExerciseLibrary() {
   const { c } = useTheme();
   const { userId } = useAuth();
   const b = useExerciseBrowser(userId);
+  const notes = useNotes((s) => s.notes);
   const scroll = useRef<ScrollView>(null);
   // Section key → y offset inside the scroll content, for the scrubber.
   const offsets = useRef(new Map<string, number>());
@@ -139,6 +141,7 @@ export default function ExerciseLibrary() {
                         primaryMuscle={e.primary_muscle}
                         subtitle={rowSubtitle(e)}
                         last={null}
+                        hasNote={notes.has(e.id)}
                         onPress={() =>
                           router.push({ pathname: '/exercises/[id]', params: { id: e.id } })
                         }

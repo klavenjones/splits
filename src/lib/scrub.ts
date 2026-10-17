@@ -6,7 +6,7 @@
 
 /** Keys whose values are never sent (matched anywhere in the key, case-insensitive). */
 export const SENSITIVE_KEY =
-  /weight|(^|_)(kg|lb|lbs)($|_)|reps|rpe|e1rm|volume|kcal|calorie|protein|(^|_)fat|carbs|fiber|serving|name_snapshot|food|meal|body_fat|waist|neck|(^|_)hip|bmi|heart|(^|_)hr($|_)|pace|distance|duration|samples|health|notes|feel|email|display_name|password|token|authorization|cookie|query|fragment|energy|bpm|moving_time|elapsed/i;
+  /weight|(^|_)(kg|lb|lbs)($|_)|reps|rpe|e1rm|volume|kcal|calorie|protein|(^|_)fat|carbs|fiber|serving|name_snapshot|food|meal|body_fat|waist|neck|(^|_)hip|bmi|heart|(^|_)hr($|_)|pace|distance|duration|samples|health|notes?|feel|email|display_name|password|token|authorization|cookie|query|fragment|energy|bpm|moving_time|elapsed/i;
 
 export const REDACTED = '[redacted]';
 

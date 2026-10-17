@@ -4,6 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 import { size } from '../theme/tokens';
 import { useTheme } from '../theme/useTheme';
 import { cn } from './cn';
+import { ExerciseNote } from './ExerciseNote';
 import { ExerciseThumbnail } from './exercises';
 import { Icon } from './Icon';
 import { Button, Card, MicroLabel } from './primitives';
@@ -71,6 +72,7 @@ export function SyncBadge({ status, detail }: { status: SyncStatus; detail?: str
 
 /** One exercise in the logger: thumbnail (opens the demo), name, targets, swap, set rows, add set. */
 export function LoggerExerciseCard({
+  exerciseId,
   name,
   primaryMuscle,
   subtitle,
@@ -80,6 +82,7 @@ export function LoggerExerciseCard({
   onAddSet,
   children,
 }: {
+  exerciseId: string;
   name: string;
   primaryMuscle: string | null;
   subtitle: string;
@@ -113,6 +116,7 @@ export function LoggerExerciseCard({
           swap
         </Button>
       </View>
+      <ExerciseNote exerciseId={exerciseId} className="px-2" />
       <View className="flex-row items-center gap-1.5 px-2">
         <MicroLabel className="w-9 text-center">set</MicroLabel>
         <MicroLabel className="flex-1">previous</MicroLabel>

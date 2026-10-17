@@ -132,6 +132,8 @@ export type ExerciseRowProps = {
   /** The "last …" line; "no sets yet" until the logger exists. */
   last?: string | null;
   custom?: boolean;
+  /** The user has a note on this exercise. */
+  hasNote?: boolean;
   onPress?: () => void;
   /** Select mode: a checkbox replaces the chevron. */
   selectable?: boolean;
@@ -149,6 +151,7 @@ export function ExerciseRow({
   subtitle,
   last,
   custom,
+  hasNote,
   onPress,
   selectable,
   selected,
@@ -163,7 +166,13 @@ export function ExerciseRow({
       disabled={!onPress || locked}
       accessibilityRole={selectable ? 'checkbox' : 'button'}
       accessibilityState={selectable ? { checked, disabled: !!locked } : undefined}
-      accessibilityLabel={[name, custom ? 'custom' : null, subtitle, last ? `last ${last}` : null]
+      accessibilityLabel={[
+        name,
+        custom ? 'custom' : null,
+        hasNote ? 'has a note' : null,
+        subtitle,
+        last ? `last ${last}` : null,
+      ]
         .filter(Boolean)
         .join(', ')}
       className={cn(
@@ -183,6 +192,7 @@ export function ExerciseRow({
               <Text className="type-micro text-text">custom</Text>
             </View>
           ) : null}
+          {hasNote ? <Icon name="info" size={size.iconSm} color={c.textMuted} /> : null}
         </View>
         {subtitle ? (
           <Text className="type-subhead text-text-muted" numberOfLines={1}>

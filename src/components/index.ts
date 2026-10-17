@@ -120,3 +120,4 @@ export {
   type Macro,
 } from './fuel';
 export { ErrorBoundary } from './ErrorBoundary';
+export { ExerciseNote } from './ExerciseNote';

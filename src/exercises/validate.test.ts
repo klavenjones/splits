@@ -19,7 +19,6 @@ const draft = (p: Partial<ExerciseDraft> = {}): ExerciseDraft => ({
   equipment: 'barbell',
   movementPattern: 'vertical press',
   trackingType: 'weight_reps',
-  notes: '',
   ...p,
 });
 
@@ -61,10 +60,6 @@ describe('validateDraft', () => {
     expect(
       validateDraft(draft({ movementPattern: 'upper push' }), LIST).movementPattern,
     ).toBeDefined();
-  });
-
-  it('limits notes', () => {
-    expect(validateDraft(draft({ notes: 'x'.repeat(501) }), LIST).notes).toBeDefined();
   });
 });
 

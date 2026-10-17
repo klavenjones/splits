@@ -145,3 +145,10 @@ One entry per build step.
 ## Autosave set inputs on blur (2026-10-16)
 - `SetInput` (`src/components/training.tsx`) now saves a changed weight/reps value when the field loses focus (`onBlur`, plus keyboard return), and flushes a pending edit if the field unmounts while focused (set completed, screen left). `shouldCommit` (`src/lib/commitEdit.ts`) stops blur, return and unmount from saving the same edit twice. Unchanged fields write nothing.
 - No store, model or SQLite changes; no new dependencies.
+
+## Exercise notes (2026-10-16)
+- A private note on any exercise (built-in or custom), for context like "seat height 4". It follows you across workouts: shown and edited in place on the logger's exercise card and on the exercise detail screen's How to tab, with a small icon on library rows that have one. Saved when the field loses focus; no save button.
+- Offline-first: the note is written to SQLite (`l_exercise_notes`, `src/local/notesRepo.ts`) and sent by the sync service (`save_exercise_note`, newest write wins), then refreshed with the other caches. `src/store/notes.ts` holds it for the UI.
+- Migration `20261016120000_exercise_notes.sql`: `exercise_notes` table (own-rows RLS, 500-char limit), the `save_exercise_note` RPC, and a backfill that copies existing custom-exercise `notes` over. The custom-exercise form no longer has a notes field. `docs/data-model.md` updated; `src/db/types.ts` edited by hand until types are regenerated. Smoke test: `supabase/tests/exercise_notes_smoke.sql` (not yet run).
+- Apply with `npx supabase db push --linked` **before** shipping the app (the sync pass now calls the RPC). `SENSITIVE_KEY` in `src/lib/scrub.ts` now also covers `note`/`p_note`.
+- No new dependencies.

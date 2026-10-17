@@ -179,6 +179,11 @@ describe('scrubEvent', () => {
 });
 
 describe('helpers', () => {
+  it('scrubValue drops an exercise note and its RPC argument', () => {
+    const out = scrubValue({ exercise_id: 'e1', note: 'left shoulder tweaky', p_note: 'seat 4' });
+    expect(JSON.stringify(out)).not.toMatch(/shoulder|seat/);
+    expect(out).toMatchObject({ exercise_id: 'e1' });
+  });
   it('scrubText leaves ordinary messages alone', () => {
     expect(scrubText('Network request failed')).toBe('Network request failed');
   });

@@ -93,7 +93,7 @@ Target database: Postgres (Supabase). 18 tables in five areas. Every user-owned 
 | demo_url | text | short silent loop (mp4) or animation |
 | demo_type | enum | |
 | instructions | jsonb | `{ steps: string[], cues: string[], mistakes: string[] }` |
-| notes | text | user notes on custom exercises |
+| notes | text | legacy: user notes on custom exercises; no longer written, copied to `exercise_notes` |
 | is_archived | bool | |
 | media_credit | jsonb, nullable | credit for third-party media: `{ author, author_url?, license, license_url, source_url }`; null for your own uploads |
 | **unique** | | (owner_id, lower(name)) — allows a custom exercise to shadow nothing; built-ins unique by name |
@@ -130,6 +130,18 @@ Equipment: barbell, dumbbell, kettlebell, cable, machine, bodyweight, band, land
 | full body / other | carry, olympic / power, plyometric / jump, conditioning / cardio, mobility / other |
 
 Built-ins are tagged by `20261008120100_exercise_movement_pattern_data.sql` (generated from `exercises.json`).
+
+### exercise_notes
+A private note per user per exercise, for built-in and custom exercises alike (built-in `exercises` rows are read-only, so the note can't live on them). It follows the user across workouts. `exercises.notes` is no longer written by the app; the migration copied its non-empty values here.
+
+| Column | Type | Notes |
+|---|---|---|
+| user_id | uuid FK users, on delete cascade | PK (user_id, exercise_id) |
+| exercise_id | uuid FK exercises, on delete cascade | |
+| note | text | 1–500 characters; clearing a note deletes the row |
+| updated_at | timestamptz | set by the client when the note was edited; the newest write wins |
+
+RLS: own rows only. Written through `save_exercise_note(p_exercise_id, p_note, p_updated_at)` (upsert, or delete when the note is empty, ignored if the stored row is newer), so a note edited offline can be sent again safely. The app mirrors it in SQLite (`l_exercise_notes`) and refreshes it with the other logger caches.
 
 ### templates
 | Column | Type | Notes |
@@ -381,7 +393,7 @@ templates 1—* template_exercises | template_run_segments
 templates 1—* sessions (nullable back-reference)
 sessions 1—* session_exercises 1—* set_logs
 sessions 1—0..1 run_logs 1—* run_splits
-exercises 1—* template_exercises, session_exercises
+exercises 1—* template_exercises, session_exercises, exercise_notes (one per user)
 foods 1—* saved_meal_items, food_logs
 saved_meals 1—* saved_meal_items
 ```
