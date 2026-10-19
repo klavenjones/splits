@@ -10,6 +10,14 @@ Source files for generated migrations. Edit these, regenerate, commit both.
 - Regenerate: `node scripts/build-exercise-seed.mjs` → `migrations/20260929120100_exercise_seed.sql` (unchanged
   since it was pushed) and `migrations/20261008120100_exercise_movement_pattern_data.sql` (tags the slots).
 
+## Default lift templates
+
+- `default-templates.json`: the 6 lift templates every user gets at sign-up, from the "Hybrid Plan" and
+  "All Movements Plan" sheets (lift Mon / Wed / Fri). `exercise` is a built-in name from `exercises.json`;
+  variations and targets the columns can't hold go in the row's `notes`.
+- Regenerate: `node scripts/build-default-templates.mjs` → `migrations/20261019120000_default_templates.sql`.
+  Once that migration is pushed, write a new migration for changes instead (users already have their copies).
+
 ## Built-in illustrations (wger)
 
 - `wger-map.json`: hand-checked map of our exercise name → wger exercise id. Every entry was checked
