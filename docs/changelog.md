@@ -152,3 +152,11 @@ One entry per build step.
 - Migration `20261016120000_exercise_notes.sql`: `exercise_notes` table (own-rows RLS, 500-char limit), the `save_exercise_note` RPC, and a backfill that copies existing custom-exercise `notes` over. The custom-exercise form no longer has a notes field. `docs/data-model.md` updated; `src/db/types.ts` edited by hand until types are regenerated. Smoke test: `supabase/tests/exercise_notes_smoke.sql` (not yet run).
 - Apply with `npx supabase db push --linked` **before** shipping the app (the sync pass now calls the RPC). `SENSITIVE_KEY` in `src/lib/scrub.ts` now also covers `note`/`p_note`.
 - No new dependencies.
+
+## Default lift templates (2026-10-19)
+- Every user now starts with 6 lift templates from the Hybrid Workout Plans sheets (lift Mon / Wed / Fri, run Tue / Thu / Sat): **Hybrid** (3 full-body days: Mon Heavy Strength, Wed Run-Focused Strength, Fri Upper Emphasis) and **All Patterns** (all 8 movement patterns each day: Mon, Wed, Fri). Each template's notes carry the schedule and that day's coaching notes.
+- They are per-user copies, so they can be edited, duplicated or deleted like any template. Sheet exercises map to existing built-ins (Back Squat → squat, Farmer's Walk → farmer's carry, Half-Kneeling Landmine Press → landmine press, ...), with the variation in the row note. Reps like "8 per leg" are stored as 8 with a "per leg" note; "30 sec per side", "40 m" and "max reps" go in the note with no rep target. "2–3 min" rest is stored as 150 s.
+- Source: `supabase/seed-data/default-templates.json`; generator `scripts/build-default-templates.mjs` writes migration `20261019120000_default_templates.sql`. It adds `seed_default_templates(user_id)` (security definer, not callable by users, skips names the user already has), calls it from `handle_new_user`, and backfills existing accounts.
+- Tests: `src/templates/defaultTemplates.test.ts` checks that the exercises exist, that the templates pass `validateTemplate`, and that their estimates match `estimateDuration`. Smoke test `supabase/tests/default_templates_smoke.sql`; `templates_smoke`, `rls_smoke` and `reset_training_smoke` now clear their fake users' defaults first.
+- Apply with `npx supabase db push --linked`. The app doesn't change.
+- No new dependencies.

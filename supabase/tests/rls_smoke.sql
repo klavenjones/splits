@@ -9,6 +9,8 @@ insert into public.users (id) values
   ('00000000-0000-0000-0000-00000000000a'),
   ('00000000-0000-0000-0000-00000000000b')
 on conflict (id) do nothing; -- created by the handle_new_user trigger since step 1
+-- Start from an empty library (sign-up seeds the default templates).
+delete from public.templates where user_id in ('00000000-0000-0000-0000-00000000000a', '00000000-0000-0000-0000-00000000000b');
 insert into public.exercises (id, owner_id, name) values
   ('00000000-0000-0000-0000-0000000000e1', null, 'rls smoke built-in');
 insert into public.foods (id, owner_id, source, external_id, name, serving_qty, serving_unit, kcal)

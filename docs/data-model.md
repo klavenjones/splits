@@ -155,6 +155,8 @@ RLS: own rows only. Written through `save_exercise_note(p_exercise_id, p_note, p
 | est_distance_m | int | run only, computed on save |
 | is_archived | bool | |
 
+Default templates: every user gets their own copy of 6 lift templates at sign-up (`handle_new_user` → `seed_default_templates(user_id)`, from `supabase/seed-data/default-templates.json`). They are ordinary rows the user can edit, duplicate or delete; no schema change. Targets the columns can't hold ("30 s per side", "40 m", "max reps", "per leg") live in `template_exercises.notes`.
+
 ### template_exercises (lift templates)
 | Column | Type | Notes |
 |---|---|---|

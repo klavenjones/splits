@@ -1,0 +1,404 @@
+[
+  {
+    "name": "Hybrid · Mon Heavy Strength",
+    "notes": "Lift Mon / Wed / Fri · Run Tue / Thu / Sat · Sun rest.\n• If Tuesday was speed or interval work and your legs feel flat, cut deadlifts to 2 sets or swap them for Romanian deadlifts.\n• Add weight to the main lifts only when you complete all reps with good form and your runs feel good.",
+    "est_duration_s": 3810,
+    "exercises": [
+      {
+        "exercise": "squat",
+        "target_sets": 4,
+        "rep_min": 5,
+        "rep_max": 5,
+        "rest_sec": 150,
+        "notes": "back squat"
+      },
+      {
+        "exercise": "deadlift",
+        "target_sets": 3,
+        "rep_min": 5,
+        "rep_max": 5,
+        "rest_sec": 180,
+        "notes": "conventional"
+      },
+      {
+        "exercise": "bench press",
+        "target_sets": 4,
+        "rep_min": 5,
+        "rep_max": 5,
+        "rest_sec": 150,
+        "notes": null
+      },
+      {
+        "exercise": "barbell row",
+        "target_sets": 4,
+        "rep_min": 6,
+        "rep_max": 6,
+        "rest_sec": 120,
+        "notes": "bent-over"
+      },
+      {
+        "exercise": "dead bug",
+        "target_sets": 3,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 60,
+        "notes": "per side"
+      }
+    ]
+  },
+  {
+    "name": "Hybrid · Wed Run-Focused Strength",
+    "notes": "Lift Mon / Wed / Fri · Run Tue / Thu / Sat · Sun rest.\n• Keep box jumps crisp and explosive; stop each set while jumps still feel fast.",
+    "est_duration_s": 3270,
+    "exercises": [
+      {
+        "exercise": "box jump",
+        "target_sets": 3,
+        "rep_min": 5,
+        "rep_max": 5,
+        "rest_sec": 90,
+        "notes": null
+      },
+      {
+        "exercise": "Bulgarian split squat",
+        "target_sets": 3,
+        "rep_min": 8,
+        "rep_max": 8,
+        "rest_sec": 90,
+        "notes": "per leg"
+      },
+      {
+        "exercise": "single-leg RDL",
+        "target_sets": 3,
+        "rep_min": 8,
+        "rep_max": 8,
+        "rest_sec": 90,
+        "notes": "per leg"
+      },
+      {
+        "exercise": "step-up",
+        "target_sets": 3,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 60,
+        "notes": "per leg"
+      },
+      {
+        "exercise": "single-leg calf raise",
+        "target_sets": 3,
+        "rep_min": 15,
+        "rep_max": 15,
+        "rest_sec": 60,
+        "notes": "per leg"
+      },
+      {
+        "exercise": "push-up",
+        "target_sets": 3,
+        "rep_min": 12,
+        "rep_max": 15,
+        "rest_sec": 60,
+        "notes": null
+      },
+      {
+        "exercise": "side plank",
+        "target_sets": 3,
+        "rep_min": null,
+        "rep_max": null,
+        "rest_sec": 45,
+        "notes": "30 s per side"
+      }
+    ]
+  },
+  {
+    "name": "Hybrid · Fri Upper Emphasis",
+    "notes": "Lift Mon / Wed / Fri · Run Tue / Thu / Sat · Sun rest.\n• Leg work should feel easy: wake your legs up, don't tire them before Saturday's run.",
+    "est_duration_s": 3870,
+    "exercises": [
+      {
+        "exercise": "overhead press",
+        "target_sets": 4,
+        "rep_min": 5,
+        "rep_max": 5,
+        "rest_sec": 150,
+        "notes": null
+      },
+      {
+        "exercise": "chin-up",
+        "target_sets": 4,
+        "rep_min": 6,
+        "rep_max": 8,
+        "rest_sec": 90,
+        "notes": null
+      },
+      {
+        "exercise": "incline dumbbell press",
+        "target_sets": 3,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 90,
+        "notes": null
+      },
+      {
+        "exercise": "dumbbell row",
+        "target_sets": 3,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 60,
+        "notes": "single-arm, per arm"
+      },
+      {
+        "exercise": "goblet squat",
+        "target_sets": 2,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 90,
+        "notes": "moderate"
+      },
+      {
+        "exercise": "farmer's carry",
+        "target_sets": 3,
+        "rep_min": null,
+        "rep_max": null,
+        "rest_sec": 90,
+        "notes": "40 m"
+      },
+      {
+        "exercise": "Pallof press",
+        "target_sets": 3,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 60,
+        "notes": "per side"
+      }
+    ]
+  },
+  {
+    "name": "All Patterns · Mon Heavy Strength",
+    "notes": "Lift Mon / Wed / Fri · Run Tue / Thu / Sat · Sun rest.\nPriority: squat, hinge, horizontal push.\n• If Tuesday was speed or interval work and your legs feel flat, cut deadlifts to 2 sets or swap them for Romanian deadlifts.\n• Add weight to the main lifts only when you complete all reps with good form and your runs feel good.",
+    "est_duration_s": 4710,
+    "exercises": [
+      {
+        "exercise": "squat",
+        "target_sets": 4,
+        "rep_min": 5,
+        "rep_max": 5,
+        "rest_sec": 150,
+        "notes": "back squat"
+      },
+      {
+        "exercise": "deadlift",
+        "target_sets": 3,
+        "rep_min": 5,
+        "rep_max": 5,
+        "rest_sec": 180,
+        "notes": "conventional"
+      },
+      {
+        "exercise": "bench press",
+        "target_sets": 4,
+        "rep_min": 5,
+        "rep_max": 5,
+        "rest_sec": 150,
+        "notes": null
+      },
+      {
+        "exercise": "barbell row",
+        "target_sets": 3,
+        "rep_min": 6,
+        "rep_max": 6,
+        "rest_sec": 120,
+        "notes": "bent-over"
+      },
+      {
+        "exercise": "dumbbell shoulder press",
+        "target_sets": 2,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 90,
+        "notes": null
+      },
+      {
+        "exercise": "pull-up",
+        "target_sets": 2,
+        "rep_min": null,
+        "rep_max": null,
+        "rest_sec": 90,
+        "notes": "max reps"
+      },
+      {
+        "exercise": "reverse lunge",
+        "target_sets": 2,
+        "rep_min": 8,
+        "rep_max": 8,
+        "rest_sec": 60,
+        "notes": "light, per leg"
+      },
+      {
+        "exercise": "dead bug",
+        "target_sets": 3,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 45,
+        "notes": "per side"
+      }
+    ]
+  },
+  {
+    "name": "All Patterns · Wed Run-Focused",
+    "notes": "Lift Mon / Wed / Fri · Run Tue / Thu / Sat · Sun rest.\nPriority: single-leg, hinge, power.\n• Keep box jumps crisp and explosive; stop each set while jumps still feel fast.\n• Short on time? Cut or shorten calf raises and lat pulldowns first.",
+    "est_duration_s": 4215,
+    "exercises": [
+      {
+        "exercise": "box jump",
+        "target_sets": 3,
+        "rep_min": 5,
+        "rep_max": 5,
+        "rest_sec": 90,
+        "notes": null
+      },
+      {
+        "exercise": "Bulgarian split squat",
+        "target_sets": 3,
+        "rep_min": 8,
+        "rep_max": 8,
+        "rest_sec": 90,
+        "notes": "per leg"
+      },
+      {
+        "exercise": "single-leg RDL",
+        "target_sets": 3,
+        "rep_min": 8,
+        "rep_max": 8,
+        "rest_sec": 90,
+        "notes": "per leg"
+      },
+      {
+        "exercise": "goblet squat",
+        "target_sets": 2,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 60,
+        "notes": null
+      },
+      {
+        "exercise": "push-up",
+        "target_sets": 3,
+        "rep_min": 12,
+        "rep_max": 15,
+        "rest_sec": 60,
+        "notes": null
+      },
+      {
+        "exercise": "inverted row",
+        "target_sets": 3,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 60,
+        "notes": null
+      },
+      {
+        "exercise": "landmine press",
+        "target_sets": 2,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 60,
+        "notes": "half-kneeling, per arm"
+      },
+      {
+        "exercise": "lat pulldown",
+        "target_sets": 2,
+        "rep_min": 12,
+        "rep_max": 12,
+        "rest_sec": 60,
+        "notes": null
+      },
+      {
+        "exercise": "single-leg calf raise",
+        "target_sets": 3,
+        "rep_min": 15,
+        "rep_max": 15,
+        "rest_sec": 45,
+        "notes": "per leg"
+      },
+      {
+        "exercise": "side plank",
+        "target_sets": 3,
+        "rep_min": null,
+        "rep_max": null,
+        "rest_sec": 45,
+        "notes": "30 s per side"
+      }
+    ]
+  },
+  {
+    "name": "All Patterns · Fri Upper Emphasis",
+    "notes": "Lift Mon / Wed / Fri · Run Tue / Thu / Sat · Sun rest.\nPriority: vertical push and pull.\n• Superset the lighter upper-body moves (push + pull) with minimal rest to save time.\n• Leg work should feel easy: wake your legs up, don't tire them before Saturday's run.",
+    "est_duration_s": 4095,
+    "exercises": [
+      {
+        "exercise": "overhead press",
+        "target_sets": 4,
+        "rep_min": 5,
+        "rep_max": 5,
+        "rest_sec": 150,
+        "notes": null
+      },
+      {
+        "exercise": "chin-up",
+        "target_sets": 4,
+        "rep_min": 6,
+        "rep_max": 8,
+        "rest_sec": 90,
+        "notes": null
+      },
+      {
+        "exercise": "incline dumbbell press",
+        "target_sets": 3,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 90,
+        "notes": null
+      },
+      {
+        "exercise": "dumbbell row",
+        "target_sets": 3,
+        "rep_min": 10,
+        "rep_max": 10,
+        "rest_sec": 60,
+        "notes": "single-arm, per arm"
+      },
+      {
+        "exercise": "leg press",
+        "target_sets": 2,
+        "rep_min": 12,
+        "rep_max": 12,
+        "rest_sec": 90,
+        "notes": "light"
+      },
+      {
+        "exercise": "glute bridge",
+        "target_sets": 2,
+        "rep_min": 12,
+        "rep_max": 12,
+        "rest_sec": 60,
+        "notes": null
+      },
+      {
+        "exercise": "lateral lunge",
+        "target_sets": 2,
+        "rep_min": 8,
+        "rep_max": 8,
+        "rest_sec": 60,
+        "notes": "bodyweight, per side"
+      },
+      {
+        "exercise": "farmer's carry",
+        "target_sets": 3,
+        "rep_min": null,
+        "rep_max": null,
+        "rest_sec": 90,
+        "notes": "40 m"
+      }
+    ]
+  }
+]

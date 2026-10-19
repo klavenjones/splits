@@ -34,7 +34,7 @@ Settings opens from the profile avatar on Today.
 | Planned session detail | Exercise list with targets; Start, Reschedule, Skip |
 | Reschedule sheet | Pick a day; coach notes on conflicts |
 | Skip dialog | Just skip / shift the week; optional reason |
-| Template library | Lift and run templates, filters, New template |
+| Template library | Lift and run templates, filters, New template; starts with 6 default lift templates (Hybrid and All Patterns, Mon / Wed / Fri) |
 | Lift template builder | Exercises, sets, rep range, rest, supersets, reorder |
 | Run template builder | Warmup / repeat blocks / steady / cooldown; workout-shape strip |
 | Edit segment sheet | Distance or time; pace / HR zone / effort target; voice cues |

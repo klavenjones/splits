@@ -5,6 +5,8 @@ begin;
 insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-0000000007a1', 'reset-a@example.test'),
   ('00000000-0000-0000-0000-0000000007b1', 'reset-b@example.test');
+-- Start from an empty library (sign-up seeds the default templates).
+delete from public.templates where user_id in ('00000000-0000-0000-0000-0000000007a1', '00000000-0000-0000-0000-0000000007b1');
 
 create temporary table smoke (k text primary key, v uuid) on commit drop;
 grant all on smoke to authenticated;
